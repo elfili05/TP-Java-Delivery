@@ -27,15 +27,15 @@ Los pedidos, realizados por los usuarios, se gestionan desde su creación hasta 
 
 | Requerimiento | **Detalle/Listado de casos incluidos** |
 | ------------- | -------------------------------------- |
-| ABMC simple | 1 CRUD Usuario (admin/cliente)<br>2. CRUD Horario Restaurante<br>3. CRUD Tipo_Producto |
-| ABMC dependiente | CRUD Producto {depende de} Tipo_Producto<br>CRUD Restaurante {depende de} Horario_Restaurante |
+| ABMC simple | 1 CRUD Usuario (admin/cliente)<br>2. CRUD Restaurante<br>3. CRUD Tipo_Producto |
+| ABMC dependiente | CRUD Producto {depende de} Tipo_Producto<br>CRUD Horario {depende de} Restaurante |
 | CU NO-ABMC | 1. Realizar Pedido |
 | Listado simple | Listado de todos los restaurantes de la plataforma |
 
 
 ## Alcance Funcional - Aprobación Directa
 
-<table><tbody><tr><th >Requerimiento</th><th >Detalle/Listado de casos incluidos</th></tr><tr><td >ABMC</td><td >1. CRUD horario_restaurante<br>2. CRUD restaurante<br>3. CRUD producto<br>4. CRUD cupon_descuento<br>5. CRUD tipo_producto<br>6. CRUD usuario</td></tr><tr><td >CU "Complejo"(nivel resumen)</td><td >Realizar pedido</td></tr><tr><td >Listado complejo</td><td >Productos por tipo, Productos por numero de veces pedido</td></tr><tr><td >Nivel de acceso</td><td >1. Invitado<br>2. Cliente<br>3. Administrador</td></tr><tr><td >Manejo de errores</td><td >No requiere detalle</td></tr><tr><td >Publicar el sitio</td><td >No requiere detalle</td></tr></tbody></table>
+<table><tbody><tr><th >Requerimiento</th><th >Detalle/Listado de casos incluidos</th></tr><tr><td >ABMC</td><td >1. CRUD Restaurante<br>2. CRUD Horario<br>3. CRUD Producto<br>4. CRUD descuento<br>5. CRUD tipo_producto<br>6. CRUD usuario</td></tr><tr><td >CU "Complejo"(nivel resumen)</td><td >Realizar pedido</td></tr><tr><td >Listado complejo</td><td >Productos por tipo, Productos por numero de veces pedido</td></tr><tr><td >Nivel de acceso</td><td >1. Invitado<br>2. Cliente<br>3. Administrador</td></tr><tr><td>Manejo de errores</td><td >No requiere detalle</td></tr><tr><td >Publicar el sitio</td><td >No requiere detalle</td></tr></tbody></table>
 
 ## Requerimientos extra - AD
 
