@@ -1,0 +1,52 @@
+usuario(id_usuario , email, nombre, apellido, contraseña, dni(null), direccion (null))
+id_usuario : cp
+
+
+descuento(id_descuento, monto_minimo, porcentaje)
+id_descuento : cp
+
+
+pedido(id_pedido, fecha_pedido, monto_total, id_descuento(null), id_usuario, id_restaurante)
+id_pedido : cp nn
+id_usuario : cf a usuario nn
+id_restaurante: cf a restaurante nn
+id_descuento: cf a descuento null
+
+
+
+detalle_pedido(nro_detalle, cantidad, subtotal, id_pedido,id_restaurante, id_producto)
+nro_detalle, id_pedido : cp
+id_pedido : cf a pedido nn
+id_restaurante, id_producto : cf a restaurant_prod nn
+
+restaurante(id_restaurante, nom_restaurante, direccion)
+id_restaurante : cp
+
+
+producto(id_producto, descripcion, precio, veces_pedido, id_tipoprod)
+id_producto : cp
+id_tipoprod : cf a tipo_producto nn 
+
+
+tipo_producto(id_tipoprod, nombre)
+id_tipoprod : cp
+
+
+horario(nro_horario, hora_inicio, hora_fin, dia, id_restaurante)
+nro_horario, id_restaurante : cp
+id_restaurante : cf a restaurante nn 
+
+
+
+
+
+
+relaciones:
+
+restaurant_prod(id_restaurante, id_producto)
+id_restaurante, id_producto : cp
+id_restaurante : cf a restaurante nn
+id_producto : cf a producto nn
+
+
+
