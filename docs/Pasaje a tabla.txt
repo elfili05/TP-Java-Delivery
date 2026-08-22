@@ -1,8 +1,8 @@
-usuario(id_usuario , email, nombre, apellido, contraseña, dni(null), direccion (null))
+/ usuario(id_usuario , email, nombre, apellido, contraseña, telefono(null) ,dni(null), direccion (null))
 id_usuario : cp
 
 
-descuento(id_descuento, monto_minimo, porcentaje)
+/ descuento(id_descuento, monto_minimo, porcentaje)
 id_descuento : cp
 
 
@@ -19,23 +19,22 @@ nro_detalle, id_pedido : cp
 id_pedido : cf a pedido nn
 id_restaurante, id_producto : cf a restaurant_prod nn
 
-restaurante(id_restaurante, nom_restaurante, direccion)
+/ restaurante(id_restaurante, nom_restaurante, direccion)
 id_restaurante : cp
 
 
-producto(id_producto, descripcion, precio, veces_pedido, id_tipoprod)
+/ producto(id_producto, descripcion, precio, veces_pedido, id_tipoprod)
 id_producto : cp
 id_tipoprod : cf a tipo_producto nn 
 
 
-tipo_producto(id_tipoprod, nombre)
+/ tipo_producto(id_tipoprod, nombre)
 id_tipoprod : cp
 
 
-horario(nro_horario, hora_inicio, hora_fin, dia, id_restaurante)
+/ horario(nro_horario, hora_inicio, hora_fin, dia, id_restaurante)
 nro_horario, id_restaurante : cp
 id_restaurante : cf a restaurante nn 
-
 
 
 
