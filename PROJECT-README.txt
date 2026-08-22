@@ -8,4 +8,3 @@ Las carpetas del proyecto funcionan de la siguiente manera:
 - src/java/servlet: Son las clases que se van a encargar de manejar todas las peticiones web, se configuran para que te redireccionen a una pagina u otra
 - src/webapp: acá va todo lo relacionado con la página web en sí, acá va la carpeta de estilos, y todos los html que sean necesarios.
 - src/webapp/WEB-INF: acá van los .JSP: páginas HTML que tienen código java dentro, para poder mostrar cualquier cosa: listas de objetos del negocio, etc. Son los servlets los que nos redirigen a esas paginas .JSP .
-
