@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `java_delivery` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `java_delivery`;
 -- MySQL dump 10.13  Distrib 8.0.45, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: javadelivery
@@ -23,7 +21,7 @@ SET @@SESSION.SQL_LOG_BIN= 0;
 -- GTID state at the beginning of the backup 
 --
 
--- SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ 'd94a4558-335b-11f1-b286-0a002700000c:1-684';
+SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ 'd94a4558-335b-11f1-b286-0a002700000c:1-697';
 
 --
 -- Table structure for table `discount`
@@ -38,32 +36,17 @@ CREATE TABLE `discount` (
   `discount_percentage` float DEFAULT NULL,
   PRIMARY KEY (`discount_id`),
   UNIQUE KEY `minimum_amount_UNIQUE` (`minimum_amount`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `order`
+-- Dumping data for table `discount`
 --
 
-DROP TABLE IF EXISTS `order`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `order` (
-  `order_id` int NOT NULL AUTO_INCREMENT,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `total_amount` float DEFAULT '0',
-  `discount_id` int DEFAULT NULL,
-  `user_id` int NOT NULL,
-  `restaurant_id` int NOT NULL,
-  PRIMARY KEY (`order_id`),
-  KEY `discount_fk_idx` (`discount_id`),
-  KEY `user_fk_idx` (`user_id`),
-  KEY `restaurant_fk_idx` (`restaurant_id`),
-  CONSTRAINT `discount_fk` FOREIGN KEY (`discount_id`) REFERENCES `discount` (`discount_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT `restaurant_id_fk` FOREIGN KEY (`restaurant_id`) REFERENCES `restaurant` (`restaurant_id`),
-  CONSTRAINT `user_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-/*!40101 SET character_set_client = @saved_cs_client */;
+LOCK TABLES `discount` WRITE;
+/*!40000 ALTER TABLE `discount` DISABLE KEYS */;
+/*!40000 ALTER TABLE `discount` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `order_detail`
@@ -83,10 +66,19 @@ CREATE TABLE `order_detail` (
   KEY `order_fk_idx` (`order_id`),
   KEY `product_id_fk, restaurant_id_fk_idx` (`product_id`,`restaurant_id`),
   KEY `product_restaurant_fk` (`restaurant_id`,`product_id`),
-  CONSTRAINT `order_fk` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `order_fk` FOREIGN KEY (`order_id`) REFERENCES `user_order` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `product_restaurant_fk` FOREIGN KEY (`restaurant_id`, `product_id`) REFERENCES `product_restaurant` (`restaurant_id`, `product_id`) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `order_detail`
+--
+
+LOCK TABLES `order_detail` WRITE;
+/*!40000 ALTER TABLE `order_detail` DISABLE KEYS */;
+/*!40000 ALTER TABLE `order_detail` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `product`
@@ -97,14 +89,23 @@ DROP TABLE IF EXISTS `product`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `product` (
   `product_id` int NOT NULL AUTO_INCREMENT,
-  `description` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
+  `description` varchar(100) COLLATE utf8mb3_bin DEFAULT NULL,
   `price` float DEFAULT NULL,
   `product_type_id` int DEFAULT NULL,
   PRIMARY KEY (`product_id`),
   KEY `product_type_fk_idx` (`product_type_id`),
   CONSTRAINT `product_type_fk` FOREIGN KEY (`product_type_id`) REFERENCES `product_type` (`product_type_id`) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `product`
+--
+
+LOCK TABLES `product` WRITE;
+/*!40000 ALTER TABLE `product` DISABLE KEYS */;
+/*!40000 ALTER TABLE `product` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `product_restaurant`
@@ -120,8 +121,17 @@ CREATE TABLE `product_restaurant` (
   KEY `product_id_fk_idx` (`product_id`),
   CONSTRAINT `product_fk_product` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `restaurant_fk_restaurant` FOREIGN KEY (`restaurant_id`) REFERENCES `restaurant` (`restaurant_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `product_restaurant`
+--
+
+LOCK TABLES `product_restaurant` WRITE;
+/*!40000 ALTER TABLE `product_restaurant` DISABLE KEYS */;
+/*!40000 ALTER TABLE `product_restaurant` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `product_type`
@@ -132,10 +142,19 @@ DROP TABLE IF EXISTS `product_type`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `product_type` (
   `product_type_id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(80) COLLATE utf8mb4_bin DEFAULT NULL,
+  `name` varchar(80) COLLATE utf8mb3_bin DEFAULT NULL,
   PRIMARY KEY (`product_type_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `product_type`
+--
+
+LOCK TABLES `product_type` WRITE;
+/*!40000 ALTER TABLE `product_type` DISABLE KEYS */;
+/*!40000 ALTER TABLE `product_type` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `restaurant`
@@ -146,11 +165,20 @@ DROP TABLE IF EXISTS `restaurant`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `restaurant` (
   `restaurant_id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(80) COLLATE utf8mb4_bin DEFAULT NULL,
-  `address` varchar(80) COLLATE utf8mb4_bin DEFAULT NULL,
+  `name` varchar(80) COLLATE utf8mb3_bin DEFAULT NULL,
+  `address` varchar(80) COLLATE utf8mb3_bin DEFAULT NULL,
   PRIMARY KEY (`restaurant_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `restaurant`
+--
+
+LOCK TABLES `restaurant` WRITE;
+/*!40000 ALTER TABLE `restaurant` DISABLE KEYS */;
+/*!40000 ALTER TABLE `restaurant` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `schedule`
@@ -164,12 +192,21 @@ CREATE TABLE `schedule` (
   `restaurant_id` int NOT NULL,
   `start_time` time DEFAULT NULL,
   `end_time` time DEFAULT NULL,
-  `day_of_week` enum('monday','tuesday','wednesday','thursday','friday','saturday','sunday') COLLATE utf8mb4_bin DEFAULT NULL,
+  `day_of_week` enum('monday','tuesday','wednesday','thursday','friday','saturday','sunday') COLLATE utf8mb3_bin DEFAULT NULL,
   PRIMARY KEY (`schedule_number`,`restaurant_id`),
   KEY `restaurant_fk_idx` (`restaurant_id`),
   CONSTRAINT `restaurant_fk_id` FOREIGN KEY (`restaurant_id`) REFERENCES `restaurant` (`restaurant_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `schedule`
+--
+
+LOCK TABLES `schedule` WRITE;
+/*!40000 ALTER TABLE `schedule` DISABLE KEYS */;
+/*!40000 ALTER TABLE `schedule` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `user`
@@ -180,17 +217,59 @@ DROP TABLE IF EXISTS `user`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user` (
   `user_id` int NOT NULL AUTO_INCREMENT,
-  `email` varchar(80) COLLATE utf8mb4_bin DEFAULT NULL,
-  `name` varchar(80) COLLATE utf8mb4_bin DEFAULT NULL,
-  `surname` varchar(80) COLLATE utf8mb4_bin DEFAULT NULL,
-  `password` varchar(200) COLLATE utf8mb4_bin DEFAULT NULL,
-  `phone_number` int DEFAULT NULL,
-  `dni` int DEFAULT NULL,
-  `address` varchar(80) COLLATE utf8mb4_bin DEFAULT NULL,
-  `role` enum('admin','client') COLLATE utf8mb4_bin NOT NULL,
+  `email` varchar(80) COLLATE utf8mb3_bin DEFAULT NULL,
+  `name` varchar(80) COLLATE utf8mb3_bin DEFAULT NULL,
+  `surname` varchar(80) COLLATE utf8mb3_bin DEFAULT NULL,
+  `password` varchar(200) COLLATE utf8mb3_bin DEFAULT NULL,
+  `phone_number` varchar(20) COLLATE utf8mb3_bin DEFAULT NULL,
+  `dni` varchar(10) COLLATE utf8mb3_bin DEFAULT NULL,
+  `address` varchar(80) COLLATE utf8mb3_bin DEFAULT NULL,
+  `role` enum('admin','client') COLLATE utf8mb3_bin NOT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user`
+--
+
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `user_order`
+--
+
+DROP TABLE IF EXISTS `user_order`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_order` (
+  `order_id` int NOT NULL AUTO_INCREMENT,
+  `date` datetime DEFAULT NULL,
+  `total_amount` float DEFAULT '0',
+  `discount_id` int DEFAULT NULL,
+  `user_id` int NOT NULL,
+  `restaurant_id` int NOT NULL,
+  PRIMARY KEY (`order_id`),
+  KEY `discount_fk_idx` (`discount_id`),
+  KEY `user_fk_idx` (`user_id`),
+  KEY `restaurant_fk_idx` (`restaurant_id`),
+  CONSTRAINT `discount_fk` FOREIGN KEY (`discount_id`) REFERENCES `discount` (`discount_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `restaurant_id_fk` FOREIGN KEY (`restaurant_id`) REFERENCES `restaurant` (`restaurant_id`),
+  CONSTRAINT `user_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user_order`
+--
+
+LOCK TABLES `user_order` WRITE;
+/*!40000 ALTER TABLE `user_order` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user_order` ENABLE KEYS */;
+UNLOCK TABLES;
 SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -202,4 +281,4 @@ SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-08-22 20:04:02
+-- Dump completed on 2026-08-24 19:03:16
