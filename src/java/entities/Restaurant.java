@@ -5,22 +5,22 @@ public class Restaurant {
 	private String name;
 	private String address;
 	
-	int getRestaurant_id() {
+	public int getRestaurant_id() {
 		return restaurant_id;
 	}
-	void setRestaurant_id(int restaurant_id) {
+	public void setRestaurant_id(int restaurant_id) {
 		this.restaurant_id = restaurant_id;
 	}
-	String getName() {
+	public String getName() {
 		return name;
 	}
-	void setName(String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
-	String getAddress() {
+	public String getAddress() {
 		return address;
 	}
-	void setAddress(String address) {
+	public void setAddress(String address) {
 		this.address = address;
 	}
 	

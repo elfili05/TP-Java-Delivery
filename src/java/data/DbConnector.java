@@ -23,7 +23,7 @@ public class DbConnector {
 		}
 	}
 	
-	public static DbConnector getinstance() {
+	public static DbConnector getInstance() {
 		if (instance == null) {
 			instance = new DbConnector();
 		}

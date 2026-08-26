@@ -1,42 +1,43 @@
 package java.entities;
 
-import java.time.*;
+import java.sql.Time;
 
 public class Schedule {
 	
 	private int schedule_number;
 	private int restaurant_id;
-	private LocalTime start_time;
-	private LocalTime end_time;
-	private DayOfWeek day_of_week;
-	int getSchedule_number() {
+	private Time start_time;
+	private Time end_time;
+	private String day_of_week;
+	
+	public int getSchedule_number() {
 		return schedule_number;
 	}
-	void setSchedule_number(int schedule_number) {
+	public void setSchedule_number(int schedule_number) {
 		this.schedule_number = schedule_number;
 	}
-	int getRestaurant_id() {
+	public int getRestaurant_id() {
 		return restaurant_id;
 	}
-	void setRestaurant_id(int restaurant_id) {
+	public void setRestaurant_id(int restaurant_id) {
 		this.restaurant_id = restaurant_id;
 	}
-	LocalTime getStart_time() {
+	public Time getStart_time() {
 		return start_time;
 	}
-	void setStart_time(LocalTime start_time) {
+	public void setStart_time(Time start_time) {
 		this.start_time = start_time;
 	}
-	LocalTime getEnd_time() {
+	public Time getEnd_time() {
 		return end_time;
 	}
-	void setEnd_time(LocalTime end_time) {
+	public void setEnd_time(Time end_time) {
 		this.end_time = end_time;
 	}
-	String getDay_of_week() {
-		return day_of_week.toString().toLowerCase();
+	public String getDay_of_week() {
+		return day_of_week.toLowerCase();
 	}
-	void setDay_of_week(DayOfWeek day_of_week) {
+	public void setDay_of_week(String day_of_week) {
 		this.day_of_week = day_of_week;
 	}
 	

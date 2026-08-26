@@ -7,33 +7,33 @@ public class OrderDetail {
 	private Product product;
 	private int quantity;
 	
-	int getOrder_id() {
+	public int getOrder_id() {
 		return order_id;
 	}
-	void setOrder_id(int order_id) {
+	public void setOrder_id(int order_id) {
 		this.order_id = order_id;
 	}
-	int getDetail_number() {
+	public int getDetail_number() {
 		return detail_number;
 	}
-	void setDetail_number(int detail_number) {
+	public void setDetail_number(int detail_number) {
 		this.detail_number = detail_number;
 	}
 
-	int getQuantity() {
+	public int getQuantity() {
 		return quantity;
 	}
-	void setQuantity(int quantity) {
+	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
-	Product getProduct() {
+	public Product getProduct() {
 		return product;
 	}
-	void setProduct(Product product) {
+	public void setProduct(Product product) {
 		this.product = product;
 	}
 	
-	double getSubtotal() {
+	public double getSubtotal() {
 		return product.getPrice() * quantity;	
 	}
 	
