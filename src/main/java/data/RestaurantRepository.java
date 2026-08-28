@@ -1,8 +1,8 @@
-package java.data;
+package main.java.data;
 import java.sql.*;
 import java.util.LinkedList;
-import java.entities.Restaurant;
-import java.entities.Schedule;
+import main.java.entities.Restaurant;
+import main.java.entities.Schedule;
 
 public class RestaurantRepository {
 

@@ -1,9 +1,9 @@
-package java.data;
+package main.java.data;
 import java.sql.*;
 import java.util.LinkedList;
-import java.entities.Product;
-import java.entities.Restaurant;
-import java.entities.ProductType;
+import main.java.entities.Product;
+import main.java.entities.Restaurant;
+import main.java.entities.ProductType;
 //import java.data.DbConnector;
 
 public class ProductRepository {

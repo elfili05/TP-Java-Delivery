@@ -1,7 +1,7 @@
-package java.data;
+package main.java.data;
 import java.sql.*;
 import java.sql.SQLException;
-import java.entities.User;
+import main.java.entities.User;
 import java.util.LinkedList;
 
 //FORMATO DE UNA CONSULTA A LA BASE DE DATOS
@@ -39,6 +39,7 @@ public class UserRepository {
 					"select email, name, surname, phone_number, dni, address, role from user where "
 					+ "email=? and password=?"
 					); // solo los datos que se necesitan mostrar en los siguientes casos de uso, excluyendo la password.
+			if (stmt == null) {}
 			stmt.setString(1, userToSearch.getEmail());
 			stmt.setString(2, userToSearch.getPassword());
 			rs = stmt.executeQuery();
@@ -57,6 +58,7 @@ public class UserRepository {
 			e.printStackTrace();
 		} finally {
 			try {
+				System.out.println("aca!");
 				if (rs != null) { rs.close(); }
 				if (stmt != null) { stmt.close(); }
 				DbConnector.getInstance().releaseConn();

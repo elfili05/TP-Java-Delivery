@@ -1,7 +1,7 @@
-package java.data;
+package main.java.data;
 import java.sql.*;
 import java.sql.SQLException;
-import java.entities.Discount;
+import main.java.entities.Discount;
 import java.util.LinkedList;
 
 public class DiscountRepository {
