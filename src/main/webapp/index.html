@@ -58,18 +58,23 @@
               />
             </div>
 
-            <p class="signin-form__register">
-              ¿No tienes una cuenta?
-              <a href="#" class="signin-form__link">Regístrate</a>
-            </p>
 
-            <p class="signin-form__register">
-              ¿Quieres ingresar como invitado?
-              <a href="#" class="signin-form__link">Entrar como invitado</a>
-            </p>
 
             <button class="signin-form__button" type="submit">Iniciar sesión</button>
           </form>
+          
+          <form action="signup" method="get">
+            <p class="signin-form__register">
+              ¿No tienes una cuenta?
+              <a href="signup" class="signin-form__link"><button class="signin-form__link" type="submit">Regístrate</button></a>
+            </p>
+		  </form>
+			<form action='signin' method='post'>
+            	<p class="signin-form__register">
+            	  ¿Quieres ingresar como invitado?
+            	  <a href="guest" class="signin-form__link"><button class="signin-form__link" type="submit" name='role' value='guest'>Entrar como invitado</button></a>
+            	</p>
+            </form>
         </div>
       </section>
     </main>

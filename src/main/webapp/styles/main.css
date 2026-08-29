@@ -1,6 +1,7 @@
 :root {
   --page-bg: #eeeeee;
-  --panel-bg: rgba(255, 255, 255, 0.08);
+  /* --panel-bg: rgb(210, 209, 209); */
+  --panel-bg: #af3510;
   --line-color: rgba(48, 48, 48, 0.7);
   --title-color: #262626;
   --secondary-color: #2b2b2b;
@@ -88,6 +89,9 @@ background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
   margin: 0 auto;
   padding: 0.25rem 0.5rem 0;
 }
+
+
+
 
 .signin-brand {
   width: 100%;
@@ -186,9 +190,7 @@ background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 }
 
 .signin-form__link:hover {
-    transition: font-size 0.2s ease-in-out;
-    font-size: 1.05rem;
-    color: var(--accent-color);
+  color: var(--accent-color);
 }
 
 .signin-form__button {
@@ -215,10 +217,189 @@ background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
   background-color: #DC430A;
 }
 
+.signin-form__link button {
+	background: none;
+	border: none;
+}
+
+.signup-layout {
+  align-items: flex-start;
+  padding-top: 1.5rem;
+  padding-bottom: 2rem;
+}
+
+.signup-panel {
+  justify-content: flex-start;
+}
+
+.signup-panel .signin-brand {
+  margin-bottom: 0.35rem;
+  margin-top: 0;
+}
+
+.signup-panel .signin-brand__placeholder {
+  width: 220px;
+  height: 92px;
+}
+
+.signup-panel .signin-title {
+  margin-bottom: 1rem;
+  font-size: 1.55rem;
+}
+
+.signup-form {
+  gap: 0.55rem;
+}
+
+.signup-form .signin-form__input {
+  min-height: 48px;
+  padding-top: 0.55rem;
+  padding-bottom: 0.55rem;
+}
+
+.signup-form .signin-form__button {
+  margin-top: 0.35rem;
+}
+
+.signup-back {
+  margin-top: 0.7rem;
+}
+
+.signup-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 1rem;
+  border: none;
+  background: rgba(38, 38, 38, 0.42);
+}
+
+.signup-modal::backdrop {
+  background: rgba(38, 38, 38, 0.42);
+}
+
+.signup-modal__content {
+  width: min(100%, 460px);
+  padding: 1.5rem 1.4rem 1.2rem;
+  border: 2px solid rgba(38, 38, 38, 0.8);
+  border-radius: 1.2rem;
+  background: #fffaf6;
+  box-shadow: 0 1.2rem 2.5rem rgba(38, 38, 38, 0.18);
+  text-align: center;
+}
+
+.signup-modal__title {
+  margin: 0 0 0.9rem;
+  color: var(--title-color);
+  font-size: clamp(1.35rem, 1vw + 1rem, 1.8rem);
+  line-height: 1.25;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.signup-modal__text {
+  margin: 0 0 1.2rem;
+  color: var(--secondary-color);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.signup-modal__form {
+  display: flex;
+  justify-content: center;
+}
+
+.signup-modal__button {
+  min-width: 190px;
+  min-height: 48px;
+  padding: 0.7rem 1.3rem;
+  border: 2px solid rgba(38, 38, 38, 0.8);
+  border-radius: 1rem;
+  background: var(--brand-dark);
+  color: var(--title-color);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease;
+}
+
+.signup-modal__button:hover {
+  transform: translateY(-1px);
+}
+
+.signup-modal__button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(255, 67, 10, 0.25);
+}
+
+.signin-error {
+  width: min(100%, 620px);
+  padding: 2.25rem 2rem 2.5rem;
+  border: 2px solid var(--input-border);
+  border-radius: 1rem;
+  background: var(--panel-bg);
+  box-shadow: 0 0.75rem 1.5rem rgba(38, 38, 38, 0.14);
+}
+
+.signin-panel__background {
+  background: #cf592e; 
+  padding: 2rem;
+  border-radius: 1rem;
+}
+
+.signin-error .signin-brand {
+  margin-top: 0;
+  margin-bottom: 1.25rem;
+}
+
+.signin-error__icon {
+  width: 150px;
+  height: 130px;
+}
+
+.signin-error__icon img {
+  object-fit: contain;
+}
+
+.signin-error__eyebrow {
+  margin: 0 0 0.8rem;
+  color: var(--brand-dark);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.signin-error .signin-title {
+  margin-bottom: 1rem;
+}
+
+.signin-error__message {
+  max-width: 34rem;
+  margin: 0 1.5rem 1.65rem;
+  color: var(--secondary-color);
+  font-size: 1rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
 @media (max-width: 850px) {
   .signin-panel {
     min-height: auto;
     padding: 1.5rem 0.5rem 1.25rem;
+  }
+
+  .signup-layout {
+    padding-top: 1rem;
   }
 }
 
@@ -238,5 +419,18 @@ background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 
   .signin-form__button {
     width: 100%;
+  }
+
+  .signup-layout {
+    padding-top: 0.5rem;
+  }
+
+  .signup-panel .signin-brand__placeholder {
+    width: 190px;
+    height: 78px;
+  }
+
+  .signup-panel .signin-title {
+    font-size: 1.35rem;
   }
 }

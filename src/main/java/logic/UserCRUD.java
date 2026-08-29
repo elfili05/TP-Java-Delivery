@@ -1,6 +1,5 @@
 package main.java.logic;
 import main.java.data.UserRepository;
-import java.util.LinkedList;
 import java.sql.*;
 import main.java.entities.User;
 
@@ -22,6 +21,10 @@ public class UserCRUD {
 			return u;
 		}
 		
+	}
+	
+	public Boolean addUser(User userToAdd) throws SQLException {
+		return ur.addUser(userToAdd);
 	}
 	
 }

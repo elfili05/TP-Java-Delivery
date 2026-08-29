@@ -8,6 +8,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+
 import main.java.entities.User;
 import main.java.logic.UserCRUD;
 
@@ -31,7 +33,7 @@ public class Signin extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		request.getRequestDispatcher("index.html").forward(request, response);
 	}
 
 	/**
@@ -41,9 +43,11 @@ public class Signin extends HttpServlet {
 		UserCRUD ctrlUser = new UserCRUD();
 		User u = new User();
 		
-		
+		u.setRole(request.getParameter("role")); // solo en el caso de "guest" se ejecuta esta parte.
 		u.setEmail(request.getParameter("email"));
 		u.setPassword(request.getParameter("password"));
+		
+		
 		
 		// atrapamos toda excepcion que pueda suceder en nuestro acceso a la DB.
 		try {
@@ -55,22 +59,21 @@ public class Signin extends HttpServlet {
 		}
 		
 		if (u.getRole() != null) {
-			response.getWriter().
-			append("Bienvenido!\n")
-			.append("Nombre: ").append(u.getName())
-			.append("\n")
-			.append("Apellido: ").append(u.getSurname())
-			.append("\n")
-			.append("ROLE: ").append(u.getRole());
 			if (u.getRole().equalsIgnoreCase("client")) {
-				response.getWriter().append("\nEl usuario que ingreso es cliente.");
+				request.getSession().setAttribute("user",u);
+				request.getRequestDispatcher("main_page.jsp").forward(request, response);
+				request.getSession().removeAttribute("user"); 
+			}
+			if (u.getRole().equalsIgnoreCase("guest")) {
+				request.getRequestDispatcher("main_page.jsp").forward(request, response);
+				System.out.println("guest!");
 				}
-			request.getSession().setAttribute("user",u);
-			request.getRequestDispatcher("main_page.jsp").forward(request, response);
+			if (u.getRole().equalsIgnoreCase("admin")) {
+				response.getWriter().append("admin!!");
+				}
 			}
 		else {
 			request.getRequestDispatcher("WEB-INF/signin_error.html").include(request, response);
-			System.out.println("paso por aca");
 //			response.getWriter().append("Email o Contrasena incorrectos.");
 		}
 	}

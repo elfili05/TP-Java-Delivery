@@ -11,7 +11,7 @@
 %>
 </head>
 <body>
-	<h1>HOLA <%=u.getName()%></h1>
+	<h1> HOLA <%=(u != null) ? u.getName() : "Invitado" %> </h1>
 	<p>lorem ipsum dolor sit amet.</p>
 </body>
 </html>
