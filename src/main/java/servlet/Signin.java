@@ -43,7 +43,7 @@ public class Signin extends HttpServlet {
 		UserCRUD ctrlUser = new UserCRUD();
 		User u = new User();
 		
-		u.setRole(request.getParameter("role")); // solo en el caso de "guest" se ejecuta esta parte.
+		u.setRole(request.getParameter("role")); // solo en el caso de "guest" se usará esta parte.
 		u.setEmail(request.getParameter("email"));
 		u.setPassword(request.getParameter("password"));
 		
@@ -53,24 +53,16 @@ public class Signin extends HttpServlet {
 		try {
 			u = ctrlUser.validateUser(u);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			response.getWriter().append(e.toString());
 			//e.printStackTrace();
 		}
 		
 		if (u.getRole() != null) {
-			if (u.getRole().equalsIgnoreCase("client")) {
-				request.getSession().setAttribute("user",u);
-				request.getRequestDispatcher("main_page.jsp").forward(request, response);
-				request.getSession().removeAttribute("user"); 
-			}
-			if (u.getRole().equalsIgnoreCase("guest")) {
-				request.getRequestDispatcher("main_page.jsp").forward(request, response);
-				System.out.println("guest!");
-				}
-			if (u.getRole().equalsIgnoreCase("admin")) {
-				response.getWriter().append("admin!!");
-				}
+			
+			// cargamos al usuario
+			request.getSession().setAttribute("user", u);
+			request.getRequestDispatcher("main_page.jsp").forward(request, response);
+
 			}
 		else {
 			request.getRequestDispatcher("WEB-INF/signin_error.html").include(request, response);
