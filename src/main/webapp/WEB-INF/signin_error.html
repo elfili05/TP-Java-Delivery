@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Java Delivery | Error de inicio de sesión</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="styles/main.css" />
+		<link rel="icon" type="ico" href="assets/icon2.ico" />
+	</head>
+	<body class="page">
+		<main class="signin-layout">
+			<section class="signin-panel signin-error" aria-labelledby="error-title">
+				<div class="signin-panel__background" aria-hidden="true">
+					<!-- <div class="signin-brand" aria-label="Java Delivery">
+						<div class="signin-brand__placeholder signin-error__icon">
+							<img src="assets/error.png" alt="Error de inicio de sesión" />
+						</div>
+					</div> -->
+
+					<div class="signin-content">
+						<p class="signin-error__eyebrow" role="status">No pudimos iniciar sesión</p>
+						<h1 class="signin-title" id="error-title">Credenciales incorrectas</h1>
+						<p class="signin-error__message">
+						Revisá tu email y contraseña e intentá nuevamente.
+						</p>
+
+						<form class="signin-form" action="signin" method="get">
+							<button class="signin-form__button" type="submit">Volver al inicio</button>
+						</form>
+					</div>
+				</div> <!-- .signin-panel__background -->
+			</section> <!-- .signin-panel -->
+		</main>
+	</body>
+</html>

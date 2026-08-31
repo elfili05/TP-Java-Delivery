@@ -1,6 +1,6 @@
-package java.data;
+package main.java.data;
 
-import java.sql.*;
+import java.sql.*;	
 
 public class DbConnector {
 
@@ -9,7 +9,7 @@ public class DbConnector {
 	private String driver="com.mysql.cj.jdbc.Driver";
 	private String host="localhost";
 	private String port="3306";
-	private String user="DBadmin";
+	private String user="DBAdmin";
 	private String password="admin";
 	private String db="javadelivery";
 	private int connected=0;
@@ -33,7 +33,7 @@ public class DbConnector {
 	public Connection getConn() {
 		try {
 			if(conn==null || conn.isClosed()) {
-				conn=DriverManager.getConnection("jdbc:mysql://"+host+":"+port+"/"+db, user, password);
+				conn=DriverManager.getConnection("jdbc:mysql://"+host+":"+port+"/"+db+"?serverTimezone=UTC", user, password);
 				connected=0;
 			}
 		} catch (SQLException e) {

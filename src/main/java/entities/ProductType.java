@@ -1,4 +1,4 @@
-package java.entities;
+package main.java.entities;
 
 public class ProductType {
 	private int product_type_id;

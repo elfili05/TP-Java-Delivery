@@ -1,7 +1,7 @@
-package java.data;
+package main.java.data;
 import java.sql.*;
 import java.sql.SQLException;
-import java.entities.User;
+import main.java.entities.User;
 import java.util.LinkedList;
 
 //FORMATO DE UNA CONSULTA A LA BASE DE DATOS
@@ -30,7 +30,7 @@ import java.util.LinkedList;
 public class UserRepository {
 	
 	// el objeto userToSearch tiene el email y la password para poder buscarlo en la base de datos.
-	public User getOne(User userToSearch) throws SQLException{
+	public User getOne(User userToSearch) throws SQLException {
 		User u = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -39,6 +39,7 @@ public class UserRepository {
 					"select email, name, surname, phone_number, dni, address, role from user where "
 					+ "email=? and password=?"
 					); // solo los datos que se necesitan mostrar en los siguientes casos de uso, excluyendo la password.
+			if (stmt == null) {}
 			stmt.setString(1, userToSearch.getEmail());
 			stmt.setString(2, userToSearch.getPassword());
 			rs = stmt.executeQuery();
@@ -57,6 +58,7 @@ public class UserRepository {
 			e.printStackTrace();
 		} finally {
 			try {
+				System.out.println("aca!");
 				if (rs != null) { rs.close(); }
 				if (stmt != null) { stmt.close(); }
 				DbConnector.getInstance().releaseConn();
@@ -68,11 +70,11 @@ public class UserRepository {
 		
 	}
 	
-	public boolean addUser(User userToAdd) throws SQLException {
+	public Boolean addUser(User userToAdd) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
-					"insert into user (email, password, name, surname, phone_number, dni, address, role) values (?, ?, ?, ?, ?, ?, ?)"
+					"insert into user (email, password, name, surname, phone_number, dni, address, role) values (?, ?, ?, ?, ?, ?, ?, ?)"
 					);
 			stmt.setString(1, userToAdd.getEmail());
 			stmt.setString(2, userToAdd.getPassword());
@@ -81,10 +83,12 @@ public class UserRepository {
 			stmt.setString(5, userToAdd.getPhone_number());
 			stmt.setString(6, userToAdd.getDni());
 			stmt.setString(7, userToAdd.getAddress());
+			stmt.setString(8, "client");
 			
 			stmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return false;
 		} finally {
 			try {
 				if (stmt != null) { stmt.close(); }

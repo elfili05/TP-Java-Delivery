@@ -1,4 +1,4 @@
-package java.entities;
+package main.java.entities;
 
 import java.sql.Time;
 

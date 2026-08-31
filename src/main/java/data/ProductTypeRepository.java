@@ -1,7 +1,7 @@
-package java.data;
+package main.java.data;
 import java.util.LinkedList;
 import java.sql.*;
-import java.entities.ProductType;
+import main.java.entities.ProductType;
 
 public class ProductTypeRepository {
 	

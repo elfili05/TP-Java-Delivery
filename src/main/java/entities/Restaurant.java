@@ -1,4 +1,4 @@
-package java.entities;
+package main.java.entities;
 
 public class Restaurant {
 	private int restaurant_id;
