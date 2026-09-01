@@ -118,8 +118,12 @@ img {
   border-bottom: 1px solid transparent;
 }
 
-.user-welcome {
+.user-menu-container {
+  position: relative;
   justify-self: end;
+}
+
+.user-welcome {
   display: inline-flex;
   align-items: center;
   gap: 12px;
@@ -129,6 +133,31 @@ img {
   border-radius: 999px;
   background: var(--brand-dark);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.user-welcome:hover,
+.user-welcome:focus-visible {
+  background: var(--accent);
+  transform: translateY(-2px);
+}
+
+.user-welcome:active {
+  transform: translateY(0);
+}
+
+.user-welcome__arrow {
+  width: 16px;
+  height: 16px;
+  color: var(--text-dark);
+  transition: transform 0.2s ease;
+}
+
+.user-welcome[aria-expanded="true"] .user-welcome__arrow {
+  transform: rotate(180deg);
 }
 
 .user-welcome__avatar {
@@ -150,6 +179,68 @@ img {
 .user-welcome__text {
   font-size: clamp(0.82rem, 0.5vw + 0.7rem, 1.25rem);
   color: var(--text-dark);
+}
+
+/* Dropdown Menu */
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 100;
+  min-width: 200px;
+  background: var(--field-bg, #faf8f6);
+  border: 2px solid var(--panel-border);
+  border-radius: 14px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+}
+
+.user-dropdown.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.user-dropdown__list {
+  list-style: none;
+  margin: 0;
+  padding: 8px 0;
+}
+
+.user-dropdown__item {
+  margin: 0;
+}
+
+.user-dropdown__link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  color: var(--text-dark);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+
+button {
+  border: none;
+  background: none;
+}
+
+.user-dropdown__item:hover,
+.user-dropdown__item:focus-visible {
+  background-color: var(--bg-page);
+  color: var(--accent);
+}
+
+.user-dropdown__icon {
+  width: 18px;
+  height: 18px;
 }
 
 .restaurants-banner {
@@ -348,8 +439,17 @@ img {
     padding-bottom: 18px;
   }
 
-  .user-welcome {
+  .user-menu-container {
     justify-self: center;
+  }
+
+  .user-dropdown {
+    right: 50%;
+    transform: translateX(50%) translateY(-10px);
+  }
+
+  .user-dropdown.is-active {
+    transform: translateX(50%) translateY(0);
   }
 
   .delivery-target {
