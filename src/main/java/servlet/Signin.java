@@ -54,14 +54,16 @@ public class Signin extends HttpServlet {
 			u = ctrlUser.validateUser(u);
 		} catch (SQLException e) {
 			response.getWriter().append(e.toString());
+			System.out.println("exception");
 			//e.printStackTrace();
 		}
 		
 		if (u.getRole() != null) {
 			
-			// cargamos al usuario
+			if (u.getRole().equalsIgnoreCase("client") || u.getRole().equalsIgnoreCase("guest")){
 			request.getSession().setAttribute("user", u);
 			request.getRequestDispatcher("main_page.jsp").forward(request, response);
+				}
 
 			}
 		else {
