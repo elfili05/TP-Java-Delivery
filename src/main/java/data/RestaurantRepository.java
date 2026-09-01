@@ -6,19 +6,18 @@ import main.java.entities.Schedule;
 
 public class RestaurantRepository {
 
-	public LinkedList<Restaurant> getAll() {
+	public LinkedList<Restaurant> getAll() throws SQLException {
 		LinkedList<Restaurant> restaurants = new LinkedList<>();
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		
 		try {
-			stmt = DbConnector.getInstance().getConn().prepareStatement(""
-					+ "SELECT DISTINCT res.name, res.address"
-					+ "FROM restaurant res"
-					+ "INNER JOIN schedule sch"
-					+ "		ON sch.restaurant_id = res.restaurant_id"
-					+ "WHERE sch.day_of_week = LOWER(DAYNAME(CURDATE()))"
-					+ "		AND time(now()) BETWEEN sch.start_time AND sch.end_time;"
+			stmt = DbConnector.getInstance().getConn().prepareStatement("SELECT DISTINCT res.name, res.address\r\n"
+					+ "FROM restaurant res\r\n"
+					+ "INNER JOIN schedule sch\r\n"
+					+ "	ON sch.restaurant_id = res.restaurant_id\r\n"
+					+ "WHERE sch.day_of_week = LOWER(DAYNAME(CURDATE()))\r\n"
+					+ "	AND time(now()) BETWEEN sch.start_time AND sch.end_time;"
 					);
 			rs = stmt.executeQuery();
 			
@@ -47,8 +46,9 @@ public class RestaurantRepository {
 		return restaurants;
 	}
 	
-	public void addRestaurant(Restaurant restaurant) throws SQLException {
+	public Boolean addRestaurant(Restaurant restaurant) throws SQLException {
 		PreparedStatement stmt = null;
+		Boolean result = false;
 		
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
@@ -59,8 +59,11 @@ public class RestaurantRepository {
 			stmt.setString(2, restaurant.getAddress());
 			stmt.executeUpdate();
 			
+			result = true;
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
+			result = false;
 			
 		} finally {
 			try {
@@ -68,29 +71,34 @@ public class RestaurantRepository {
 				DbConnector.getInstance().releaseConn();
 			} catch (SQLException e) {
 				e.printStackTrace();
+				result = false;
 			}
 		}
+		return result;
 	}
 	
-	public void addSchedule(Restaurant restaurant, LinkedList<Schedule> schedules) throws SQLException {
+	public Boolean addSchedule(Restaurant restaurant, Schedule schedule) throws SQLException {
 		PreparedStatement stmt = null;
+		Boolean result = false;
 		
 		try {
-			for (Schedule schedule : schedules) {
+			
 				stmt = DbConnector.getInstance().getConn().prepareStatement(
 						  "INSERT INTO schedule (schedule_number, restaurant_id, day_of_week, start_time, end_time) "
-						+ "VALUES (?,?, ?, ?, ?)"
+						+ "VALUES (?, ?, ?, ?, ?)"
 						);
-				stmt.setInt(1, (schedules.indexOf(schedule) + 1 ) );
+				stmt.setInt(1, (schedule.getSchedule_number()) );
 				stmt.setInt(2, restaurant.getRestaurant_id());
 				stmt.setString(3, schedule.getDay_of_week());
 				stmt.setTime(4, schedule.getStart_time());
 				stmt.setTime(5, schedule.getEnd_time());
 				stmt.executeUpdate();
-			}
+				
+				result = true;
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
+			result = false;
 			
 		} finally {
 			try {
@@ -98,12 +106,15 @@ public class RestaurantRepository {
 				DbConnector.getInstance().releaseConn();
 			} catch (SQLException e) {
 				e.printStackTrace();
+				result = false;
 			}
 		}
+		return result;
 	}
 	
-	public void deleteRestaurant(int restaurantId) throws SQLException {
+	public Boolean deleteRestaurant(int restaurantId) throws SQLException {
 		PreparedStatement stmt = null;
+		Boolean result = false;
 		
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
@@ -111,9 +122,11 @@ public class RestaurantRepository {
 					);
 			stmt.setInt(1, restaurantId);
 			stmt.executeUpdate();
+			result = true;
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
+			result = false;
 			
 		} finally {
 			try {
@@ -121,12 +134,15 @@ public class RestaurantRepository {
 				DbConnector.getInstance().releaseConn();
 			} catch (SQLException e) {
 				e.printStackTrace();
+				result = false;
 			}
 		}
+		return result;
 	}
 	
-	public void updateRestaurant(Restaurant restaurant) throws SQLException {
+	public Boolean updateRestaurant(Restaurant restaurant) throws SQLException {
 		PreparedStatement stmt = null;
+		Boolean result = false;
 		
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
@@ -138,9 +154,11 @@ public class RestaurantRepository {
 			stmt.setString(2, restaurant.getAddress());
 			stmt.setInt(3, restaurant.getRestaurant_id());
 			stmt.executeUpdate();
+			result = true;
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
+			result = false;
 			
 		} finally {
 			try {
@@ -148,7 +166,9 @@ public class RestaurantRepository {
 				DbConnector.getInstance().releaseConn();
 			} catch (SQLException e) {
 				e.printStackTrace();
+				result = false;
 			}
 		}
+		return result;
 	}
 }

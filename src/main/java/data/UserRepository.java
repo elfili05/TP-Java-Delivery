@@ -71,6 +71,7 @@ public class UserRepository {
 	}
 	
 	public Boolean addUser(User userToAdd) throws SQLException {
+		Boolean result = false;
 		PreparedStatement stmt = null;
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
@@ -86,22 +87,24 @@ public class UserRepository {
 			stmt.setString(8, "client");
 			
 			stmt.executeUpdate();
+			result = true;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return false;
+			result = false;
 		} finally {
 			try {
 				if (stmt != null) { stmt.close(); }
 				DbConnector.getInstance().releaseConn();
 			} catch (SQLException e) {
 				e.printStackTrace();
-				return false;
+				result = false;
 			}
 		}
-		return true;
+		return result;
 	}
 	
-	public boolean deleteUser(String email) throws SQLException{
+	public Boolean deleteUser(String email) throws SQLException {
+		Boolean result = false;
 		String errorMessage = null;
 		PreparedStatement stmt = null;
 		try {
@@ -110,26 +113,32 @@ public class UserRepository {
 					);
 			stmt.setString(1, email);
 			stmt.executeUpdate();
+			
+			result = true;
+			
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			errorMessage = e1.getMessage();
+			result = false;
 		} finally {
 			try {
 				if (stmt != null) { stmt.close(); }
 				DbConnector.getInstance().releaseConn();
 			} catch (SQLException e2) {
 				e2.printStackTrace();
-				return false;
+				result = false;
 			}
 			
 			if (errorMessage != null) {
-				return false;
+				result = false;
 			}
 		}
-		return true;
+		return result;
 	}
 	
-	public boolean updateUser(User userToUpdate) throws SQLException{
+	public Boolean updateUser(User userToUpdate) throws SQLException {
+		
+		Boolean result = false;
 		PreparedStatement stmt = null;
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
@@ -144,18 +153,22 @@ public class UserRepository {
 			stmt.setString(7, userToUpdate.getEmail());
 			
 			stmt.executeUpdate();
+			
+			result = true;
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
+			result = false;
 		} finally {
 			try {
 				if (stmt != null) { stmt.close(); }
 				DbConnector.getInstance().releaseConn();
 			} catch (SQLException e) {
 				e.printStackTrace();
-				return false;
+				result = false;
 			}
 		}
-		return true;
+		return result;
 	}
 	
 	public LinkedList<User> getAll() throws SQLException{
