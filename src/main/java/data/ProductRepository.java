@@ -9,17 +9,15 @@ import main.java.entities.ProductType;
 public class ProductRepository {
 	
 	public LinkedList<Product> getAll(Restaurant res) throws SQLException{
-		//ProductTypeRepository ptRepo = new ProductTypeRepository();
+		ProductTypeRepository ptRepo = new ProductTypeRepository();
 		LinkedList<Product> products = new LinkedList<>();
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
-					  "SELECT product_id, description, price, pt.name"
-					+ "FROM product prod"
-					+ "INNER JOIN product_type pt "
-					+ "     ON prod.product_type_id = pt.product_type_id"
+					  "SELECT product_id, description, price "
+					+ "FROM product prod "
 					+ "WHERE prod.restaurant_id = ?"
 					);
 			stmt.setInt(1, res.getRestaurant_id());
@@ -31,7 +29,7 @@ public class ProductRepository {
 					p.setProduct_id(rs.getInt("product_id"));
 					p.setDescription(rs.getString("description"));
 					p.setPrice(rs.getDouble("price"));
-					p.setProduct_type(rs.getString("pt.name"));
+					ptRepo.setProductType(p);
 					products.add(p);
 				}
 			}
@@ -53,16 +51,17 @@ public class ProductRepository {
 	}
 	
 	public LinkedList<Product> getByType(Restaurant res, ProductType pt) throws SQLException{
+		ProductTypeRepository ptRepo = new ProductTypeRepository();
 		LinkedList<Product> products = new LinkedList<>();
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
-					  "SELECT prod.product_id, prod.description, prod.price, pt.name"
-					+ "FROM product prod"
+					  "SELECT prod.product_id, prod.description, prod.price, pt.name "
+					+ "FROM product prod "
 					+ "INNER JOIN product_type pt "
-					+ "     ON prod.product_type_id = pt.product_type_id"
+					+ "     ON prod.product_type_id = pt.product_type_id "
 					+ "WHERE prod.restaurant_id = ? AND prod.product_type_id = ?"
 					);
 			stmt.setInt(1, res.getRestaurant_id());
@@ -75,7 +74,7 @@ public class ProductRepository {
 					p.setProduct_id(rs.getInt("prod.product_id"));
 					p.setDescription(rs.getString("prod.description"));
 					p.setPrice(rs.getDouble("prod.price"));
-					p.setProduct_type(rs.getString("pt.name"));
+					ptRepo.setProductType(p);
 					products.add(p);
 				}
 			}
@@ -97,6 +96,7 @@ public class ProductRepository {
 	}
 	
 	public Product getOne(int productId) throws SQLException{
+		ProductTypeRepository ptRepo = new ProductTypeRepository();
 		Product p = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -117,7 +117,7 @@ public class ProductRepository {
 				p.setProduct_id(rs.getInt("product_id"));
 				p.setDescription(rs.getString("description"));
 				p.setPrice(rs.getDouble("price"));
-				p.setProduct_type(rs.getString("pt.name"));
+				ptRepo.setProductType(p);
 			}
 			
 		} catch (SQLException e) {

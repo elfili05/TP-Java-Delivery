@@ -1,6 +1,9 @@
 package main.java.data;
 import java.util.LinkedList;
+
 import java.sql.*;
+
+import main.java.entities.Product;
 import main.java.entities.ProductType;
 
 public class ProductTypeRepository {
@@ -130,6 +133,40 @@ public class ProductTypeRepository {
 		} finally {
 			try {
 				if (stmt != null) { stmt.close(); }
+				DbConnector.getInstance().releaseConn();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void setProductType(Product productToSearch) {
+		PreparedStatement stmt=null;
+		ResultSet rs=null;
+		try {
+			stmt=DbConnector.getInstance().getConn().prepareStatement(
+					  "select "
+					+ "from product_type pt "
+					+ "inner join producto prod "
+					+ "on prod.product_type_id=pt.product_type_id "
+					+ "where prod.product_id = ?"
+					);
+			stmt.setInt(1, productToSearch.getProduct_id());
+			rs= stmt.executeQuery();
+			if(rs!=null) {
+					ProductType pt = new ProductType();
+					pt.setProduct_type_id(rs.getInt("product_type_id"));
+					pt.setName(rs.getString("name"));
+					productToSearch.setProduct_type(pt);
+				
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				if(rs!=null) {rs.close();}
+				if(stmt!=null) {stmt.close();}
 				DbConnector.getInstance().releaseConn();
 			} catch (SQLException e) {
 				e.printStackTrace();
