@@ -1,6 +1,4 @@
-<%@page import="main.java.logic.RestaurantCRUD"%>
-<%@page import="java.util.List"%>
-<%@page import="main.java.data.RestaurantRepository"%>
+<%@page import="java.util.LinkedList"%>
 <%@page import="main.java.entities.Restaurant"%>
 <%@page import="main.java.entities.User"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -15,12 +13,12 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 	<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 	<link rel="stylesheet" href="styles/main_page.css" />
+	<link rel="icon" type="ico" href="assets/icon2.ico" />
 	<%
 		User u = (User) session.getAttribute("user");
 		String userName = (u != null && u.getName() != null && !u.getName().isBlank() && !"guest".equalsIgnoreCase(u.getRole())) ? u.getName() : "Invitado";
 		String userAddress = (u != null && u.getAddress() != null && !u.getAddress().isBlank()) ? u.getAddress() : "Tu dirección";
-		RestaurantCRUD ctrlRestaurant = new RestaurantCRUD();
-		List<Restaurant> restaurants = ctrlRestaurant.getAvailable();
+		LinkedList<Restaurant> restaurants = (LinkedList<Restaurant>)request.getAttribute("restaurants");
 	%>
 </head>
 <body class="home-page">
@@ -73,21 +71,28 @@
 
 		<section class="restaurant-section" aria-label="Listado de restaurantes">
 			
-				<%
-				if (restaurants != null && !restaurants.isEmpty()) { %>
+				<% if (restaurants != null && !restaurants.isEmpty()) { %>
 					<div class="restaurant-list">
 					<% for (Restaurant restaurant : restaurants) {
 						String name = restaurant.getName() != null ? restaurant.getName() : "Restaurante";
 						String address = restaurant.getAddress() != null ? restaurant.getAddress() : "Dirección no disponible";
 						int restaurantId = restaurant.getRestaurant_id();
+						System.out.println(restaurantId);
+						
 					%>
-						<a style= 'background-image: url("<%=restaurant.getImage_url()%>"); background-size: cover;'  class="restaurant-card" href="menu.jsp?restaurantId=<%= restaurantId %>" aria-label="Ver menú de <%= name %>">
-							<div class="restaurant-card__media" aria-hidden="true"></div>
-							<div class="restaurant-card__content">
-								<h2><%= name %></h2>
-								<p><%= address %></p>
-							</div>
-						</a>
+					<form action="restaurantmenu" method="get">
+						
+							<a style= 'background-image: url("<%=restaurant.getImage_url()%>"); background-size: cover;'  class="restaurant-card" aria-label="Ver menú de <%= name %>">
+								<button type="submit" name="selectedRestaurant" value="<%=Integer.toString(restaurant.getRestaurant_id())%>">
+								<div class="restaurant-card__media" aria-hidden="true"></div>
+								<div class="restaurant-card__content">
+									<h2><%= name %></h2>
+									<p><%= address %></p>
+								</div>
+								</button>
+							</a>
+						
+					</form>
 					
 					<%
 					} %>

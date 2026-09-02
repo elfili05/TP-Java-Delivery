@@ -3,6 +3,7 @@ import java.sql.*;
 import java.util.LinkedList;
 import main.java.entities.Restaurant;
 import main.java.entities.Schedule;
+import main.java.entities.User;
 
 public class RestaurantRepository {
 
@@ -12,7 +13,7 @@ public class RestaurantRepository {
 		ResultSet rs = null;
 		
 		try {
-			stmt = DbConnector.getInstance().getConn().prepareStatement("SELECT DISTINCT res.name, res.address, res.image_url\r\n"
+			stmt = DbConnector.getInstance().getConn().prepareStatement("SELECT DISTINCT res.restaurant_id, res.name, res.address, res.image_url\r\n"
 					+ "FROM restaurant res\r\n;"
 					);
 			rs = stmt.executeQuery();
@@ -20,6 +21,7 @@ public class RestaurantRepository {
 			if (rs != null) {
 				while (rs.next()) {
 					Restaurant r = new Restaurant();
+					r.setRestaurant_id(rs.getInt("res.restaurant_id"));
 					r.setName(rs.getString("res.name"));
 					r.setAddress(rs.getString("res.address"));
 					r.setImage_url(rs.getString("res.image_url"));
@@ -42,6 +44,49 @@ public class RestaurantRepository {
 		
 		return restaurants;
 	}
+	
+	
+	
+	public Restaurant getOne(Restaurant restaurantToFind) throws SQLException {
+		PreparedStatement stmt = null;
+		Restaurant res = null;
+		ResultSet rs = null;
+		
+		try {
+			stmt = DbConnector.getInstance().getConn().prepareStatement(
+					  "SELECT restaurant_id, name, address, image_url "
+					  + " FROM restaurant"
+					  + " WHERE restaurant_id = ?"
+					);
+
+			
+			if (stmt == null) {}
+			stmt.setInt(1, restaurantToFind.getRestaurant_id());
+			rs = stmt.executeQuery();
+			if (rs != null && rs.next()) {
+				res = new Restaurant();
+				res.setRestaurant_id(rs.getInt("restaurant_id"));
+				res.setName(rs.getString("name"));
+				res.setAddress(rs.getString("address"));
+				res.setImage_url(rs.getString("image_url"));
+			
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			
+		} finally {
+			try {
+				if (stmt != null) { stmt.close(); }
+				DbConnector.getInstance().releaseConn();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return res;
+		
+	}
+	
 	
 	public Boolean addRestaurant(Restaurant restaurant) throws SQLException {
 		PreparedStatement stmt = null;
