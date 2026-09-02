@@ -81,7 +81,7 @@
 						String address = restaurant.getAddress() != null ? restaurant.getAddress() : "Dirección no disponible";
 						int restaurantId = restaurant.getRestaurant_id();
 					%>
-						<a class="restaurant-card" href="menu.jsp?restaurantId=<%= restaurantId %>" aria-label="Ver menú de <%= name %>">
+						<a style= 'background-image: url("<%=restaurant.getImage_url()%>"); background-size: cover;'  class="restaurant-card" href="menu.jsp?restaurantId=<%= restaurantId %>" aria-label="Ver menú de <%= name %>">
 							<div class="restaurant-card__media" aria-hidden="true"></div>
 							<div class="restaurant-card__content">
 								<h2><%= name %></h2>

@@ -12,12 +12,8 @@ public class RestaurantRepository {
 		ResultSet rs = null;
 		
 		try {
-			stmt = DbConnector.getInstance().getConn().prepareStatement("SELECT DISTINCT res.name, res.address\r\n"
-					+ "FROM restaurant res\r\n"
-					+ "INNER JOIN schedule sch\r\n"
-					+ "	ON sch.restaurant_id = res.restaurant_id\r\n"
-					+ "WHERE sch.day_of_week = LOWER(DAYNAME(CURDATE()))\r\n"
-					+ "	AND time(now()) BETWEEN sch.start_time AND sch.end_time;"
+			stmt = DbConnector.getInstance().getConn().prepareStatement("SELECT DISTINCT res.name, res.address, res.image_url\r\n"
+					+ "FROM restaurant res\r\n;"
 					);
 			rs = stmt.executeQuery();
 			
@@ -26,6 +22,7 @@ public class RestaurantRepository {
 					Restaurant r = new Restaurant();
 					r.setName(rs.getString("res.name"));
 					r.setAddress(rs.getString("res.address"));
+					r.setImage_url(rs.getString("res.image_url"));
 					restaurants.add(r);
 				}
 			}
@@ -53,10 +50,11 @@ public class RestaurantRepository {
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
 					  "INSERT INTO restaurant (name, address) "
-					+ "VALUES (?, ?)"
+					+ "VALUES (?, ?, ?)"
 					);
 			stmt.setString(1, restaurant.getName());
 			stmt.setString(2, restaurant.getAddress());
+			stmt.setString(3, restaurant.getImage_url());
 			stmt.executeUpdate();
 			
 			result = true;
@@ -147,12 +145,13 @@ public class RestaurantRepository {
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
 					  "UPDATE restaurant "
-					+ "SET name = ?, address = ? "
+					+ "SET name = ?, address = ?, image_url = ? "
 					+ "WHERE restaurant_id = ?"
 					);
 			stmt.setString(1, restaurant.getName());
 			stmt.setString(2, restaurant.getAddress());
-			stmt.setInt(3, restaurant.getRestaurant_id());
+			stmt.setString(3, restaurant.getImage_url());
+			stmt.setInt(4, restaurant.getRestaurant_id());
 			stmt.executeUpdate();
 			result = true;
 			
