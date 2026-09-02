@@ -14,9 +14,15 @@ public class RestaurantCRUD {
 		rr = new RestaurantRepository();
 	}
 	
-	public LinkedList<Restaurant> getAvailable( ) throws SQLException {
+	public LinkedList<Restaurant> getAvailable() throws SQLException {
 		return rr.getAll();
 	}
+	
+	
+	public Restaurant getRestaurant(Restaurant restaurantToFind) throws SQLException {
+		return rr.getOne(restaurantToFind);
+	}
+	
 	
 	public Boolean addRestaurant(Restaurant restaurantToAdd) throws SQLException {
 		return rr.addRestaurant(restaurantToAdd);

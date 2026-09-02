@@ -2,6 +2,7 @@ package main.java.servlet;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.LinkedList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 
 
 import main.java.entities.User;
+import main.java.entities.Restaurant;
+import main.java.logic.RestaurantCRUD;
 import main.java.logic.UserCRUD;
 
 /**
@@ -40,8 +43,11 @@ public class Signin extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		RestaurantCRUD ctrlRestaurant = new RestaurantCRUD();
 		UserCRUD ctrlUser = new UserCRUD();
 		User u = new User();
+		LinkedList<Restaurant> restaurants = new LinkedList<Restaurant>();
+		
 		
 		u.setRole(request.getParameter("role")); // solo en el caso de "guest" se usará esta parte.
 		u.setEmail(request.getParameter("email"));
@@ -58,11 +64,22 @@ public class Signin extends HttpServlet {
 			//e.printStackTrace();
 		}
 		
+		
+
+		
 		if (u.getRole() != null) {
 			
-			if (u.getRole().equalsIgnoreCase("client") || u.getRole().equalsIgnoreCase("guest")){
-			request.getSession().setAttribute("user", u);
-			request.getRequestDispatcher("main_page.jsp").forward(request, response);
+			if (u.getRole().equalsIgnoreCase("client") || u.getRole().equalsIgnoreCase("guest")) {
+					
+				try {
+					restaurants = ctrlRestaurant.getAvailable();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}	
+			
+				request.getSession().setAttribute("user", u);
+				request.setAttribute("restaurants", restaurants);
+				request.getRequestDispatcher("WEB-INF/main_page.jsp").forward(request, response);
 				}
 
 			}
@@ -70,6 +87,7 @@ public class Signin extends HttpServlet {
 			request.getRequestDispatcher("WEB-INF/signin_error.html").include(request, response);
 //			response.getWriter().append("Email o Contrasena incorrectos.");
 		}
+		
 	}
 	/* 2 formas de continuar flujo:
 	 * - forward: envía a traves del propio servlet, la trae y la devuelve en la url del servlet. en la misma peticion, yo respondo otra pagina y todo
