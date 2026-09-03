@@ -27,6 +27,7 @@ public class Logout extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.getSession().removeAttribute("user");
+		request.getSession().removeAttribute("currentRestaurant");
 		request.getRequestDispatcher("index.html").forward(request, response);
 	}
 
@@ -34,8 +35,7 @@ public class Logout extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.getSession().removeAttribute("user");
-		request.getRequestDispatcher("index.html").forward(request, response);
+		doGet(request, response);
 	}
 
 }
