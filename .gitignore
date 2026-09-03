@@ -1,0 +1,10 @@
+# Claude Code — local-only, not meant to be shared with the team
+CLAUDE.md
+.claude/
+
+# VS Code — has an absolute path to this machine's Tomcat install (F:/tomcat),
+# your teammate uses Eclipse and doesn't need this
+.vscode/
+
+# compiled classes, generated locally by the Java extension, never source
+src/main/webapp/WEB-INF/classes/

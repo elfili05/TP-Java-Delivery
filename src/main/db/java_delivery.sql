@@ -167,6 +167,7 @@ CREATE TABLE `restaurant` (
   `restaurant_id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(80) COLLATE utf8mb3_bin DEFAULT NULL,
   `address` varchar(80) COLLATE utf8mb3_bin DEFAULT NULL,
+  `image_url` varchar(255) COLLATE utf8mb3_bin DEFAULT NULL,
   PRIMARY KEY (`restaurant_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -177,7 +178,7 @@ CREATE TABLE `restaurant` (
 
 LOCK TABLES `restaurant` WRITE;
 /*!40000 ALTER TABLE `restaurant` DISABLE KEYS */;
-INSERT INTO `restaurant` VALUES (1,'La Esquina','Av. Pellegrini 1234'),(2,'El Buen Sabor','San Lorenzo 850'),(3,'Don Giuseppe','Italia 456'),(4,'Sabores del Sur','Bv. Oroño 1720'),(5,'La Terraza','Córdoba 2100'),(6,'Parrilla El Fogón','Mendoza 1450'),(7,'Green Garden','Santa Fe 980'),(8,'Mar y Tierra','Entre Ríos 620');
+INSERT INTO `restaurant` VALUES (1,'La Esquina','Av. Pellegrini 1234','uploads/restaurant1.jpg'),(2,'El Buen Sabor','San Lorenzo 850','uploads/restaurant2.jpg'),(3,'Don Giuseppe','Italia 456','uploads/restaurant3.jpg'),(4,'Sabores del Sur','Bv. Oroño 1720','uploads/restaurant4.jpg'),(5,'La Terraza','Córdoba 2100','uploads/restaurant5.jpg'),(6,'Parrilla El Fogón','Mendoza 1450','uploads/restaurant6.jpg'),(7,'Green Garden','Santa Fe 980','uploads/restaurant7.jpg'),(8,'Mar y Tierra','Entre Ríos 620','uploads/restaurant8.jpg');
 /*!40000 ALTER TABLE `restaurant` ENABLE KEYS */;
 UNLOCK TABLES;
 
