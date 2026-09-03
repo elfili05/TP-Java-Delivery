@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import main.java.data.ProductRepository;
 import main.java.entities.Restaurant;
 import main.java.logic.RestaurantCRUD;
 
@@ -39,13 +40,14 @@ public class RestaurantMenu extends HttpServlet {
 		
 		try {
 			res = ctrlRestaurant.getRestaurant(res);
+			request.setAttribute("products", new ProductRepository().getAll(res));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		//System.out.println(response.getStatus());
-		request.setAttribute("currentRestaurant", res);
+		request.getSession().setAttribute("currentRestaurant", res);
 		request.getRequestDispatcher("WEB-INF/restaurant_menu.jsp").forward(request, response);
 		
 		
