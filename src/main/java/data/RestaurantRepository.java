@@ -94,7 +94,7 @@ public class RestaurantRepository {
 		
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
-					  "INSERT INTO restaurant (name, address) "
+					  "INSERT INTO restaurant (name, address, image_url) "
 					+ "VALUES (?, ?, ?)"
 					);
 			stmt.setString(1, restaurant.getName());
