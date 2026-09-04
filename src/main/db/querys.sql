@@ -17,3 +17,17 @@ UPDATE user
 	SET email= 'santifilippini2005@gmail.com', name='santi', surname='filippini'
     WHERE user_id=1;
     
+    
+INSERT INTO product_type (name) VALUES
+	("Embutidos"), -- 1
+    ("Pastas"), -- 2
+    ("Carnes"), -- 3
+    ("Postres"); -- 4
+    
+INSERT INTO product (description,price,product_type_id,restaurant_id) VALUES
+("Jamón crudo, 300g",1290.32,1,1),
+("Roast beef, 200g",19020.2,3,1),
+("Fideos a la carbonara",16059.29,2,1),
+("Tiramisu",12292,4,1),
+("Milanesa Napolitana",7893.2,3,1);
+    

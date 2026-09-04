@@ -1,9 +1,11 @@
 package main.java.data;
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.LinkedList;
+
 import main.java.entities.Restaurant;
 import main.java.entities.Schedule;
-import main.java.entities.User;
 
 public class RestaurantRepository {
 
