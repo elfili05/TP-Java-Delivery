@@ -145,18 +145,19 @@ public class ProductTypeRepository {
 		ResultSet rs=null;
 		try {
 			stmt=DbConnector.getInstance().getConn().prepareStatement(
-					  "select "
-					+ "from product_type pt "
-					+ "inner join producto prod "
-					+ "on prod.product_type_id=pt.product_type_id "
-					+ "where prod.product_id = ?"
+					  "select pt.product_type_id, pt.name\r\n"
+					  + "from product_type pt \r\n"
+					  + "inner join product prod \r\n"
+					  + "	on prod.product_type_id = pt.product_type_id\r\n"
+					  + "where prod.product_id = ?;"
 					);
 			stmt.setInt(1, productToSearch.getProduct_id());
 			rs= stmt.executeQuery();
 			if(rs!=null) {
+					rs.next();
 					ProductType pt = new ProductType();
-					pt.setProduct_type_id(rs.getInt("product_type_id"));
-					pt.setName(rs.getString("name"));
+					pt.setProduct_type_id(rs.getInt("pt.product_type_id"));
+					pt.setName(rs.getString("pt.name"));
 					productToSearch.setProduct_type(pt);
 				
 			}

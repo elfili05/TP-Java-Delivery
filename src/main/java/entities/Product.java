@@ -6,6 +6,7 @@ public class Product {
 	private double price;
 	private ProductType product_type;
 	
+	
 	public int getProduct_id() {
 		return product_id;
 	}
