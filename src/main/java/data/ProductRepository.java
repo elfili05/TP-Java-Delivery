@@ -50,11 +50,18 @@ public class ProductRepository {
 		return products;
 	}
 	
-	public LinkedList<Product> getByType(Restaurant res, ProductType pt) throws SQLException{
+	public LinkedList<Product> getByType(Restaurant res, String pt_name) throws SQLException{
 		ProductTypeRepository ptRepo = new ProductTypeRepository();
 		LinkedList<Product> products = new LinkedList<>();
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
+		
+		
+		if (pt_name == null || pt_name.isEmpty() || pt_name.equalsIgnoreCase("all")) {
+			return getAll(res);
+		}
+		
+		else {
 		
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
@@ -62,10 +69,10 @@ public class ProductRepository {
 					+ "FROM product prod "
 					+ "INNER JOIN product_type pt "
 					+ "     ON prod.product_type_id = pt.product_type_id "
-					+ "WHERE prod.restaurant_id = ? AND prod.product_type_id = ?"
+					+ "WHERE prod.restaurant_id = ? AND pt.name = ?"
 					);
 			stmt.setInt(1, res.getRestaurant_id());
-			stmt.setInt(2, pt.getProduct_type_id());
+			stmt.setString(2, pt_name);
 			rs = stmt.executeQuery();
 			
 			if (rs != null) {
@@ -93,6 +100,8 @@ public class ProductRepository {
 		}
 		
 		return products;
+	}
+		
 	}
 	
 	public Product getOne(int productId) throws SQLException{

@@ -71,13 +71,43 @@
         </section>
 
         <main class="menu-content">
-            <div class="menu-toolbar"><label for="productTypeFilter">Filtrar por:</label><select id="productTypeFilter"><option value="all">Todos los productos</option><% if (products != null) { java.util.LinkedHashSet<String> types = new java.util.LinkedHashSet<>(); for (Product product : products) { if (product.getProduct_type() != null && product.getProduct_type().getName() != null) types.add(product.getProduct_type().getName()); } for (String type : types) { %><option value="<%= type %>"><%= type %></option><% } } %></select></div>
+            <div class="menu-toolbar">
+            	<form action="restaurantmenu" method="get">
+            		<label for="productTypeFilter">Filtrar por:</label>
+            		<select id="productTypeFilter" name="productTypeFilter"><option value="all">Todos los productos
+            				</option><% if (products != null) { java.util.LinkedHashSet<String> types = new java.util.LinkedHashSet<>(); for (Product product : products) { if (product.getProduct_type() != null && product.getProduct_type().getName() != null) types.add(product.getProduct_type().getName()); } for (String type : types) { %><option value="<%= type %>"><%= type %></option><% } } %>
+            		</select>
+            		<button type="submit">Elegir filtro</button>
+            	</form>
+            </div>
             <form id="orderForm" class="order-form">
-            <div class="table-wrapper"><table class="products-table"><thead><tr><th scope="col">Descripción</th><th scope="col">Precio</th><th scope="col">Tipo de producto</th><th scope="col">Cantidad pedida</th></tr></thead><tbody>
-                <% if (products != null) { for (Product product : products) { String type = product.getProduct_type() != null ? product.getProduct_type().getName() : "Sin tipo"; %>
-                <tr data-product-type="<%= type %>"><td><%= product.getDescription() %></td><td>$ <%= String.format(java.util.Locale.US, "%.2f", product.getPrice()) %></td><td><%= type %></td><td><div class="quantity-control"><button type="button" class="quantity-button decrease" aria-label="Reducir cantidad de <%= product.getDescription() %>">-</button><input type="number" name="quantity_<%= product.getProduct_id() %>" value="0" min="0" aria-label="Cantidad de <%= product.getDescription() %>"><button type="button" class="quantity-button increase" aria-label="Aumentar cantidad de <%= product.getDescription() %>">+</button></div></td></tr>
-                <% } } %>
-                </tbody></table></div>
+            <div class="table-wrapper">
+            	<table class="products-table">
+            		<thead>
+            			<tr>
+            				<th scope="col">Descripción</th>
+            				<th scope="col">Precio</th><th scope="col">Tipo de producto</th>
+            				<th scope="col">Cantidad pedida</th>
+            			</tr>
+            		</thead>
+            		 <tbody>
+                			<% if (products != null) { for (Product product : products) { String type = product.getProduct_type() != null ? product.getProduct_type().getName() : "Sin tipo"; %>
+                			<tr data-product-type="<%= type %>">
+                				<td><%= product.getDescription() %></td>
+                				<td>$ <%= String.format(java.util.Locale.US, "%.2f", product.getPrice()) %></td>
+                				<td><%= type %></td>
+                				<td>
+                					<div class="quantity-control">
+                							<button type="button" class="quantity-button decrease" aria-label="Reducir cantidad de <%= product.getDescription() %>">-</button>
+                							<input type="number" name="quantity_<%= product.getProduct_id() %>" value="0" min="0" aria-label="Cantidad de <%= product.getDescription() %>">
+                							<button type="button" class="quantity-button increase" aria-label="Aumentar cantidad de <%= product.getDescription() %>">+</button>
+                					</div>
+                				</td>
+                			</tr>
+                			<% } } %>
+                	</tbody>
+                </table>
+            </div>
             <% if (products == null || products.isEmpty()) { %>
                 <p class="menu-empty" role="status"><%= restaurantName %> no tiene productos para ofrecer.. por ahora.</p>
             <% } else { %>
