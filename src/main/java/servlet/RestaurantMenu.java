@@ -34,16 +34,41 @@ public class RestaurantMenu extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		RestaurantCRUD ctrlRestaurant = new RestaurantCRUD();
-		Restaurant res = new Restaurant();		
-		Integer res_id = Integer.parseInt(request.getParameter("selectedRestaurant"));
+		Restaurant res = new Restaurant();
+		Integer res_id = null; 
+		
+		if (request.getParameter("selectedRestaurant") != null) {
+			res_id = Integer.parseInt(request.getParameter("selectedRestaurant"));
+		}
+		else {
+			res_id = ((Restaurant)request.getSession().getAttribute("currentRestaurant")).getRestaurant_id();
+		}
+		
 		res.setRestaurant_id(res_id);
 		
 		try {
 			res = ctrlRestaurant.getRestaurant(res);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if (request.getParameter("productTypeFilter") != null) {
+			String product_type_name = request.getParameter("productTypeFilter");
+			try {
+				request.setAttribute("products", new ProductRepository().getByType(res, product_type_name));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else {
+		try {
 			request.setAttribute("products", new ProductRepository().getAll(res));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			}
 		}
 		
 		//System.out.println(response.getStatus());
