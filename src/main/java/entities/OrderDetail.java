@@ -7,6 +7,15 @@ public class OrderDetail {
 	private Product product;
 	private int quantity;
 	
+	
+	
+	public OrderDetail(Product product, int quantity, int detail_number) {
+		this.product = product;
+		this.quantity = quantity;
+		this.detail_number = detail_number;
+		
+	}
+	
 	public int getOrder_id() {
 		return order_id;
 	}

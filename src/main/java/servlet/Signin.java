@@ -43,15 +43,20 @@ public class Signin extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+
+		
 		RestaurantCRUD ctrlRestaurant = new RestaurantCRUD();
 		UserCRUD ctrlUser = new UserCRUD();
 		User u = new User();
 		LinkedList<Restaurant> restaurants = new LinkedList<Restaurant>();
 		
 		
+		
 		u.setRole(request.getParameter("role")); // solo en el caso de "guest" se usará esta parte.
 		u.setEmail(request.getParameter("email"));
 		u.setPassword(request.getParameter("password"));
+		
 		
 		
 		
@@ -64,6 +69,10 @@ public class Signin extends HttpServlet {
 			//e.printStackTrace();
 		}
 		
+		if (request.getSession().getAttribute("user") != null) {
+			u = (User) request.getSession().getAttribute("user");
+			
+		}
 		
 
 		

@@ -21,7 +21,11 @@ SET @@SESSION.SQL_LOG_BIN= 0;
 -- GTID state at the beginning of the backup 
 --
 
+<<<<<<< HEAD
 SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ 'd94a4558-335b-11f1-b286-0a002700000c:1-882';
+=======
+SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ 'd94a4558-335b-11f1-b286-0a002700000c:1-966';
+>>>>>>> 8ea60ac (feat: orders can now be fully processed in the application. database dump updated with data samples for testing.)
 
 --
 -- Table structure for table `discount`
@@ -36,7 +40,7 @@ CREATE TABLE `discount` (
   `discount_percentage` float DEFAULT NULL,
   PRIMARY KEY (`discount_id`),
   UNIQUE KEY `minimum_amount_UNIQUE` (`minimum_amount`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -45,6 +49,7 @@ CREATE TABLE `discount` (
 
 LOCK TABLES `discount` WRITE;
 /*!40000 ALTER TABLE `discount` DISABLE KEYS */;
+INSERT INTO `discount` VALUES (1,30000,0.1),(2,50000,0.2),(3,100000,0.35);
 /*!40000 ALTER TABLE `discount` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -58,16 +63,15 @@ DROP TABLE IF EXISTS `order_detail`;
 CREATE TABLE `order_detail` (
   `order_id` int NOT NULL,
   `detail_number` int NOT NULL,
-  `restaurant_id` int NOT NULL,
   `product_id` int NOT NULL,
   `quantity` int DEFAULT NULL,
   `subtotal` float DEFAULT '0',
   PRIMARY KEY (`order_id`,`detail_number`),
   KEY `order_fk_idx` (`order_id`),
-  KEY `product_id_fk, restaurant_id_fk_idx` (`product_id`,`restaurant_id`),
-  KEY `product_restaurant_fk` (`restaurant_id`,`product_id`),
-  CONSTRAINT `order_fk` FOREIGN KEY (`order_id`) REFERENCES `user_order` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `product_restaurant_fk` FOREIGN KEY (`restaurant_id`, `product_id`) REFERENCES `product_restaurant` (`restaurant_id`, `product_id`) ON DELETE RESTRICT ON UPDATE CASCADE
+  KEY `product_id_fk, restaurant_id_fk_idx` (`product_id`),
+  KEY `product_restaurant_fk` (`product_id`),
+  CONSTRAINT `order_fk` FOREIGN KEY (`order_id`) REFERENCES `user_order` (`order_id`),
+  CONSTRAINT `product_fk_id` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -77,6 +81,7 @@ CREATE TABLE `order_detail` (
 
 LOCK TABLES `order_detail` WRITE;
 /*!40000 ALTER TABLE `order_detail` DISABLE KEYS */;
+INSERT INTO `order_detail` VALUES (1,1,4,2,24584),(1,2,5,2,15786.4);
 /*!40000 ALTER TABLE `order_detail` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -172,7 +177,11 @@ CREATE TABLE `restaurant` (
   `restaurant_id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(80) COLLATE utf8mb3_bin DEFAULT NULL,
   `address` varchar(80) COLLATE utf8mb3_bin DEFAULT NULL,
+<<<<<<< HEAD
   `image_url` varchar(255) COLLATE utf8mb3_bin DEFAULT NULL,
+=======
+  `image_url` varchar(25) COLLATE utf8mb3_bin DEFAULT NULL,
+>>>>>>> 8ea60ac (feat: orders can now be fully processed in the application. database dump updated with data samples for testing.)
   PRIMARY KEY (`restaurant_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -235,7 +244,11 @@ CREATE TABLE `user` (
   `role` enum('admin','client') COLLATE utf8mb3_bin NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `email` (`email`)
+<<<<<<< HEAD
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
+=======
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
+>>>>>>> 8ea60ac (feat: orders can now be fully processed in the application. database dump updated with data samples for testing.)
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -244,7 +257,11 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
+<<<<<<< HEAD
 INSERT INTO `user` VALUES (1,'a@a','a','a','a','a','a','a','client'),(2,'b@b','b','b','b','b','b','b','client'),(3,'c@c','c','c','c','c','c','c','client'),(4,'Hola@hola','Hola','Chau','hola','asdasdl','oasd','JEJE','client'),(5,'pepe@gmail.com','pepe','sand','pepe','2390239203','20202020','Villa 1-11-14','client');
+=======
+INSERT INTO `user` VALUES (1,'a@a','a','a','a','a','a','a','client'),(2,'b@b','b','b','b','b','b','b','client'),(3,'pepe@gmail.com','Pepe','Sech','pepe','1209301923','46464646','Rivadavia 1121','client');
+>>>>>>> 8ea60ac (feat: orders can now be fully processed in the application. database dump updated with data samples for testing.)
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -263,11 +280,21 @@ CREATE TABLE `user_order` (
   `user_id` int NOT NULL,
   `restaurant_id` int NOT NULL,
   PRIMARY KEY (`order_id`),
+<<<<<<< HEAD
   KEY `discount_fk_idx` (`discount_id`),
   KEY `restaurant_fk_idx` (`restaurant_id`),
   CONSTRAINT `discount_fk` FOREIGN KEY (`discount_id`) REFERENCES `discount` (`discount_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT `restaurant_id_fk` FOREIGN KEY (`restaurant_id`) REFERENCES `restaurant` (`restaurant_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
+=======
+  KEY `restaurant_fk_idx` (`restaurant_id`),
+  KEY `user_fk_idx` (`user_id`),
+  KEY `discount_fk_idx` (`discount_id`),
+  CONSTRAINT `discount_fk` FOREIGN KEY (`discount_id`) REFERENCES `discount` (`discount_id`),
+  CONSTRAINT `restaurant_id_fk` FOREIGN KEY (`restaurant_id`) REFERENCES `restaurant` (`restaurant_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `user_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
+>>>>>>> 8ea60ac (feat: orders can now be fully processed in the application. database dump updated with data samples for testing.)
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -276,6 +303,7 @@ CREATE TABLE `user_order` (
 
 LOCK TABLES `user_order` WRITE;
 /*!40000 ALTER TABLE `user_order` DISABLE KEYS */;
+INSERT INTO `user_order` VALUES (1,'2026-09-06 00:00:00',40370.4,1,3,1);
 /*!40000 ALTER TABLE `user_order` ENABLE KEYS */;
 UNLOCK TABLES;
 SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
@@ -289,4 +317,8 @@ SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
+<<<<<<< HEAD
 -- Dump completed on 2026-09-03 23:30:39
+=======
+-- Dump completed on 2026-09-06  0:32:40
+>>>>>>> 8ea60ac (feat: orders can now be fully processed in the application. database dump updated with data samples for testing.)

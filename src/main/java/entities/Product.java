@@ -1,5 +1,7 @@
 package main.java.entities;
 
+import java.util.Objects;
+
 public class Product {
 	private int product_id;
 	private String description;
@@ -30,6 +32,22 @@ public class Product {
 	}
 	public void setProduct_type(ProductType product_type) {
 		this.product_type = product_type;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(Integer.valueOf(product_id));
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Product other = (Product) obj;
+		return product_id == other.product_id;
 	}
 	
 	
