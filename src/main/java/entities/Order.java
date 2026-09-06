@@ -10,6 +10,17 @@ public class Order {
 	private Restaurant restaurant;
 	private LinkedList<OrderDetail> order_details;
 	
+	public Order(User user, Restaurant restaurant) {
+		this.order_date = LocalDate.now();
+		this.user = user;
+		this.restaurant = restaurant;
+	}
+	
+	
+	public void addOrderDetail(OrderDetail order_detail) {
+		this.order_details.add(order_detail);
+	}
+	
 	public int getOrder_id() {
 		return order_id;
 	}

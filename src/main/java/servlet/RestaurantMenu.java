@@ -56,7 +56,7 @@ public class RestaurantMenu extends HttpServlet {
 		if (request.getParameter("productTypeFilter") != null) {
 			String product_type_name = request.getParameter("productTypeFilter");
 			try {
-				request.setAttribute("products", new ProductRepository().getByType(res, product_type_name));
+				request.getSession().setAttribute("products", new ProductRepository().getByType(res, product_type_name));
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -64,7 +64,7 @@ public class RestaurantMenu extends HttpServlet {
 		}
 		else {
 		try {
-			request.setAttribute("products", new ProductRepository().getAll(res));
+			request.getSession().setAttribute("products", new ProductRepository().getAll(res));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

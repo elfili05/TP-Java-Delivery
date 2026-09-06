@@ -1,7 +1,9 @@
+<%@page import="main.java.entities.Order"%>
 <%@page import="main.java.entities.User"%>
 <%@page import="main.java.entities.Restaurant"%>
 <%@page import="main.java.entities.Product"%>
 <%@page import="java.util.LinkedList"%>
+<%@page import="java.time.*"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -13,13 +15,24 @@
 <link rel="stylesheet" href="styles/main_page.css" />
 <link rel="stylesheet" href="styles/restaurant_menu.css" />
 <%
+	// load selected restaurant and user from session
     Restaurant res = (Restaurant) session.getAttribute("currentRestaurant");
     User u = (User) session.getAttribute("user");
+ 	// load selected restaurant and user from session
+ 
+ 	// prepare user and restaurant info for display
     String userName = (u != null && u.getName() != null && !u.getName().isBlank() && !"guest".equalsIgnoreCase(u.getRole())) ? u.getName() : "Invitado";
     String userAddress = (u != null && u.getAddress() != null && !u.getAddress().isBlank()) ? u.getAddress() : "Tu dirección";
     String restaurantName = res != null && res.getName() != null ? res.getName() : "Restaurante";
     String restaurantImage = res != null ? res.getImage_url() : null;
-    LinkedList<Product> products = (LinkedList<Product>) request.getAttribute("products");
+ 	// prepare user and restaurant info for display
+    
+ 	// load products for the selected restaurant from request attribute
+    LinkedList<Product> products = (LinkedList<Product>) session.getAttribute("products");
+ 	// load products for the selected restaurant from request attribute
+ 	
+ 	// prepare an empty order for the user and restaurant
+ 	
 %>
 <title>Java Delivery | <%= restaurantName %></title>
 </head>
@@ -80,7 +93,7 @@
             		<button type="submit">Elegir filtro</button>
             	</form>
             </div>
-            <form id="orderForm" class="order-form">
+            <form id="orderForm" class="order-form" action="orderprocess" method="post">
             <div class="table-wrapper">
             	<table class="products-table">
             		<thead>
@@ -111,8 +124,13 @@
             <% if (products == null || products.isEmpty()) { %>
                 <p class="menu-empty" role="status"><%= restaurantName %> no tiene productos para ofrecer.. por ahora.</p>
             <% } else { %>
-                <div class="order-actions"><button type="button" class="order-button order-button--cancel" id="cancelOrder">Cancelar pedido</button><button type="submit" class="order-button order-button--confirm">Confirmar pedido</button></div>
+                <div class="order-actions">
+                	<button type="submit" class="order-button order-button--confirm">Confirmar pedido</button>
+                </div>
             <% } %>
+            </form>
+			<form action="signin" method="post">
+                <button type="submit" class="order-button order-button--cancel" id="cancelOrder">Cancelar pedido</button>
             </form>
         </main>
         <footer class="bottom-bar"><span>Java Delivery — 2026</span></footer>

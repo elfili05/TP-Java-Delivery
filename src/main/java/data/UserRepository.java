@@ -36,7 +36,7 @@ public class UserRepository {
 		ResultSet rs = null;
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
-					"select email, name, surname, phone_number, dni, address, role from user where "
+					"select user_id, email, name, surname, phone_number, dni, address, role from user where "
 					+ "email=? and password=?"
 					); // solo los datos que se necesitan mostrar en los siguientes casos de uso, excluyendo la password.
 			if (stmt == null) {}
@@ -45,6 +45,7 @@ public class UserRepository {
 			rs = stmt.executeQuery();
 			if (rs != null && rs.next()) {
 				u = new User();
+				u.setUser_id(rs.getInt("user_id"));
 				u.setEmail(rs.getString("email"));
 				u.setName(rs.getString("name"));
 				u.setSurname(rs.getString("surname"));
@@ -72,10 +73,12 @@ public class UserRepository {
 	
 	public Boolean addUser(User userToAdd) throws SQLException {
 		Boolean result = false;
+		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
 					"insert into user (email, password, name, surname, phone_number, dni, address, role) values (?, ?, ?, ?, ?, ?, ?, ?)"
+					,Statement.RETURN_GENERATED_KEYS
 					);
 			stmt.setString(1, userToAdd.getEmail());
 			stmt.setString(2, userToAdd.getPassword());
@@ -87,6 +90,14 @@ public class UserRepository {
 			stmt.setString(8, "client");
 			
 			stmt.executeUpdate();
+			
+			rs = stmt.getGeneratedKeys();
+			if (rs.next()) {
+				userToAdd.setUser_id(rs.getInt(1));
+				//System.out.println("User added with ID: " + userToAdd.getUser_id());
+			}
+			
+			
 			result = true;
 		} catch (SQLException e) {
 			e.printStackTrace();
