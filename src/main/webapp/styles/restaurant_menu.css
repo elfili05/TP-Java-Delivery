@@ -1,6 +1,8 @@
 :root {
   --menu-line: rgba(38, 38, 38, 0.82);
   --menu-surface: rgba(250, 248, 246, 0.84);
+  --menu-surface-solid: #faf8f6;
+  --menu-soft-accent: #ffe9e2;
 }
 
 .menu-page .home-layout { min-height: 100vh; }
@@ -45,4 +47,224 @@
 .order-button { min-width: 190px; min-height: 48px; padding: 10px 18px; border: 2px solid var(--menu-line); border-radius: 14px; color: var(--text-dark); background: var(--brand-dark); font: inherit; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: transform 0.15s ease, background-color 0.15s ease; }
 .order-button:hover, .order-button:focus-visible { background: var(--accent); transform: translateY(-2px); }.order-button:active { transform: translateY(0); }.order-button--cancel { background: var(--bg-soft); }
 
+dialog.order-confirmation-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 20px;
+  border: 0;
+  background: rgba(30, 24, 18, 0.42);
+  display: grid;
+  place-items: center;
+}
+
+dialog.order-confirmation-dialog::backdrop { background: transparent; }
+
+.order-confirmation-dialog__panel {
+  width: min(100%, 980px);
+  max-height: min(100%, 920px);
+  padding: 24px 26px 22px;
+  border: 2px solid var(--menu-line);
+  border-radius: 26px;
+  background: #f7f0e8;
+  box-shadow: 0 18px 45px rgba(38, 38, 38, 0.25);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.order-confirmation-dialog__header { text-align: center; }
+
+.order-confirmation-dialog__title {
+  margin: 0;
+  font-size: clamp(1.35rem, 2vw, 2rem);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dark);
+}
+
+.order-confirmation-dialog__meta {
+  display: grid;
+  gap: 10px;
+}
+
+.order-confirmation-dialog__meta-row {
+  display: grid;
+  grid-template-columns: 185px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(38, 38, 38, 0.18);
+}
+
+.order-confirmation-dialog__label,
+.order-confirmation-dialog__summary-label {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dark);
+}
+
+.order-confirmation-dialog__value,
+.order-confirmation-dialog__summary-value {
+  min-width: 0;
+  color: var(--text-dark);
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.order-confirmation-dialog__details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.order-confirmation-dialog__section-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.order-confirmation-dialog__section-line {
+  flex: 1 1 auto;
+  height: 2px;
+  background: var(--menu-line);
+}
+
+.order-confirmation-dialog__section-title {
+  margin: 0;
+  font-size: clamp(1rem, 1.4vw, 1.45rem);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dark);
+  white-space: nowrap;
+}
+
+.order-confirmation-dialog__table-shell {
+  overflow: auto;
+  max-height: min(42vh, 360px);
+  border: 2px solid var(--menu-line);
+  border-radius: 18px;
+  background: var(--menu-surface-solid);
+}
+
+.order-confirmation-dialog__table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+}
+
+.order-confirmation-dialog__table th,
+.order-confirmation-dialog__table td {
+  padding: 13px 16px;
+  border-right: 1px solid var(--menu-line);
+  border-bottom: 1px solid var(--menu-line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.order-confirmation-dialog__table th:last-child,
+.order-confirmation-dialog__table td:last-child { border-right: 0; }
+
+.order-confirmation-dialog__table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--brand-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.order-confirmation-dialog__empty-row td {
+  padding: 24px 16px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.order-confirmation-dialog__summary {
+  display: grid;
+  gap: 10px;
+}
+
+.order-confirmation-dialog__summary-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 12px 14px;
+  border: 2px solid var(--menu-line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.48);
+}
+
+.order-confirmation-dialog__summary-row--discount {
+  background: var(--menu-soft-accent);
+}
+
+.order-confirmation-dialog__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: auto;
+}
+
+.order-confirmation-dialog__action-form { display: contents; }
+
+.order-confirmation-dialog__button {
+  min-height: 54px;
+  padding: 12px 18px;
+  border: 2px solid var(--menu-line);
+  border-radius: 16px;
+  background: var(--brand-dark);
+  color: var(--text-dark);
+  font: inherit;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.order-confirmation-dialog__button:hover,
+.order-confirmation-dialog__button:focus-visible {
+  background: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(38, 38, 38, 0.12);
+}
+
+.order-confirmation-dialog__button:active { transform: translateY(0); }
+
+.order-confirmation-dialog__button--secondary { background: var(--bg-soft); }
+
+.order-confirmation-dialog__button--primary { background: var(--brand-dark); }
+
 @media (max-width: 600px) { .menu-banner { min-height: 150px; padding: 18px; }.menu-banner__overlay { padding: 18px 14px; }.menu-toolbar { align-items: flex-start; flex-direction: column; }.menu-toolbar select { width: 100%; }.order-actions { flex-direction: column-reverse; gap: 12px; }.order-button { width: 100%; } }
+
+@media (max-width: 920px) {
+  .order-confirmation-dialog { padding: 12px; }
+
+  .order-confirmation-dialog__panel {
+    width: 100%;
+    max-height: 100%;
+    padding: 18px 16px 16px;
+    border-radius: 20px;
+  }
+
+  .order-confirmation-dialog__meta-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    align-items: start;
+  }
+
+  .order-confirmation-dialog__section-title-wrap { gap: 12px; }
+}
+
+@media (max-width: 640px) {
+  .order-confirmation-dialog__table-shell { max-height: 20vh; border-radius: 16px; }
+  .order-confirmation-dialog__table { min-width: 640px; }
+  .order-confirmation-dialog__actions { grid-template-columns: 1fr; }
+}

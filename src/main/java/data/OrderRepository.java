@@ -1,39 +1,34 @@
 package main.java.data;
 import java.sql.*;
-import java.util.LinkedList;
-
-import main.java.entities.Discount;
+import main.java.entities.Order;
 import main.java.entities.OrderDetail;
-import main.java.entities.Restaurant;
-import main.java.entities.User;
 import java.sql.Types;
 
 public class OrderRepository {
 
-	public void addOrder(LinkedList<OrderDetail> orderDetails, User user, Restaurant restaurant, double totalAmount) throws SQLException{
+	public void addOrder(Order orderToAdd) throws SQLException{
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		DiscountRepository discountRepo = new DiscountRepository(); //cuando se llegue a los controladores, CAMBIAR esto
 		int orderId = 0;
 		
-		Discount discount = discountRepo.getOne(totalAmount);
+		//Discount discount = discountRepo.getOne(totalAmount);
 		
 		try {
 			// Insert the order
-			System.out.println(restaurant.getRestaurant_id());
+			//System.out.println(restaurant.getRestaurant_id());
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
 					  "INSERT INTO user_order (user_id, restaurant_id, date, discount_id, total_amount) "
 					+ "VALUES (?, ?, CURDATE(),?, ?)",
 					Statement.RETURN_GENERATED_KEYS
 					);
-			System.out.println("user id: " + user.getUser_id());
-			stmt.setInt(1, user.getUser_id());
-			stmt.setInt(2, restaurant.getRestaurant_id());
-			if (discount != null) {
-			stmt.setInt(3, discount.getDiscount_id()); //cuando se llegue a los controladores, CAMBIAR esto
+			System.out.println("user id: " + orderToAdd.getUser().getUser_id());
+			stmt.setInt(1, orderToAdd.getUser().getUser_id());
+			stmt.setInt(2, orderToAdd.getRestaurant().getRestaurant_id());
+			if (orderToAdd.getDiscount() != null) {
+			stmt.setInt(3, orderToAdd.getDiscount().getDiscount_id()); //cuando se llegue a los controladores, CAMBIAR esto
 				}
 			else { stmt.setNull(3, Types.INTEGER); }
-			stmt.setDouble(4, totalAmount);
+			stmt.setDouble(4, orderToAdd.getTotal());
 			stmt.executeUpdate();
 			
 			rs = stmt.getGeneratedKeys();
@@ -42,7 +37,7 @@ public class OrderRepository {
 			}
 			
 			// Insert the order details
-			for (OrderDetail orderDetail : orderDetails) {
+			for (OrderDetail orderDetail : orderToAdd.getOrder_details()) {
 				stmt = DbConnector.getInstance().getConn().prepareStatement(
 						  "INSERT INTO order_detail (order_id, detail_number, product_id, quantity, subtotal) "
 						+ "VALUES (?,?,?,?,?)"
