@@ -2,6 +2,7 @@
 <%@page import="main.java.entities.User"%>
 <%@page import="main.java.entities.Restaurant"%>
 <%@page import="main.java.entities.Product"%>
+<%@page import="main.java.entities.OrderDetail"%>
 <%@page import="java.util.LinkedList"%>
 <%@page import="java.time.*"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -14,6 +15,7 @@
 <link rel="icon" type="ico" href="assets/icon2.ico" />
 <link rel="stylesheet" href="styles/main_page.css" />
 <link rel="stylesheet" href="styles/restaurant_menu.css" />
+<!-- <link rel="stylesheet" href="styles/main.css" /> -->
 <%
 	// load selected restaurant and user from session
     Restaurant res = (Restaurant) session.getAttribute("currentRestaurant");
@@ -31,7 +33,44 @@
     LinkedList<Product> products = (LinkedList<Product>) session.getAttribute("products");
  	// load products for the selected restaurant from request attribute
  	
- 	// prepare an empty order for the user and restaurant
+ 	Boolean confirmOrder = (Boolean) request.getAttribute("confirmOrder");
+		Order userOrder = null;
+		LinkedList<OrderDetail> orderDetails = new LinkedList<>();
+		String orderDateLabel = "—";
+		String orderAddressLabel = userAddress;
+		String orderRestaurantLabel = restaurantName;
+		double orderTotal = 0.0;
+		double orderTotalWithDiscount = 0.0;
+		boolean hasDiscount = false;
+		String discountLabel = null;
+	
+		if (confirmOrder != null) {
+			userOrder = (Order) session.getAttribute("order");
+			if (userOrder != null) {
+				if (userOrder.getOrder_details() != null) {
+					orderDetails = userOrder.getOrder_details();
+				}
+				if (userOrder.getOrder_date() != null) {
+					orderDateLabel = userOrder.getOrder_date().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+				}
+				if (userOrder.getUser() != null && userOrder.getUser().getAddress() != null && !userOrder.getUser().getAddress().isBlank()) {
+					orderAddressLabel = userOrder.getUser().getAddress();
+				}
+				if (userOrder.getRestaurant() != null && userOrder.getRestaurant().getName() != null && !userOrder.getRestaurant().getName().isBlank()) {
+					orderRestaurantLabel = userOrder.getRestaurant().getName();
+				}
+				for (OrderDetail detail : orderDetails) {
+					if (detail != null) {
+						orderTotal += detail.getSubtotal();
+					}
+				}
+				if (userOrder.getDiscount() != null && userOrder.getDiscount().getDiscount_percentage() > 0) {
+					hasDiscount = true;
+					discountLabel = String.format(java.util.Locale.US, "%.0f%%", userOrder.getDiscount().getDiscount_percentage() * 100);
+					orderTotalWithDiscount = userOrder.getTotalWithDiscount();
+				}
+			}
+		}
  	
 %>
 <title>Java Delivery | <%= restaurantName %></title>
@@ -88,7 +127,20 @@
             	<form action="restaurantmenu" method="get">
             		<label for="productTypeFilter">Filtrar por:</label>
             		<select id="productTypeFilter" name="productTypeFilter"><option value="all">Todos los productos
-            				</option><% if (products != null) { java.util.LinkedHashSet<String> types = new java.util.LinkedHashSet<>(); for (Product product : products) { if (product.getProduct_type() != null && product.getProduct_type().getName() != null) types.add(product.getProduct_type().getName()); } for (String type : types) { %><option value="<%= type %>"><%= type %></option><% } } %>
+            				</option><% 
+            				if (products != null) { 
+            				java.util.LinkedHashSet<String> types = new java.util.LinkedHashSet<>(); 
+            				for (Product product : products) { 
+            				if (product.getProduct_type() != null && product.getProduct_type().getName() != null) {
+            					types.add(product.getProduct_type().getName()); 
+            					} 
+            				}
+            				
+            				for (String type : types) { %>
+            				<option value="<%= type %>"><%= type %></option>
+            				<% } 
+            				} %>
+            				
             		</select>
             		<button type="submit">Elegir filtro</button>
             	</form>
@@ -124,14 +176,107 @@
             <% if (products == null || products.isEmpty()) { %>
                 <p class="menu-empty" role="status"><%= restaurantName %> no tiene productos para ofrecer.. por ahora.</p>
             <% } else { %>
+			   <%  if (!u.getRole().equalsIgnoreCase("guest")) { %>
                 <div class="order-actions">
                 	<button type="submit" class="order-button order-button--confirm">Confirmar pedido</button>
                 </div>
+                <% } %>
             <% } %>
             </form>
+            
 			<form action="signin" method="post">
-                <button type="submit" class="order-button order-button--cancel" id="cancelOrder">Cancelar pedido</button>
+				<div class="order-actions">
+                	<button type="submit" class="order-button order-button--cancel" id="cancelOrder">Cancelar pedido</button>
+                </div>
             </form>
+           
+            <!-- Order confirmation modal -->
+            <% if (confirmOrder != null) { %>
+			<dialog open class="order-confirmation-dialog" aria-labelledby="orderConfirmationTitle">
+				<div class="order-confirmation-dialog__panel">
+					<header class="order-confirmation-dialog__header">
+						<h2 class="order-confirmation-dialog__title" id="orderConfirmationTitle">Confirmación de pedido</h2>
+					</header>
+
+					<section class="order-confirmation-dialog__meta" aria-label="Datos del pedido">
+						<div class="order-confirmation-dialog__meta-row">
+							<span class="order-confirmation-dialog__label">Fecha pedido:</span>
+							<span class="order-confirmation-dialog__value"><%= orderDateLabel %></span>
+						</div>
+						<div class="order-confirmation-dialog__meta-row">
+							<span class="order-confirmation-dialog__label">Enviar a:</span>
+							<span class="order-confirmation-dialog__value"><%= orderAddressLabel %></span>
+						</div>
+						<div class="order-confirmation-dialog__meta-row">
+							<span class="order-confirmation-dialog__label">Restaurante:</span>
+							<span class="order-confirmation-dialog__value"><%= orderRestaurantLabel %></span>
+						</div>
+					</section>
+
+					<section class="order-confirmation-dialog__details" aria-label="Detalles del pedido">
+						<div class="order-confirmation-dialog__section-title-wrap">
+							<span class="order-confirmation-dialog__section-line" aria-hidden="true"></span>
+							<h3 class="order-confirmation-dialog__section-title">Detalles del pedido</h3>
+							<span class="order-confirmation-dialog__section-line" aria-hidden="true"></span>
+						</div>
+
+						<div class="order-confirmation-dialog__table-shell">
+							<table class="order-confirmation-dialog__table">
+								<thead>
+									<tr>
+										<th scope="col">Producto</th>
+										<th scope="col">Precio</th>
+										<th scope="col">Cantidad</th>
+										<th scope="col">Subtotal</th>
+									</tr>
+								</thead>
+								<tbody>
+									<% if (orderDetails != null && !orderDetails.isEmpty()) { for (OrderDetail detail : orderDetails) { if (detail != null && detail.getProduct() != null) { %>
+									<tr>
+										<td><%= detail.getProduct().getDescription() %></td>
+										<td>$ <%= String.format(java.util.Locale.US, "%.2f", detail.getProduct().getPrice()) %></td>
+										<td><%= detail.getQuantity() %></td>
+										<td>$ <%= String.format(java.util.Locale.US, "%.2f", detail.getSubtotal()) %></td>
+									</tr>
+									<% } } } else { %>
+									<tr class="order-confirmation-dialog__empty-row">
+										<td colspan="4">No hay productos para mostrar.</td>
+									</tr>
+									<% } %>
+								</tbody>
+							</table>
+						</div>
+					</section>
+
+					<section class="order-confirmation-dialog__summary" aria-label="Resumen del pedido">
+						<div class="order-confirmation-dialog__summary-row">
+							<span class="order-confirmation-dialog__summary-label">Total:</span>
+							<span class="order-confirmation-dialog__summary-value">$ <%= String.format(java.util.Locale.US, "%.2f", orderTotal) %></span>
+						</div>
+						<% if (hasDiscount) { %>
+						<div class="order-confirmation-dialog__summary-row order-confirmation-dialog__summary-row--discount">
+							<span class="order-confirmation-dialog__summary-label">Total con descuento (<%= discountLabel %> desc):</span>
+							<span class="order-confirmation-dialog__summary-value">$ <%= String.format(java.util.Locale.US, "%.2f", orderTotalWithDiscount) %></span>
+						</div>
+						<% } %>
+					</section>
+
+					<div class="order-confirmation-dialog__actions">
+						<form class="order-confirmation-dialog__action-form" action="orderProcess" method="get">
+							<button class="order-confirmation-dialog__button order-confirmation-dialog__button--secondary" name="confirmOrder" value="false" type="submit">Cancelar pedido</button>
+						</form>
+						<form class="order-confirmation-dialog__action-form" action="orderProcess" method="get">
+							<button class="order-confirmation-dialog__button order-confirmation-dialog__button--primary" name="confirmOrder" value="true" type="submit">Confirmar pedido</button>
+						</form>
+					</div>
+				</div>
+			</dialog>
+		<% } %>
+            
+            
+            
+            
+            
         </main>
         <footer class="bottom-bar"><span>Java Delivery — 2026</span></footer>
     </div>
@@ -167,5 +312,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		});
 </script>
+
 </body>
 </html>

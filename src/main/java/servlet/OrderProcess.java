@@ -38,7 +38,34 @@ public class OrderProcess extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		/*acá proceso la decisión de la ventana modal: cancelar o confirmar, si confirma, proOrder.addOrder(order), si cancela, vuelvo al menú
+		 * de restaurant_menu.jsp
+		*/
+		ProcessOrder proOrder = new ProcessOrder();
+		
+		
+		if (request.getParameter("confirmOrder") != null) {
+			if ((request.getParameter("confirmOrder").equalsIgnoreCase("true"))) {
+				try {
+					proOrder.addOrder((Order) request.getSession().getAttribute("order"));
+					request.getRequestDispatcher("WEB-INF/order_confirmation.jsp").forward(request, response);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			} else { 
+				request.getSession().removeAttribute("order");
+				request.removeAttribute("confirmOrder");
+				request.getRequestDispatcher("WEB-INF/restaurant_menu.jsp").forward(request, response); }
+			
+			
+		}
+		else {
+			request.getRequestDispatcher("WEB-INF/restaurant_menu.jsp").forward(request, response);
+		}
+		
+		//request.getRequestDispatcher("WEB-INF/main_page.jsp").forward(request, response);
 	}
 
 	/**
@@ -46,7 +73,7 @@ public class OrderProcess extends HttpServlet {
 	 */
 	@SuppressWarnings("unchecked")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+		// DISCOUNT OBJECT GETS ADDED HERE
 		ProcessOrder proOrder = new ProcessOrder();
 		
 		LinkedList<Product> products = (LinkedList<Product>)request.getSession().getAttribute("products");
@@ -66,19 +93,24 @@ public class OrderProcess extends HttpServlet {
 			}
 		}
 			
-		Order order = proOrder.prepareOrder(u, res, orderDetails);
+		Order order = null;
+		try {
+			order = proOrder.prepareOrder(u, res, orderDetails);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		request.getSession().setAttribute("order", order);
 		
 		if (order == null) {
-			//TODO: Handle the case where no products were selected
+			// Handle the case where no products were selected
+			doGet(request, response);
 		} 
 		
-		else {
-			try {
-				proOrder.addOrder(order);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		else { 
+			request.setAttribute("confirmOrder",true);
+			request.getRequestDispatcher("WEB-INF/restaurant_menu.jsp").forward(request, response);
 		}
 		
 		

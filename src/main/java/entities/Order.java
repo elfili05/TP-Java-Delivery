@@ -9,11 +9,15 @@ public class Order {
 	private User user;
 	private Restaurant restaurant;
 	private LinkedList<OrderDetail> order_details;
+	private Discount discount;
 	
-	public Order(User user, Restaurant restaurant) {
+	
+	public Order(User user, Restaurant restaurant, Discount discount) {
 		this.order_date = LocalDate.now();
 		this.user = user;
 		this.restaurant = restaurant;
+		this.discount = discount;
+		
 	}
 	
 	
@@ -52,14 +56,32 @@ public class Order {
 		this.order_details = order_details;
 	}
 	
+	public Discount getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(Discount discount) {
+		this.discount = discount;
+	}
+
+
 	public double getTotal() {
-		double total = 0;
-		for (OrderDetail order_detail : order_details) {
-			total += order_detail.getSubtotal();
+		if (order_details != null || !order_details.isEmpty()) {
+			double total = 0;
+			for (OrderDetail order_detail : order_details) {
+				total += order_detail.getSubtotal();
+			}
+			return total;
 		}
-		return total;
+		else { return 0; }
 	}
 	
+	public double getTotalWithDiscount() {
+		if (this.discount != null) {
+			return this.getTotal() * (1 - this.discount.getDiscount_percentage());
+		}
+		else { return this.getTotal(); }
+	}
 	
 }
 
