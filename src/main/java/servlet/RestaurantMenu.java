@@ -39,19 +39,30 @@ public class RestaurantMenu extends HttpServlet {
 		
 		if (request.getParameter("selectedRestaurant") != null) {
 			res_id = Integer.parseInt(request.getParameter("selectedRestaurant"));
+			res.setRestaurant_id(res_id);
+			
+			try {
+				res = ctrlRestaurant.getRestaurant(res);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
 		else {
-			res_id = ((Restaurant)request.getSession().getAttribute("currentRestaurant")).getRestaurant_id();
+			res = ((Restaurant)request.getSession().getAttribute("currentRestaurant"));
 		}
 		
-		res.setRestaurant_id(res_id);
 		
 		try {
-			res = ctrlRestaurant.getRestaurant(res);
-		} catch (SQLException e) {
+			if (ctrlRestaurant.isAvailable(res) == false) {
+				request.getRequestDispatcher("WEB-INF/restaurant_unavailable.jsp").forward(request, response);
+			}
+		} catch (SQLException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		
 		if (request.getParameter("productTypeFilter") != null) {
 			String product_type_name = request.getParameter("productTypeFilter");

@@ -19,6 +19,11 @@ public class RestaurantCRUD {
 	}
 	
 	
+	public boolean isAvailable(Restaurant restaurantToCheck) throws SQLException {
+		return rr.isAvailable(restaurantToCheck);
+	}
+	
+	
 	public Restaurant getRestaurant(Restaurant restaurantToFind) throws SQLException {
 		return rr.getOne(restaurantToFind);
 	}

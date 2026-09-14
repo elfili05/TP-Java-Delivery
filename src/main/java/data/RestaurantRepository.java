@@ -8,6 +8,18 @@ import main.java.entities.Restaurant;
 import main.java.entities.Schedule;
 
 public class RestaurantRepository {
+	
+	
+	/* 
+	 * ""
+					+ "SELECT DISTINCT res.restaurant_id, res.name, res.address, res.image_url\r\n"
+					+ "FROM restaurant res\r\n"
+					+ "INNER JOIN schedule sch\r\n"
+					+ "	ON sch.restaurant_id = res.restaurant_id\r\n"
+					+ "WHERE sch.day_of_week = LOWER(DAYNAME(CURDATE()))\r\n"
+					+ "	AND time(now()) BETWEEN sch.start_time AND sch.end_time;"
+	 * 
+	 * */
 
 	public LinkedList<Restaurant> getAll() throws SQLException {
 		LinkedList<Restaurant> restaurants = new LinkedList<>();
@@ -15,8 +27,9 @@ public class RestaurantRepository {
 		ResultSet rs = null;
 		
 		try {
-			stmt = DbConnector.getInstance().getConn().prepareStatement("SELECT DISTINCT res.restaurant_id, res.name, res.address, res.image_url\r\n"
-					+ "FROM restaurant res\r\n;"
+			stmt = DbConnector.getInstance().getConn().prepareStatement(""
+					+ "SELECT res.restaurant_id, res.name, res.address, res.image_url\r\n"
+					+ "FROM restaurant res\r\n"
 					);
 			rs = stmt.executeQuery();
 			
@@ -46,8 +59,6 @@ public class RestaurantRepository {
 		
 		return restaurants;
 	}
-	
-	
 	
 	public Restaurant getOne(Restaurant restaurantToFind) throws SQLException {
 		PreparedStatement stmt = null;
@@ -89,6 +100,45 @@ public class RestaurantRepository {
 		
 	}
 	
+	public Boolean isAvailable(Restaurant restaurantToCheck) throws SQLException {
+		PreparedStatement stmt = null;
+		Boolean result = false;
+		ResultSet rs = null;
+		
+		try {
+			stmt = DbConnector.getInstance().getConn().prepareStatement(
+					  "SELECT res.restaurant_id, res.name\r\n"
+					  + "FROM restaurant res\r\n"
+					  + "INNER JOIN schedule sch\r\n"
+					  + "	ON sch.restaurant_id = res.restaurant_id\r\n"
+					  + "WHERE sch.day_of_week = LOWER(DAYNAME(CURDATE()))\r\n"
+					  + "	AND time(now()) BETWEEN sch.start_time AND sch.end_time\r\n"
+					  + "    AND res.restaurant_id = ?;"
+					);
+			stmt.setInt(1, restaurantToCheck.getRestaurant_id());
+			rs = stmt.executeQuery();
+			if (rs != null && rs.next()) {
+				result = true;
+			} else {
+				result = false;
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result = false;
+			
+		} finally {
+			try {
+				if (stmt != null) { stmt.close(); }
+				DbConnector.getInstance().releaseConn();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				result = false;
+			}
+		}
+		return result;
+		
+	}
 	
 	public Boolean addRestaurant(Restaurant restaurant) throws SQLException {
 		PreparedStatement stmt = null;

@@ -12,11 +12,10 @@ public class Order {
 	private Discount discount;
 	
 	
-	public Order(User user, Restaurant restaurant, Discount discount) {
+	public Order(User user, Restaurant restaurant) {
 		this.order_date = LocalDate.now();
 		this.user = user;
 		this.restaurant = restaurant;
-		this.discount = discount;
 		
 	}
 	

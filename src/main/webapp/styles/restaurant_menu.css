@@ -146,7 +146,7 @@ dialog.order-confirmation-dialog::backdrop { background: transparent; }
 
 .order-confirmation-dialog__table-shell {
   overflow: auto;
-  max-height: min(42vh, 360px);
+  max-height: min(24vh, 360px);
   border: 2px solid var(--menu-line);
   border-radius: 18px;
   background: var(--menu-surface-solid);
