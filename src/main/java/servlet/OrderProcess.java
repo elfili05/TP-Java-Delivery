@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import main.java.logic.ProcessOrder;
+import main.java.logic.RestaurantCRUD;
 import main.java.entities.Restaurant;
 import main.java.entities.User;
 import main.java.entities.Order;
@@ -37,32 +38,47 @@ public class OrderProcess extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		/*acá proceso la decisión de la ventana modal: cancelar o confirmar, si confirma, proOrder.addOrder(order), si cancela, vuelvo al menú
 		 * de restaurant_menu.jsp
 		*/
 		ProcessOrder proOrder = new ProcessOrder();
-		
+		RestaurantCRUD ctrlRestaurant = new RestaurantCRUD();
+		Restaurant currentRes = (Restaurant) request.getSession().getAttribute("currentRestaurant");
 		
 		if (request.getParameter("confirmOrder") != null) {
 			if ((request.getParameter("confirmOrder").equalsIgnoreCase("true"))) {
 				try {
-					proOrder.addOrder((Order) request.getSession().getAttribute("order"));
-					request.getRequestDispatcher("WEB-INF/order_confirmation.jsp").forward(request, response);
+					if (ctrlRestaurant.isAvailable(currentRes)) {
+						proOrder.addOrder((Order) request.getSession().getAttribute("order"));
+						request.getRequestDispatcher("WEB-INF/order_confirmation.jsp").forward(request, response); // order successfull
+					} 
+					
+					else { // redirecting because restaurant is not available upon order confirmation
+						
+						request.getSession().removeAttribute("order");
+						request.removeAttribute("confirmOrder");
+						request.getSession().removeAttribute("currentRestaurant");
+						request.getSession().removeAttribute("products");
+						
+						request.getRequestDispatcher("WEB-INF/restaurant_unavailable.jsp").forward(request, response); // order failed
+						
+					}
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
-			} else { 
+			} else { // redirecting because of order cancellation
 				request.getSession().removeAttribute("order");
 				request.removeAttribute("confirmOrder");
-				request.getRequestDispatcher("WEB-INF/restaurant_menu.jsp").forward(request, response); }
+				request.getRequestDispatcher("WEB-INF/restaurant_menu.jsp").forward(request, response); // order failed
+				
+			}
 			
 			
 		}
-		else {
-			request.getRequestDispatcher("WEB-INF/restaurant_menu.jsp").forward(request, response);
+		else { // redirecting because of empty order
+			request.getRequestDispatcher("WEB-INF/restaurant_menu.jsp").forward(request, response); // order failed
 		}
 		
 		//request.getRequestDispatcher("WEB-INF/main_page.jsp").forward(request, response);
@@ -73,7 +89,9 @@ public class OrderProcess extends HttpServlet {
 	 */
 	@SuppressWarnings("unchecked")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// DISCOUNT OBJECT GETS ADDED HERE
+		
+		// If the user has selected products and quantities, prepare the order and redirect to confirmation modal. Otherwise, redirect back to menu.
+	
 		ProcessOrder proOrder = new ProcessOrder();
 		
 		LinkedList<Product> products = (LinkedList<Product>)request.getSession().getAttribute("products");
@@ -81,6 +99,8 @@ public class OrderProcess extends HttpServlet {
 		User u = (User)request.getSession().getAttribute("user");
 		LinkedList<OrderDetail> orderDetails = new LinkedList<OrderDetail>();
 		
+		
+		// create every order detail
 		int detail_number = 1;
 		for (Product product : products) {
 			String quantityStr = request.getParameter("quantity_" + product.getProduct_id());
@@ -103,12 +123,12 @@ public class OrderProcess extends HttpServlet {
 		
 		request.getSession().setAttribute("order", order);
 		
-		if (order == null) {
-			// Handle the case where no products were selected
+		if (order == null) { // no products were selected, empty order, redirecting back to menu
+			
 			doGet(request, response);
 		} 
 		
-		else { 
+		else { // order has items, proceed to confirmation modal.
 			request.setAttribute("confirmOrder",true);
 			request.getRequestDispatcher("WEB-INF/restaurant_menu.jsp").forward(request, response);
 		}
