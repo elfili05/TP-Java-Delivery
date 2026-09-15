@@ -70,16 +70,21 @@ public class Signin extends HttpServlet {
 		if (u.getRole() != null) {
 			
 			if (u.getRole().equalsIgnoreCase("client") || u.getRole().equalsIgnoreCase("guest")) {
-					
+
 				try {
 					restaurants = ctrlRestaurant.getAvailable();
 				} catch (SQLException e) {
 					e.printStackTrace();
-				}	
-			
+				}
+
 				request.getSession().setAttribute("user", u);
 				request.setAttribute("restaurants", restaurants);
 				request.getRequestDispatcher("WEB-INF/main_page.jsp").forward(request, response);
+				}
+			else if (u.getRole().equalsIgnoreCase("admin")) {
+				// login de administrador: va directo al panel, no a la home de restaurantes.
+				request.getSession().setAttribute("user", u);
+				request.getRequestDispatcher("WEB-INF/admin_panel.jsp").forward(request, response);
 				}
 
 			}

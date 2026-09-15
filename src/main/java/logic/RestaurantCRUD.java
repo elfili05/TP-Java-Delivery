@@ -27,4 +27,13 @@ public class RestaurantCRUD {
 	public Boolean addRestaurant(Restaurant restaurantToAdd) throws SQLException {
 		return rr.addRestaurant(restaurantToAdd);
 	}
+
+	// usados por el panel admin para editar/eliminar restaurantes.
+	public Boolean updateRestaurant(Restaurant restaurantToUpdate) throws SQLException {
+		return rr.updateRestaurant(restaurantToUpdate);
+	}
+
+	public Boolean deleteRestaurant(int restaurantId) throws SQLException {
+		return rr.deleteRestaurant(restaurantId);
+	}
 }

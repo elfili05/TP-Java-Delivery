@@ -172,7 +172,7 @@ CREATE TABLE `restaurant` (
   `restaurant_id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(80) COLLATE utf8mb3_bin DEFAULT NULL,
   `address` varchar(80) COLLATE utf8mb3_bin DEFAULT NULL,
-  `image_url` varchar(25) COLLATE utf8mb3_bin DEFAULT NULL,
+  `image_url` varchar(255) COLLATE utf8mb3_bin DEFAULT NULL,
   PRIMARY KEY (`restaurant_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;

@@ -170,7 +170,43 @@ public class UserRepository {
 		}
 		return result;
 	}
-	
+
+	// actualiza los datos que puede tocar un admin (incluye el rol), nunca la password.
+	public Boolean updateUserAdmin(User userToUpdate) throws SQLException {
+
+		Boolean result = false;
+		PreparedStatement stmt = null;
+		try {
+			stmt = DbConnector.getInstance().getConn().prepareStatement(
+					"update user set name=?, surname=?, phone_number=?, dni=?, address=?, role=? where email=?"
+					);
+			stmt.setString(1, userToUpdate.getName());
+			stmt.setString(2, userToUpdate.getSurname());
+			stmt.setString(3, userToUpdate.getPhone_number());
+			stmt.setString(4, userToUpdate.getDni());
+			stmt.setString(5, userToUpdate.getAddress());
+			stmt.setString(6, userToUpdate.getRole());
+			stmt.setString(7, userToUpdate.getEmail());
+
+			stmt.executeUpdate();
+
+			result = true;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result = false;
+		} finally {
+			try {
+				if (stmt != null) { stmt.close(); }
+				DbConnector.getInstance().releaseConn();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				result = false;
+			}
+		}
+		return result;
+	}
+
 	public LinkedList<User> getAll() throws SQLException{
 		LinkedList<User> users = new LinkedList<>();
 		PreparedStatement stmt = null;
