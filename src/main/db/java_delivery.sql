@@ -22,10 +22,14 @@ SET @@SESSION.SQL_LOG_BIN= 0;
 --
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ 'd94a4558-335b-11f1-b286-0a002700000c:1-882';
 =======
 SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ 'd94a4558-335b-11f1-b286-0a002700000c:1-966';
 >>>>>>> 8ea60ac (feat: orders can now be fully processed in the application. database dump updated with data samples for testing.)
+=======
+SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ 'd94a4558-335b-11f1-b286-0a002700000c:1-1114';
+>>>>>>> 3fce8c4 (fix: solved a bug where logging out didn't delete the user from the session.)
 
 --
 -- Table structure for table `discount`
@@ -81,7 +85,7 @@ CREATE TABLE `order_detail` (
 
 LOCK TABLES `order_detail` WRITE;
 /*!40000 ALTER TABLE `order_detail` DISABLE KEYS */;
-INSERT INTO `order_detail` VALUES (1,1,4,2,24584),(1,2,5,2,15786.4);
+INSERT INTO `order_detail` VALUES (1,1,4,2,24584),(1,2,5,2,15786.4),(2,1,1,3,3870.96),(3,1,2,6,114121),(3,2,5,3,23679.6),(4,1,2,2,38040.4),(4,2,3,1,16059.3),(4,3,4,2,24584),(5,1,1,1,1290.32),(5,2,3,1,16059.3),(5,3,5,2,15786.4),(6,1,1,3,3870.96),(6,2,3,2,32118.6),(6,3,4,2,24584),(7,1,1,1,1290.32),(7,2,3,2,32118.6),(7,3,4,3,36876),(8,1,5,5,39466),(9,1,2,5,95101),(9,2,4,2,24584),(10,1,1,1,1290.32),(10,2,2,1,19020.2),(10,3,3,1,16059.3),(10,4,4,1,12292),(10,5,5,1,7893.2),(11,1,2,2,38040.4),(11,2,3,1,16059.3),(11,3,4,1,12292),(12,1,1,3,3870.96),(12,2,2,2,38040.4),(13,1,3,1,16059.3),(13,2,4,1,12292),(14,1,3,2,32118.6),(14,2,4,5,61460);
 /*!40000 ALTER TABLE `order_detail` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -234,7 +238,7 @@ DROP TABLE IF EXISTS `user`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user` (
   `user_id` int NOT NULL AUTO_INCREMENT,
-  `email` varchar(80) COLLATE utf8mb3_bin DEFAULT NULL,
+  `email` varchar(80) COLLATE utf8mb3_bin NOT NULL,
   `name` varchar(80) COLLATE utf8mb3_bin DEFAULT NULL,
   `surname` varchar(80) COLLATE utf8mb3_bin DEFAULT NULL,
   `password` varchar(200) COLLATE utf8mb3_bin DEFAULT NULL,
@@ -245,10 +249,14 @@ CREATE TABLE `user` (
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `email` (`email`)
 <<<<<<< HEAD
+<<<<<<< HEAD
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 =======
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 >>>>>>> 8ea60ac (feat: orders can now be fully processed in the application. database dump updated with data samples for testing.)
+=======
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
+>>>>>>> 3fce8c4 (fix: solved a bug where logging out didn't delete the user from the session.)
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -258,10 +266,14 @@ CREATE TABLE `user` (
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 <<<<<<< HEAD
+<<<<<<< HEAD
 INSERT INTO `user` VALUES (1,'a@a','a','a','a','a','a','a','client'),(2,'b@b','b','b','b','b','b','b','client'),(3,'c@c','c','c','c','c','c','c','client'),(4,'Hola@hola','Hola','Chau','hola','asdasdl','oasd','JEJE','client'),(5,'pepe@gmail.com','pepe','sand','pepe','2390239203','20202020','Villa 1-11-14','client');
 =======
 INSERT INTO `user` VALUES (1,'a@a','a','a','a','a','a','a','client'),(2,'b@b','b','b','b','b','b','b','client'),(3,'pepe@gmail.com','Pepe','Sech','pepe','1209301923','46464646','Rivadavia 1121','client');
 >>>>>>> 8ea60ac (feat: orders can now be fully processed in the application. database dump updated with data samples for testing.)
+=======
+INSERT INTO `user` VALUES (1,'a@a','a','a','a','a','a','a','client'),(2,'b@b','b','b','b','b','b','b','client'),(3,'pepe@gmail.com','Pepe','Sech','pepe','1209301923','46464646','Rivadavia 1121','client'),(4,'santifilippini2005@gmail.com','Santiago','Filippini','123','3464440885','20202020','Rivadavia 1010','client');
+>>>>>>> 3fce8c4 (fix: solved a bug where logging out didn't delete the user from the session.)
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -293,8 +305,12 @@ CREATE TABLE `user_order` (
   CONSTRAINT `discount_fk` FOREIGN KEY (`discount_id`) REFERENCES `discount` (`discount_id`),
   CONSTRAINT `restaurant_id_fk` FOREIGN KEY (`restaurant_id`) REFERENCES `restaurant` (`restaurant_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `user_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
+<<<<<<< HEAD
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 >>>>>>> 8ea60ac (feat: orders can now be fully processed in the application. database dump updated with data samples for testing.)
+=======
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
+>>>>>>> 3fce8c4 (fix: solved a bug where logging out didn't delete the user from the session.)
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -303,7 +319,7 @@ CREATE TABLE `user_order` (
 
 LOCK TABLES `user_order` WRITE;
 /*!40000 ALTER TABLE `user_order` DISABLE KEYS */;
-INSERT INTO `user_order` VALUES (1,'2026-09-06 00:00:00',40370.4,1,3,1);
+INSERT INTO `user_order` VALUES (1,'2026-09-06 00:00:00',40370.4,1,3,1),(2,'2026-09-06 00:00:00',3870.96,NULL,1,1),(3,'2026-09-06 00:00:00',137801,3,3,1),(4,'2026-09-06 00:00:00',78683.7,2,3,1),(5,'2026-09-06 00:00:00',33136,1,4,1),(6,'2026-09-07 00:00:00',60573.6,2,4,1),(7,'2026-09-07 00:00:00',70284.9,2,3,1),(8,'2026-09-07 00:00:00',39466,1,3,1),(9,'2026-09-08 00:00:00',119685,3,4,1),(10,'2026-09-08 00:00:00',56555,2,4,1),(11,'2026-09-14 00:00:00',66391.7,2,4,1),(12,'2026-09-14 00:00:00',41911.4,1,3,1),(13,'2026-09-14 00:00:00',28351.3,NULL,3,1),(14,'2026-09-15 00:00:00',93578.6,2,4,1);
 /*!40000 ALTER TABLE `user_order` ENABLE KEYS */;
 UNLOCK TABLES;
 SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
@@ -318,7 +334,11 @@ SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 -- Dump completed on 2026-09-03 23:30:39
 =======
 -- Dump completed on 2026-09-06  0:32:40
 >>>>>>> 8ea60ac (feat: orders can now be fully processed in the application. database dump updated with data samples for testing.)
+=======
+-- Dump completed on 2026-09-15 21:59:20
+>>>>>>> 3fce8c4 (fix: solved a bug where logging out didn't delete the user from the session.)
