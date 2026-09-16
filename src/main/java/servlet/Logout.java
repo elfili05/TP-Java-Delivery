@@ -29,6 +29,7 @@ public class Logout extends HttpServlet {
 		request.getSession().removeAttribute("user");
 		request.getSession().removeAttribute("currentRestaurant");
 		request.getRequestDispatcher("index.html").forward(request, response);
+		System.out.println("User logged out successfully.");
 	}
 
 	/**

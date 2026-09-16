@@ -85,8 +85,11 @@ public class Signin extends HttpServlet {
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}	
-			
+				
+				if (request.getSession().getAttribute("user") == null) {
 				request.getSession().setAttribute("user", u);
+				}
+				
 				request.setAttribute("restaurants", restaurants);
 				request.getRequestDispatcher("WEB-INF/main_page.jsp").forward(request, response);
 				}
