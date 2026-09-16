@@ -97,6 +97,10 @@ public class Signin extends HttpServlet {
 				request.setAttribute("restaurants", restaurants);
 				request.getRequestDispatcher("WEB-INF/main_page.jsp").forward(request, response);
 				}
+			else if (u.getRole() == null) {
+			request.getRequestDispatcher("WEB-INF/signin_error.html").include(request, response);
+			//response.getWriter().append("Email o Contrasena incorrectos.");
+				}
 			else if (u.getRole().equalsIgnoreCase("admin")) {
 				// login de administrador: va directo al panel, no a la home de restaurantes.
 				request.getSession().setAttribute("user", u);
@@ -104,10 +108,7 @@ public class Signin extends HttpServlet {
 				}
 
 			}
-		else {
-			request.getRequestDispatcher("WEB-INF/signin_error.html").include(request, response);
-//			response.getWriter().append("Email o Contrasena incorrectos.");
-		}
+
 		
 	}
 	/* 2 formas de continuar flujo:
@@ -115,4 +116,4 @@ public class Signin extends HttpServlet {
 	 * el circuito va por dentro del servidor. solo se puede llegar mediante el servlet.
 	 * - redirect: se le envia la resp al cliente y se lo redirige a otra página.
 	 * */
-}
+
