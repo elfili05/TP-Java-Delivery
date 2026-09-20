@@ -77,8 +77,7 @@ public class Signin extends HttpServlet {
 
 		
 		if (u.getRole() != null) {
-			
-			if (u.getRole().equalsIgnoreCase("client") || u.getRole().equalsIgnoreCase("guest")) {
+			System.out.println("role: " + u.getRole());
 
 				try {
 					restaurants = ctrlRestaurant.getAvailable();
@@ -86,8 +85,6 @@ public class Signin extends HttpServlet {
 					e.printStackTrace();
 
 				}
-
-				}	
 				
 				if (request.getSession().getAttribute("user") == null) {
 
@@ -96,16 +93,16 @@ public class Signin extends HttpServlet {
 				
 				request.setAttribute("restaurants", restaurants);
 				request.getRequestDispatcher("WEB-INF/main_page.jsp").forward(request, response);
+
+				
+				
+
 				}
-			else if (u.getRole() == null) {
+			else {
 			request.getRequestDispatcher("WEB-INF/signin_error.html").include(request, response);
 			//response.getWriter().append("Email o Contrasena incorrectos.");
 				}
-			else if (u.getRole().equalsIgnoreCase("admin")) {
-				// login de administrador: va directo al panel, no a la home de restaurantes.
-				request.getSession().setAttribute("user", u);
-				request.getRequestDispatcher("WEB-INF/admin_panel.jsp").forward(request, response);
-				}
+
 
 			}
 

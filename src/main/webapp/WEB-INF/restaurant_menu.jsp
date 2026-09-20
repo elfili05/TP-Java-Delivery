@@ -176,7 +176,7 @@
             <% if (products == null || products.isEmpty()) { %>
                 <p class="menu-empty" role="status"><%= restaurantName %> no tiene productos para ofrecer.. por ahora.</p>
             <% } else { %>
-			   <%  if (!u.getRole().equalsIgnoreCase("guest")) { %>
+			   <%  if (!u.getRole().equalsIgnoreCase("guest") && !u.getRole().equalsIgnoreCase("admin")) { %>
                 <div class="order-actions">
                 	<button type="submit" class="order-button order-button--confirm">Confirmar pedido</button>
                 </div>

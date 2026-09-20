@@ -65,4 +65,30 @@ public class OrderRepository {
 		
 	}
 	
+	public void deliverOrder(Order orderToDeliver) throws SQLException {
+		PreparedStatement stmt = null;
+		
+		try {
+			stmt = DbConnector.getInstance().getConn().prepareStatement(
+					  "UPDATE user_order "
+					  + "SET status = 'delivered' "
+					  + "WHERE order_id = ?"
+					);
+			stmt.setInt(1, orderToDeliver.getOrder_id());
+			stmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			
+		} finally {
+			try {
+				if (stmt != null) { stmt.close(); }
+				DbConnector.getInstance().releaseConn();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
 }

@@ -10,13 +10,14 @@ public class Order {
 	private Restaurant restaurant;
 	private LinkedList<OrderDetail> order_details;
 	private Discount discount;
+	private String status;
 	
 	
 	public Order(User user, Restaurant restaurant) {
 		this.order_date = LocalDate.now();
 		this.user = user;
 		this.restaurant = restaurant;
-		
+		this.setStatus("pending");
 	}
 	
 	
@@ -80,6 +81,16 @@ public class Order {
 			return this.getTotal() * (1 - this.discount.getDiscount_percentage());
 		}
 		else { return this.getTotal(); }
+	}
+
+
+	public String getStatus() {
+		return status;
+	}
+
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	
 }
