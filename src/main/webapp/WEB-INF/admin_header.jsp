@@ -12,7 +12,7 @@
 	</nav>
 	
 	<div class="admin-topbar__right">
-		<span class="admin-welcome">Hola, <strong><%= u.getName() %></strong></span>
+		<a href="MainHome" class="admin-welcome" title="Volver al menú principal">Hola, <strong><%= u.getName() %></strong></a>
 		<form action="logout" method="post">
 			<button type="submit" class="admin-logout">Cerrar sesión</button>
 		</form>
