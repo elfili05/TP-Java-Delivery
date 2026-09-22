@@ -54,7 +54,7 @@
 								</div>
 								<div class="admin-user-item__actions">
 									<a href="UserEdit?email=<%= user.getEmail() %>" class="admin-action-link">Editar</a>
-									<form action="UserDelete" method="post" onsubmit="return confirm('¿Eliminar este usuario?');">
+									<form action="UserDelete" method="post" data-confirm="¿Eliminar este usuario?">
 										<input type="hidden" name="email" value="<%= user.getEmail() %>" />
 										<button type="submit" class="admin-action-link admin-action-link--danger">Eliminar</button>
 									</form>
@@ -69,6 +69,42 @@
 				<% } %>
 			</section>
 		</main>
+
+		<dialog id="confirmDeleteModal" class="admin-modal">
+			<div class="admin-modal__content">
+				<h2>Confirmar</h2>
+				<p id="confirmDeleteMessage"></p>
+				<div class="admin-modal__actions">
+					<button type="button" id="confirmDeleteCancel" class="admin-action-link">Cancelar</button>
+					<button type="button" id="confirmDeleteAccept" class="admin-action-link admin-action-link--danger">Eliminar</button>
+				</div>
+			</div>
+		</dialog>
 	</div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			// modal de confirmación para los "Eliminar" (reemplaza el confirm() del navegador)
+			const confirmModal = document.getElementById('confirmDeleteModal');
+			const confirmMessage = document.getElementById('confirmDeleteMessage');
+			const confirmAccept = document.getElementById('confirmDeleteAccept');
+			const confirmCancel = document.getElementById('confirmDeleteCancel');
+			let formPendingDelete = null;
+
+			document.querySelectorAll('form[data-confirm]').forEach((form) => {
+				form.addEventListener('submit', (e) => {
+					e.preventDefault();
+					formPendingDelete = form;
+					confirmMessage.textContent = form.getAttribute('data-confirm');
+					confirmModal.showModal();
+				});
+			});
+			confirmAccept.addEventListener('click', () => {
+				confirmModal.close();
+				if (formPendingDelete) { formPendingDelete.submit(); }
+			});
+			confirmCancel.addEventListener('click', () => confirmModal.close());
+		});
+	</script>
 </body>
 </html>

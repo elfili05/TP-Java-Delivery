@@ -54,7 +54,7 @@
 								</div>
 								<div class="admin-restaurant-item__actions">
 									<a href="RestaurantEdit?id=<%= restaurant.getRestaurant_id() %>" class="admin-action-link">Editar</a>
-									<form action="RestaurantDelete" method="post" onsubmit="return confirm('¿Eliminar este restaurante?');">
+									<form action="RestaurantDelete" method="post" data-confirm="¿Eliminar este restaurante?">
 										<input type="hidden" name="restaurant_id" value="<%= restaurant.getRestaurant_id() %>" />
 										<button type="submit" class="admin-action-link admin-action-link--danger">Eliminar</button>
 									</form>
@@ -93,6 +93,17 @@
 				</form>
 			</div>
 		</dialog>
+
+		<dialog id="confirmDeleteModal" class="admin-modal">
+			<div class="admin-modal__content">
+				<h2>Confirmar</h2>
+				<p id="confirmDeleteMessage"></p>
+				<div class="admin-modal__actions">
+					<button type="button" id="confirmDeleteCancel" class="admin-action-link">Cancelar</button>
+					<button type="button" id="confirmDeleteAccept" class="admin-action-link admin-action-link--danger">Eliminar</button>
+				</div>
+			</div>
+		</dialog>
 	</div>
 
 	<script>
@@ -111,6 +122,44 @@
 			if (closeBtn) {
 				closeBtn.addEventListener('click', () => modal.close());
 			}
+
+			// modal de confirmación para los "Eliminar" (reemplaza el confirm() del navegador)
+			const confirmModal = document.getElementById('confirmDeleteModal');
+			const confirmMessage = document.getElementById('confirmDeleteMessage');
+			const confirmAccept = document.getElementById('confirmDeleteAccept');
+			const confirmCancel = document.getElementById('confirmDeleteCancel');
+			let formPendingDelete = null;
+
+			document.querySelectorAll('form[data-confirm]').forEach((form) => {
+				form.addEventListener('submit', (e) => {
+					e.preventDefault();
+					formPendingDelete = form;
+					confirmMessage.textContent = form.getAttribute('data-confirm');
+					confirmModal.showModal();
+				});
+			});
+			confirmAccept.addEventListener('click', () => {
+				confirmModal.close();
+				if (formPendingDelete) { formPendingDelete.submit(); }
+			});
+			confirmCancel.addEventListener('click', () => confirmModal.close());
+
+			// reemplaza el globo nativo de "completá este campo" por un mensaje con el estilo de la app
+			document.querySelectorAll('form.admin-form').forEach((form) => {
+				form.setAttribute('novalidate', 'novalidate');
+				form.addEventListener('submit', (e) => {
+					if (!form.checkValidity()) {
+						e.preventDefault();
+						let errorEl = form.querySelector('.admin-form__error');
+						if (!errorEl) {
+							errorEl = document.createElement('p');
+							errorEl.className = 'admin-message admin-form__error';
+							form.prepend(errorEl);
+						}
+						errorEl.textContent = 'Completá todos los campos obligatorios.';
+					}
+				});
+			});
 		});
 	</script>
 </body>

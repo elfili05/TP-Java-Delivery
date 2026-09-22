@@ -63,5 +63,26 @@
 			</section>
 		</main>
 	</div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			// reemplaza el globo nativo de "completá este campo" por un mensaje con el estilo de la app
+			document.querySelectorAll('form.admin-form').forEach((form) => {
+				form.setAttribute('novalidate', 'novalidate');
+				form.addEventListener('submit', (e) => {
+					if (!form.checkValidity()) {
+						e.preventDefault();
+						let errorEl = form.querySelector('.admin-form__error');
+						if (!errorEl) {
+							errorEl = document.createElement('p');
+							errorEl.className = 'admin-message admin-form__error';
+							form.prepend(errorEl);
+						}
+						errorEl.textContent = 'Completá todos los campos obligatorios.';
+					}
+				});
+			});
+		});
+	</script>
 </body>
 </html>
