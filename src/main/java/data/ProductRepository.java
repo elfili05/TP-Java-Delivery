@@ -112,10 +112,8 @@ public class ProductRepository {
 		
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
-					  "SELECT product_id, description, price, pt.name"
-					+ "FROM product prod"
-					+ "INNER JOIN product_type pt "
-					+ "     ON prod.product_type_id = pt.product_type_id"
+					  "SELECT product_id, description, price "
+					+ "FROM product "
 					+ "WHERE product_id = ?"
 					);
 			stmt.setInt(1, productId);
