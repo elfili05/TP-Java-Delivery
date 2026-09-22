@@ -2,6 +2,7 @@ package main.java.servlet;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.LinkedList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import main.java.entities.Restaurant;
+import main.java.entities.Schedule;
 import main.java.entities.User;
 import main.java.logic.RestaurantCRUD;
 
@@ -46,13 +48,25 @@ public class RestaurantEdit extends HttpServlet {
 			return;
 		}
 
+		forwardWithRestaurant(request, response, restaurantId);
+	}
+
+	// recarga el restaurante y sus horarios, y vuelve a la pantalla de edición; la comparten los servlets de horarios.
+	static void forwardWithRestaurant(HttpServletRequest request, HttpServletResponse response, Integer restaurantId) throws ServletException, IOException {
+		if (restaurantId == null) {
+			response.sendRedirect("AdminRestaurants");
+			return;
+		}
+
 		RestaurantCRUD ctrlRestaurant = new RestaurantCRUD();
 		Restaurant restaurantToFind = new Restaurant();
 		restaurantToFind.setRestaurant_id(restaurantId);
 
 		Restaurant restaurant = null;
+		LinkedList<Schedule> schedules = new LinkedList<Schedule>();
 		try {
 			restaurant = ctrlRestaurant.getRestaurant(restaurantToFind);
+			schedules = ctrlRestaurant.getSchedules(restaurantId);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -63,6 +77,7 @@ public class RestaurantEdit extends HttpServlet {
 		}
 
 		request.setAttribute("restaurant", restaurant);
+		request.setAttribute("schedules", schedules);
 		request.getRequestDispatcher("WEB-INF/admin_restaurant_edit.jsp").forward(request, response);
 	}
 
