@@ -53,7 +53,8 @@ public class Signin extends HttpServlet {
 		
 		
 		
-		u.setRole(request.getParameter("role")); // solo en el caso de "guest" se usará esta parte.
+		// el rol NUNCA se toma del request: sale de la base de datos. Solo "guest" (botón de invitado) se acepta como valor pedido.
+		String requestedRole = request.getParameter("role");
 		u.setEmail(request.getParameter("email"));
 		u.setPassword(request.getParameter("password"));
 		
@@ -64,11 +65,15 @@ public class Signin extends HttpServlet {
 		try {
 			u = ctrlUser.validateUser(u);
 		} catch (SQLException e) {
-			response.getWriter().append(e.toString());
-			System.out.println("exception");
-			//e.printStackTrace();
+			// el detalle queda en el servidor; al usuario no se le muestra la excepción.
+			e.printStackTrace();
 		}
 		
+		// validateUser devuelve el mismo objeto sin rol si las credenciales no existen: solo ahí se permite entrar como invitado.
+		if (u.getRole() == null && "guest".equalsIgnoreCase(requestedRole)) {
+			u.setRole("guest");
+		}
+
 		if (request.getSession().getAttribute("user") != null) {
 			u = (User) request.getSession().getAttribute("user");
 			
