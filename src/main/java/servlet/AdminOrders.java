@@ -15,16 +15,16 @@ import main.java.entities.User;
 import main.java.logic.OrderCRUD;
 
 /**
- * Servlet implementation class AdminHome
+ * Servlet implementation class AdminOrders
  */
-@WebServlet({ "/AdminHome", "/adminhome", "/adminHome", "/Adminhome", "/ADMINHOME" })
-public class AdminHome extends HttpServlet {
+@WebServlet({ "/AdminOrders", "/adminorders", "/adminOrders", "/Adminorders", "/ADMINORDERS" })
+public class AdminOrders extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public AdminHome() {
+    public AdminOrders() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -32,7 +32,7 @@ public class AdminHome extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	// punto de entrada al panel (inicio) para un admin ya logueado; es a donde vuelve el logo del header.
+	// lista los pedidos pendientes y entregados para la pantalla "Gestionar pedidos".
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User u = (User) request.getSession().getAttribute("user");
 
@@ -41,22 +41,25 @@ public class AdminHome extends HttpServlet {
 			return;
 		}
 
-		forwardWithPendingOrders(request, response);
+		forwardWithOrders(request, response);
 	}
 
-	// carga los pedidos pendientes y muestra el inicio del panel; la usa también OrderDeliver al volver a "home".
-	static void forwardWithPendingOrders(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	// recarga ambas listas de pedidos; la comparte OrderDeliver para volver a esta pantalla tras un POST.
+	static void forwardWithOrders(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		OrderCRUD ctrlOrder = new OrderCRUD();
 
 		LinkedList<Order> pendingOrders = new LinkedList<Order>();
+		LinkedList<Order> deliveredOrders = new LinkedList<Order>();
 		try {
 			pendingOrders = ctrlOrder.getOrdersByStatus("pending");
+			deliveredOrders = ctrlOrder.getOrdersByStatus("delivered");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
 		request.setAttribute("pendingOrders", pendingOrders);
-		request.getRequestDispatcher("WEB-INF/admin_panel.jsp").forward(request, response);
+		request.setAttribute("deliveredOrders", deliveredOrders);
+		request.getRequestDispatcher("WEB-INF/admin_orders.jsp").forward(request, response);
 	}
 
 }

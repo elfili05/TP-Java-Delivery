@@ -15,19 +15,21 @@
 		return;
 	}
 	String message = (String) request.getAttribute("message");
+	LinkedList<Order> pendingOrders = (LinkedList<Order>) request.getAttribute("pendingOrders");
+	LinkedList<Order> deliveredOrders = (LinkedList<Order>) request.getAttribute("deliveredOrders");
 
-	// variables que lee el fragmento admin_orders_list.jsp.
-	LinkedList<Order> orders = (LinkedList<Order>) request.getAttribute("pendingOrders");
-	boolean showDeliver = true;
-	String ordersFrom = "home";
-	String ordersEmptyText = "No hay pedidos pendientes.";
+	// variables que lee el fragmento admin_orders_list.jsp antes de cada include.
+	LinkedList<Order> orders;
+	boolean showDeliver;
+	String ordersFrom = "orders";
+	String ordersEmptyText;
 %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Java Delivery | Panel de Administrador</title>
+	<title>Java Delivery | Gestionar Pedidos</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 	<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -46,6 +48,14 @@
 					<p class="admin-message"><%= HtmlUtils.escape(message) %></p>
 				<% } %>
 
+				<% orders = pendingOrders; showDeliver = true; ordersEmptyText = "No hay pedidos pendientes."; %>
+				<%@ include file="admin_orders_list.jsp" %>
+			</section>
+
+			<section class="admin-panel" aria-label="Pedidos entregados">
+				<h1>Pedidos entregados</h1>
+
+				<% orders = deliveredOrders; showDeliver = false; ordersEmptyText = "No hay pedidos entregados."; %>
 				<%@ include file="admin_orders_list.jsp" %>
 			</section>
 		</main>
