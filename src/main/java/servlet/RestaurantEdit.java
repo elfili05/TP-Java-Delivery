@@ -5,20 +5,25 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
 import main.java.entities.Restaurant;
 import main.java.entities.Schedule;
 import main.java.entities.User;
 import main.java.logic.RestaurantCRUD;
+import main.java.logic.RestaurantImageStorage;
 
 /**
  * Servlet implementation class RestaurantEdit
  */
 @WebServlet({ "/RestaurantEdit", "/restaurantedit", "/restaurantEdit", "/Restaurantedit", "/RESTAURANTEDIT" })
+// archivo de hasta 2 MB; el request completo tiene un margen extra para el resto del formulario.
+@MultipartConfig(maxFileSize = 2097152, maxRequestSize = 2162688)
 public class RestaurantEdit extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -93,24 +98,93 @@ public class RestaurantEdit extends HttpServlet {
 			return;
 		}
 
-		String name = request.getParameter("name");
-		String address = request.getParameter("address");
-		String imageUrl = request.getParameter("image_url");
-		Integer restaurantId = parseId(request.getParameter("restaurant_id"));
-
 		RestaurantCRUD ctrlRestaurant = new RestaurantCRUD();
 
-		Boolean updated = false;
-		if (restaurantId != null && name != null && !name.trim().isEmpty() && address != null && !address.trim().isEmpty()) {
-			Restaurant restaurant = new Restaurant();
-			restaurant.setRestaurant_id(restaurantId);
-			restaurant.setName(name);
-			restaurant.setAddress(address);
-			restaurant.setImage_url(imageUrl);
+		String name = null;
+		String address = null;
+		Integer restaurantId = null;
+		Part imagePart = null;
+		try {
+			name = request.getParameter("name");
+			address = request.getParameter("address");
+			restaurantId = parseId(request.getParameter("restaurant_id"));
+			// si el request no vino como multipart (formulario alterado), no hay archivo que leer.
+			if (request.getContentType() != null && request.getContentType().startsWith("multipart/")) {
+				imagePart = request.getPart("image");
+			}
+		} catch (IllegalStateException e) {
+			// el contenedor aborta el parseo del request cuando un archivo supera el tope de multipart.
+			request.setAttribute("message", "El archivo es demasiado grande (máximo 2 MB).");
+			RestaurantCreate.forwardWithRestaurants(request, response, ctrlRestaurant);
+			return;
+		}
+
+		if (name == null || name.trim().isEmpty() || address == null || address.trim().isEmpty()) {
+			request.setAttribute("message", "El nombre y la dirección son obligatorios.");
+			RestaurantCreate.forwardWithRestaurants(request, response, ctrlRestaurant);
+			return;
+		}
+
+		if (restaurantId == null) {
+			request.setAttribute("message", "No se pudo actualizar el restaurante.");
+			RestaurantCreate.forwardWithRestaurants(request, response, ctrlRestaurant);
+			return;
+		}
+
+		// se lee el restaurante antes de escribir nada en disco: si el id no existe no se guarda el archivo,
+		// y si no viene imagen nueva se conserva la que ya tiene.
+		Restaurant current = null;
+		try {
+			Restaurant restaurantToFind = new Restaurant();
+			restaurantToFind.setRestaurant_id(restaurantId);
+			current = ctrlRestaurant.getRestaurant(restaurantToFind);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		if (current == null) {
+			request.setAttribute("message", "El restaurante indicado no existe.");
+			RestaurantCreate.forwardWithRestaurants(request, response, ctrlRestaurant);
+			return;
+		}
+
+		String newImageUrl = null;
+		if (RestaurantImageStorage.hasImage(imagePart)) {
 			try {
-				updated = ctrlRestaurant.updateRestaurant(restaurant);
-			} catch (SQLException e) {
+				newImageUrl = RestaurantImageStorage.store(imagePart, getServletContext());
+			} catch (RestaurantImageStorage.ImageUploadException e) {
+				request.setAttribute("message", e.getMessage());
+				RestaurantCreate.forwardWithRestaurants(request, response, ctrlRestaurant);
+				return;
+			} catch (IOException e) {
 				e.printStackTrace();
+				request.setAttribute("message", "No se pudo guardar la imagen.");
+				RestaurantCreate.forwardWithRestaurants(request, response, ctrlRestaurant);
+				return;
+			}
+		}
+
+		Restaurant restaurant = new Restaurant();
+		restaurant.setRestaurant_id(restaurantId);
+		restaurant.setName(name);
+		restaurant.setAddress(address);
+		restaurant.setImage_url(newImageUrl != null ? newImageUrl : current.getImage_url());
+
+		Boolean updated = false;
+		try {
+			updated = ctrlRestaurant.updateRestaurant(restaurant);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		if (newImageUrl != null) {
+			if (updated) {
+				// la BD ya quedó apuntando a la imagen nueva: recién ahora se borra la anterior,
+				// solo si la generó la app (las semilla restaurantN.jpg nunca se tocan).
+				RestaurantImageStorage.deleteIfGenerated(current.getImage_url(), getServletContext());
+			} else {
+				// el UPDATE falló: el archivo recién escrito no puede quedar huérfano en uploads/.
+				RestaurantImageStorage.deleteIfGenerated(newImageUrl, getServletContext());
 			}
 		}
 

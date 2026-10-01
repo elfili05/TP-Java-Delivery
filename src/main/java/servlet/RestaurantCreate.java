@@ -5,19 +5,24 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
 import main.java.entities.Restaurant;
 import main.java.entities.User;
 import main.java.logic.RestaurantCRUD;
+import main.java.logic.RestaurantImageStorage;
 
 /**
  * Servlet implementation class RestaurantCreate
  */
 @WebServlet({ "/RestaurantCreate", "/restaurantcreate", "/restaurantCreate", "/Restaurantcreate", "/RESTAURANTCREATE" })
+// archivo de hasta 2 MB; el request completo tiene un margen extra para el resto del formulario.
+@MultipartConfig(maxFileSize = 2097152, maxRequestSize = 2162688)
 public class RestaurantCreate extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -33,6 +38,13 @@ public class RestaurantCreate extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u = (User) request.getSession().getAttribute("user");
+
+		if (u == null || !u.getRole().equalsIgnoreCase("admin")) {
+			response.sendRedirect("index.html");
+			return;
+		}
+
 		response.sendRedirect("AdminRestaurants");
 	}
 
@@ -49,16 +61,46 @@ public class RestaurantCreate extends HttpServlet {
 			return;
 		}
 
-		String name = request.getParameter("name");
-		String address = request.getParameter("address");
-		String imageUrl = request.getParameter("image_url");
-
 		RestaurantCRUD ctrlRestaurant = new RestaurantCRUD();
+
+		String name = null;
+		String address = null;
+		Part imagePart = null;
+		try {
+			name = request.getParameter("name");
+			address = request.getParameter("address");
+			// si el request no vino como multipart (formulario alterado), no hay archivo que leer.
+			if (request.getContentType() != null && request.getContentType().startsWith("multipart/")) {
+				imagePart = request.getPart("image");
+			}
+		} catch (IllegalStateException e) {
+			// el contenedor aborta el parseo del request cuando un archivo supera el tope de multipart.
+			request.setAttribute("message", "El archivo es demasiado grande (máximo 2 MB).");
+			forwardWithRestaurants(request, response, ctrlRestaurant);
+			return;
+		}
 
 		if (name == null || name.trim().isEmpty() || address == null || address.trim().isEmpty()) {
 			request.setAttribute("message", "El nombre y la dirección son obligatorios.");
 			forwardWithRestaurants(request, response, ctrlRestaurant);
 			return;
+		}
+
+		// primero se valida y se guarda la imagen (opcional); recién después se toca la BD.
+		String imageUrl = null;
+		if (RestaurantImageStorage.hasImage(imagePart)) {
+			try {
+				imageUrl = RestaurantImageStorage.store(imagePart, getServletContext());
+			} catch (RestaurantImageStorage.ImageUploadException e) {
+				request.setAttribute("message", e.getMessage());
+				forwardWithRestaurants(request, response, ctrlRestaurant);
+				return;
+			} catch (IOException e) {
+				e.printStackTrace();
+				request.setAttribute("message", "No se pudo guardar la imagen.");
+				forwardWithRestaurants(request, response, ctrlRestaurant);
+				return;
+			}
 		}
 
 		Restaurant restaurant = new Restaurant();
@@ -71,6 +113,11 @@ public class RestaurantCreate extends HttpServlet {
 			created = ctrlRestaurant.addRestaurant(restaurant);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}
+
+		if (!created && imageUrl != null) {
+			// el INSERT falló: el archivo recién escrito no puede quedar huérfano en uploads/.
+			RestaurantImageStorage.deleteIfGenerated(imageUrl, getServletContext());
 		}
 
 		request.setAttribute("message", created ? "Restaurante creado correctamente." : "No se pudo crear el restaurante.");

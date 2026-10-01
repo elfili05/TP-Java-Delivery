@@ -9,8 +9,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import main.java.entities.Restaurant;
 import main.java.entities.User;
 import main.java.logic.RestaurantCRUD;
+import main.java.logic.RestaurantImageStorage;
 
 /**
  * Servlet implementation class RestaurantDelete
@@ -42,13 +44,26 @@ public class RestaurantDelete extends HttpServlet {
 		RestaurantCRUD ctrlRestaurant = new RestaurantCRUD();
 
 		Boolean deleted = false;
+		String imageUrl = null;
 		try {
 			int restaurantId = Integer.parseInt(request.getParameter("restaurant_id"));
+			// se lee el restaurante antes de borrarlo para saber si tenía una imagen subida por la app.
+			Restaurant restaurantToFind = new Restaurant();
+			restaurantToFind.setRestaurant_id(restaurantId);
+			Restaurant restaurant = ctrlRestaurant.getRestaurant(restaurantToFind);
+			if (restaurant != null) {
+				imageUrl = restaurant.getImage_url();
+			}
 			deleted = ctrlRestaurant.deleteRestaurant(restaurantId);
 		} catch (NumberFormatException e) {
 			// restaurant_id ausente o inválido: se trata igual que un borrado fallido.
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}
+
+		if (deleted) {
+			// la BD ya confirmó el borrado: se limpia la imagen solo si la generó la app (nunca las semilla).
+			RestaurantImageStorage.deleteIfGenerated(imageUrl, getServletContext());
 		}
 
 		request.setAttribute("message", deleted ? "Restaurante eliminado correctamente." : "No se pudo eliminar el restaurante.");
