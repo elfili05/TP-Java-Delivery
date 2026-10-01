@@ -42,25 +42,29 @@ public class ProductTypeRepository {
 		return productTypes;
 	}
 	
-	public void addProductType(ProductType productType) throws SQLException {
+	public Boolean addProductType(ProductType productType) throws SQLException {
 		PreparedStatement stmt = null;
+		Boolean result = false;
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
 					"INSERT INTO product_type (name) VALUES (?)"
 					);
 			stmt.setString(1, productType.getName());
 			stmt.executeUpdate();
+			result = true;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			
+			result = false;
 		} finally {
 			try {
 				if (stmt != null) { stmt.close(); }
 				DbConnector.getInstance().releaseConn();
 			} catch (SQLException e) {
 				e.printStackTrace();
+				result = false;
 			}
 		}
+		return result;
 	}
 	
 	public ProductType getOne(int productTypeId) throws SQLException{
@@ -97,47 +101,56 @@ public class ProductTypeRepository {
 		return productType;
 	}
 	
-	public void deleteProductType(int productTypeId) throws SQLException{
+	public Boolean deleteProductType(int productTypeId) throws SQLException{
 		PreparedStatement stmt = null;
+		Boolean result = false;
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
 					"DELETE FROM product_type WHERE product_type_id = ?"
 					);
 			stmt.setInt(1, productTypeId);
-			stmt.executeUpdate();
+			result = stmt.executeUpdate() > 0;
+		} catch (SQLIntegrityConstraintViolationException e) {
+			// la FK de product impide borrar un tipo en uso: se propaga para que logic lo traduzca a un mensaje controlado.
+			throw e;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			
+			result = false;
 		} finally {
 			try {
 				if (stmt != null) { stmt.close(); }
 				DbConnector.getInstance().releaseConn();
 			} catch (SQLException e) {
 				e.printStackTrace();
+				result = false;
 			}
 		}
+		return result;
 	}
 	
-	public void updateProductType(ProductType productType) throws SQLException{
+	public Boolean updateProductType(ProductType productType) throws SQLException{
 		PreparedStatement stmt = null;
+		Boolean result = false;
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
 					"UPDATE product_type SET name = ? WHERE product_type_id = ?"
 					);
 			stmt.setString(1, productType.getName());
 			stmt.setInt(2, productType.getProduct_type_id());
-			stmt.executeUpdate();
+			result = stmt.executeUpdate() > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			
+			result = false;
 		} finally {
 			try {
 				if (stmt != null) { stmt.close(); }
 				DbConnector.getInstance().releaseConn();
 			} catch (SQLException e) {
 				e.printStackTrace();
+				result = false;
 			}
 		}
+		return result;
 	}
 	
 	public void setProductType(Product productToSearch) {

@@ -10,6 +10,7 @@
 		<a href="AdminRestaurants" class="admin-nav__link">Gestionar Restaurantes</a>
 		<a href="AdminUsers" class="admin-nav__link">Gestionar Usuarios</a>
 		<a href="AdminOrders" class="admin-nav__link">Gestionar Pedidos</a>
+		<a href="AdminProductTypes" class="admin-nav__link">Tipos de Producto</a>
 	</nav>
 	
 	<div class="admin-topbar__right">
