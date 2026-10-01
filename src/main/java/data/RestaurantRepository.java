@@ -2,6 +2,7 @@ package main.java.data;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.LinkedList;
 
 import main.java.entities.Restaurant;
@@ -266,9 +267,7 @@ public class RestaurantRepository {
 			stmt.setTime(3, schedule.getEnd_time());
 			stmt.setInt(4, schedule.getRestaurant_id());
 			stmt.setInt(5, schedule.getSchedule_number());
-			stmt.executeUpdate();
-
-			result = true;
+			result = stmt.executeUpdate() > 0;
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -296,8 +295,7 @@ public class RestaurantRepository {
 					);
 			stmt.setInt(1, restaurantId);
 			stmt.setInt(2, scheduleNumber);
-			stmt.executeUpdate();
-			result = true;
+			result = stmt.executeUpdate() > 0;
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -324,9 +322,11 @@ public class RestaurantRepository {
 					  "DELETE FROM restaurant WHERE restaurant_id = ?"
 					);
 			stmt.setInt(1, restaurantId);
-			stmt.executeUpdate();
-			result = true;
+			result = stmt.executeUpdate() > 0;
 			
+		} catch (SQLIntegrityConstraintViolationException e) {
+			// la FK de product/user_order impide borrar un restaurante con datos asociados: se propaga para mostrar un mensaje claro.
+			throw e;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			result = false;
@@ -357,8 +357,7 @@ public class RestaurantRepository {
 			stmt.setString(2, restaurant.getAddress());
 			stmt.setString(3, restaurant.getImage_url());
 			stmt.setInt(4, restaurant.getRestaurant_id());
-			stmt.executeUpdate();
-			result = true;
+			result = stmt.executeUpdate() > 0;
 			
 		} catch (SQLException e) {
 			e.printStackTrace();

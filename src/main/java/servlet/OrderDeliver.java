@@ -62,14 +62,13 @@ public class OrderDeliver extends HttpServlet {
 		} else {
 			OrderCRUD ctrlOrder = new OrderCRUD();
 
-			Boolean delivered = false;
 			try {
-				delivered = ctrlOrder.deliverOrder(orderId);
+				Boolean delivered = ctrlOrder.deliverOrder(orderId);
+				message = delivered ? "Pedido marcado como entregado." : "El pedido ya estaba entregado o no existe.";
 			} catch (SQLException e) {
 				e.printStackTrace();
+				message = "No se pudo marcar el pedido como entregado. Intentá de nuevo.";
 			}
-
-			message = delivered ? "Pedido marcado como entregado." : "El pedido ya estaba entregado o no existe.";
 		}
 
 		request.setAttribute("message", message);

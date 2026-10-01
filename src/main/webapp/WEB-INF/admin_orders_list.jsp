@@ -26,7 +26,7 @@
 						<p><%= detail.getQuantity() %> &times; <%= HtmlUtils.escape(detail.getProduct().getDescription()) %> &mdash; $<%= String.format("%.2f", detail.getSubtotal()) %></p>
 					<% } %>
 					<% if (order.getDiscount() != null) { %>
-						<p>Descuento aplicado: <%= BigDecimal.valueOf(order.getDiscount().getDiscount_percentage() * 100).setScale(2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString() %>%</p>
+						<p>Descuento aplicado: <%= BigDecimal.valueOf(order.getDiscount().getDiscount_percentage() * 100).setScale(2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString().replace('.', ',') %>%</p>
 					<% } %>
 					<p><strong>Total: $<%= String.format("%.2f", order.getTotalWithDiscount()) %></strong></p>
 				</div>

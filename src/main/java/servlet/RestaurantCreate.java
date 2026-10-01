@@ -76,12 +76,14 @@ public class RestaurantCreate extends HttpServlet {
 		} catch (IllegalStateException e) {
 			// el contenedor aborta el parseo del request cuando un archivo supera el tope de multipart.
 			request.setAttribute("message", "El archivo es demasiado grande (máximo 2 MB).");
+			request.setAttribute("reopenCreateModal", true);
 			forwardWithRestaurants(request, response, ctrlRestaurant);
 			return;
 		}
 
 		if (name == null || name.trim().isEmpty() || address == null || address.trim().isEmpty()) {
 			request.setAttribute("message", "El nombre y la dirección son obligatorios.");
+			request.setAttribute("reopenCreateModal", true);
 			forwardWithRestaurants(request, response, ctrlRestaurant);
 			return;
 		}
@@ -93,11 +95,13 @@ public class RestaurantCreate extends HttpServlet {
 				imageUrl = RestaurantImageStorage.store(imagePart, getServletContext());
 			} catch (RestaurantImageStorage.ImageUploadException e) {
 				request.setAttribute("message", e.getMessage());
+				request.setAttribute("reopenCreateModal", true);
 				forwardWithRestaurants(request, response, ctrlRestaurant);
 				return;
 			} catch (IOException e) {
 				e.printStackTrace();
 				request.setAttribute("message", "No se pudo guardar la imagen.");
+				request.setAttribute("reopenCreateModal", true);
 				forwardWithRestaurants(request, response, ctrlRestaurant);
 				return;
 			}
@@ -121,6 +125,9 @@ public class RestaurantCreate extends HttpServlet {
 		}
 
 		request.setAttribute("message", created ? "Restaurante creado correctamente." : "No se pudo crear el restaurante.");
+		if (!created) {
+			request.setAttribute("reopenCreateModal", true);
+		}
 		forwardWithRestaurants(request, response, ctrlRestaurant);
 	}
 

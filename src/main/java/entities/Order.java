@@ -66,7 +66,7 @@ public class Order {
 
 
 	public double getTotal() {
-		if (order_details != null || !order_details.isEmpty()) {
+		if (order_details != null && !order_details.isEmpty()) {
 			double total = 0;
 			for (OrderDetail order_detail : order_details) {
 				total += order_detail.getSubtotal();

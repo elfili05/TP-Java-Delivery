@@ -44,6 +44,11 @@ public class AdminOrders extends HttpServlet {
 		forwardWithOrders(request, response);
 	}
 
+	// un POST (a mano o por un formulario alterado) se trata igual que un GET: valida el rol y solo muestra la lista.
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
 	// recarga ambas listas de pedidos; la comparte OrderDeliver para volver a esta pantalla tras un POST.
 	static void forwardWithOrders(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		OrderCRUD ctrlOrder = new OrderCRUD();

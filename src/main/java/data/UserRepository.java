@@ -123,9 +123,7 @@ public class UserRepository {
 					"delete from user where email=?"
 					);
 			stmt.setString(1, email);
-			stmt.executeUpdate();
-			
-			result = true;
+			result = stmt.executeUpdate() > 0;
 			
 		} catch (SQLException e1) {
 			e1.printStackTrace();

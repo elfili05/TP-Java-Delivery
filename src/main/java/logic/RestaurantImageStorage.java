@@ -176,7 +176,9 @@ public class RestaurantImageStorage {
 			case "webp":
 				return content.length >= 12
 						&& content[0] == 'R' && content[1] == 'I' && content[2] == 'F' && content[3] == 'F'
-						&& content[8] == 'W' && content[9] == 'E' && content[10] == 'B' && content[11] == 'P';
+						&& content[8] == 'W' && content[9] == 'E' && content[10] == 'B' && content[11] == 'P'
+						// la cabecera RIFF declara el tamaño del resto del archivo (4 bytes little-endian): debe coincidir.
+						&& (content[4] & 0xFFL | (content[5] & 0xFFL) << 8 | (content[6] & 0xFFL) << 16 | (content[7] & 0xFFL) << 24) == content.length - 8;
 			case "png":
 				return content.length >= 4
 						&& (content[0] & 0xFF) == 0x89 && content[1] == 'P' && content[2] == 'N' && content[3] == 'G';

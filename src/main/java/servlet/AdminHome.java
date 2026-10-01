@@ -44,6 +44,11 @@ public class AdminHome extends HttpServlet {
 		forwardWithPendingOrders(request, response);
 	}
 
+	// un POST (a mano o por un formulario alterado) se trata igual que un GET: valida el rol y solo muestra la lista.
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
 	// carga los pedidos pendientes y muestra el inicio del panel; la usa también OrderDeliver al volver a "home".
 	static void forwardWithPendingOrders(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		OrderCRUD ctrlOrder = new OrderCRUD();

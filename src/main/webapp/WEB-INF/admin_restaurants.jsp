@@ -11,6 +11,8 @@
 		return;
 	}
 	String message = (String) request.getAttribute("message");
+	// solo los errores del alta reabren el modal; el resto de los mensajes (editar, eliminar, éxito) van arriba del listado.
+	boolean reopenCreateModal = request.getAttribute("reopenCreateModal") != null;
 	String query = (String) request.getAttribute("query");
 	LinkedList<Restaurant> restaurants = (LinkedList<Restaurant>) request.getAttribute("restaurants");
 %>
@@ -36,6 +38,10 @@
 					<h1>Restaurantes</h1>
 					<button type="button" id="openCreateRestaurant" class="admin-submit admin-submit--small">Crear restaurante</button>
 				</div>
+
+				<% if (message != null && !reopenCreateModal) { %>
+					<p class="admin-message"><%= HtmlUtils.escape(message) %></p>
+				<% } %>
 
 				<form action="AdminRestaurants" method="get" class="admin-search">
 					<input type="text" name="q" value="<%= HtmlUtils.escape(query) %>" placeholder="Buscar por nombre o dirección..." />
@@ -71,12 +77,12 @@
 			</section>
 		</main>
 
-		<dialog id="createRestaurantModal" class="admin-modal" <%= message != null ? "open" : "" %>>
+		<dialog id="createRestaurantModal" class="admin-modal" <%= reopenCreateModal ? "open" : "" %>>
 			<div class="admin-modal__content">
 				<button type="button" id="closeCreateRestaurant" class="admin-modal__close" aria-label="Cerrar">&times;</button>
 				<h2>Crear restaurante</h2>
 
-				<% if (message != null) { %>
+				<% if (message != null && reopenCreateModal) { %>
 					<p class="admin-message"><%= HtmlUtils.escape(message) %></p>
 				<% } %>
 

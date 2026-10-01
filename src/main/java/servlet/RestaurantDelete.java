@@ -2,6 +2,7 @@ package main.java.servlet;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -44,6 +45,7 @@ public class RestaurantDelete extends HttpServlet {
 		RestaurantCRUD ctrlRestaurant = new RestaurantCRUD();
 
 		Boolean deleted = false;
+		String failureMessage = "No se pudo eliminar el restaurante.";
 		String imageUrl = null;
 		try {
 			int restaurantId = Integer.parseInt(request.getParameter("restaurant_id"));
@@ -57,6 +59,8 @@ public class RestaurantDelete extends HttpServlet {
 			deleted = ctrlRestaurant.deleteRestaurant(restaurantId);
 		} catch (NumberFormatException e) {
 			// restaurant_id ausente o inválido: se trata igual que un borrado fallido.
+		} catch (SQLIntegrityConstraintViolationException e) {
+			failureMessage = "No se puede eliminar: el restaurante tiene productos o pedidos asociados.";
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -66,7 +70,7 @@ public class RestaurantDelete extends HttpServlet {
 			RestaurantImageStorage.deleteIfGenerated(imageUrl, getServletContext());
 		}
 
-		request.setAttribute("message", deleted ? "Restaurante eliminado correctamente." : "No se pudo eliminar el restaurante.");
+		request.setAttribute("message", deleted ? "Restaurante eliminado correctamente." : failureMessage);
 		RestaurantCreate.forwardWithRestaurants(request, response, ctrlRestaurant);
 	}
 
