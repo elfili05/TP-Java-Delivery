@@ -11,6 +11,7 @@
 		<a href="AdminUsers" class="admin-nav__link">Gestionar Usuarios</a>
 		<a href="AdminOrders" class="admin-nav__link">Gestionar Pedidos</a>
 		<a href="AdminProductTypes" class="admin-nav__link">Tipos de Producto</a>
+		<a href="AdminDiscounts" class="admin-nav__link">Descuentos</a>
 	</nav>
 	
 	<div class="admin-topbar__right">
