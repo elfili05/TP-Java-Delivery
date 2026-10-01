@@ -1,6 +1,7 @@
 <%@page import="java.util.LinkedList"%>
 <%@page import="main.java.entities.Restaurant"%>
 <%@page import="main.java.entities.User"%>
+<%@page import="main.java.logic.HtmlUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -32,14 +33,14 @@
 
 			<div class="delivery-target">
 				<span class="delivery-target__label">Enviar a:</span>
-				<span class="delivery-target__value"><%= userAddress %></span>
+				<span class="delivery-target__value"><%= HtmlUtils.escape(userAddress) %></span>
 			</div>
 
 			<div class="user-menu-container">
 				<button class="user-welcome" aria-label="Usuario logueado, menú de opciones" aria-haspopup="true" aria-expanded="false" id="userMenuBtn">
 					<div class="user-welcome__avatar"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6"><path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" /></svg>
 					</div>
-					<span class="user-welcome__text">Hola, <strong><%= userName %></strong></span>
+					<span class="user-welcome__text">Hola, <strong><%= HtmlUtils.escape(userName) %></strong></span>
 					<%if (!u.getRole().equalsIgnoreCase("guest")) { %><svg class="user-welcome__arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"> <% } %>
 						<path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
 					</svg>
@@ -97,12 +98,12 @@
 					%>
 					<form action="restaurantmenu" method="get">
 						
-							<a style= 'background-image: url("<%=restaurant.getImage_url()%>"); background-size: cover;'  class="restaurant-card" aria-label="Ver menú de <%= name %>">
+							<a style= 'background-image: url("<%= HtmlUtils.safeImageUrl(restaurant.getImage_url(), "assets/restaurant_background.jpg") %>"); background-size: cover;'  class="restaurant-card" aria-label="Ver menú de <%= HtmlUtils.escape(name) %>">
 								<button type="submit" name="selectedRestaurant" value="<%=Integer.toString(restaurant.getRestaurant_id())%>">
 								<div class="restaurant-card__media" aria-hidden="true"></div>
 								<div class="restaurant-card__content">
-									<h2><%= name %></h2>
-									<p><%= address %></p>
+									<h2><%= HtmlUtils.escape(name) %></h2>
+									<p><%= HtmlUtils.escape(address) %></p>
 								</div>
 								</button>
 							</a>

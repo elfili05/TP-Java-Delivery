@@ -1,4 +1,5 @@
 <%@page import="main.java.entities.User"%>
+<%@page import="main.java.logic.HtmlUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
@@ -30,25 +31,25 @@
 				<h1>Editar usuario</h1>
 
 				<form action="UserEdit" method="post" class="admin-form">
-					<input type="hidden" name="email" value="<%= editedUser.getEmail() %>" />
+					<input type="hidden" name="email" value="<%= HtmlUtils.escape(editedUser.getEmail()) %>" />
 
 					<label>Email</label>
-					<input type="text" value="<%= editedUser.getEmail() %>" disabled />
+					<input type="text" value="<%= HtmlUtils.escape(editedUser.getEmail()) %>" disabled />
 
 					<label for="name">Nombre</label>
-					<input type="text" id="name" name="name" value="<%= editedUser.getName() != null ? editedUser.getName() : "" %>" required />
+					<input type="text" id="name" name="name" value="<%= HtmlUtils.escape(editedUser.getName()) %>" required />
 
 					<label for="surname">Apellido</label>
-					<input type="text" id="surname" name="surname" value="<%= editedUser.getSurname() != null ? editedUser.getSurname() : "" %>" required />
+					<input type="text" id="surname" name="surname" value="<%= HtmlUtils.escape(editedUser.getSurname()) %>" required />
 
 					<label for="phone_number">Teléfono</label>
-					<input type="text" id="phone_number" name="phone_number" value="<%= editedUser.getPhone_number() != null ? editedUser.getPhone_number() : "" %>" />
+					<input type="text" id="phone_number" name="phone_number" value="<%= HtmlUtils.escape(editedUser.getPhone_number()) %>" />
 
 					<label for="dni">DNI</label>
-					<input type="text" id="dni" name="dni" value="<%= editedUser.getDni() != null ? editedUser.getDni() : "" %>" />
+					<input type="text" id="dni" name="dni" value="<%= HtmlUtils.escape(editedUser.getDni()) %>" />
 
 					<label for="address">Dirección</label>
-					<input type="text" id="address" name="address" value="<%= editedUser.getAddress() != null ? editedUser.getAddress() : "" %>" />
+					<input type="text" id="address" name="address" value="<%= HtmlUtils.escape(editedUser.getAddress()) %>" />
 
 					<label for="role">Rol</label>
 					<select id="role" name="role">

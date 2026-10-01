@@ -1,4 +1,5 @@
 <%@ page import="main.java.entities.User" %>
+<%@ page import="main.java.logic.HtmlUtils" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -29,8 +30,8 @@
 
 				<h1 id="confirmTitle" class="signin-title">¡Gracias por tu pedido!</h1>
 
-				<p class="signin-error__message" style="margin-bottom:1.25rem;">Se ha registrado el pedido a nombre de <strong><%= userName %></strong>.<br>
-				Serás notificado al nro. <strong><%= userPhone %></strong> cuando llegue a destino. ¡Gracias por elegirnos!</p>
+				<p class="signin-error__message" style="margin-bottom:1.25rem;">Se ha registrado el pedido a nombre de <strong><%= HtmlUtils.escape(userName) %></strong>.<br>
+				Serás notificado al nro. <strong><%= HtmlUtils.escape(userPhone) %></strong> cuando llegue a destino. ¡Gracias por elegirnos!</p>
 
 				<div style="display:flex;gap:1rem;justify-content:center;width:100%;margin-top:0.5rem;">
 					<form action="signin" method="post">

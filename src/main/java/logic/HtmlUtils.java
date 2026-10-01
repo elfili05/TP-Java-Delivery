@@ -34,4 +34,13 @@ public class HtmlUtils {
 		return escaped.toString();
 	}
 
+	// devuelve la URL de imagen lista para usar dentro de un atributo HTML o un url("...") de CSS inline:
+	// si está vacía o trae caracteres que podrían cerrar el atributo/CSS (comillas, paréntesis, espacios, < >), usa la imagen por defecto.
+	public static String safeImageUrl(String imageUrl, String fallback) {
+		if (imageUrl == null || !imageUrl.trim().matches("[A-Za-z0-9_./:%?=&+~-]+")) {
+			return fallback;
+		}
+		return imageUrl.trim();
+	}
+
 }

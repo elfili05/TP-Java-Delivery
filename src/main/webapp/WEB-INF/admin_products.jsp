@@ -3,6 +3,7 @@
 <%@page import="main.java.entities.ProductType"%>
 <%@page import="main.java.entities.Restaurant"%>
 <%@page import="main.java.entities.User"%>
+<%@page import="main.java.logic.HtmlUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
@@ -35,7 +36,7 @@
 		<main class="admin-content admin-content--wide">
 			<section class="admin-panel" aria-label="Productos del restaurante">
 				<div class="admin-section-header">
-					<h1>Productos de <%= restaurant.getName() %></h1>
+					<h1>Productos de <%= HtmlUtils.escape(restaurant.getName()) %></h1>
 					<% if (productTypes != null && !productTypes.isEmpty()) { %>
 						<button type="button" id="openCreateProduct" class="admin-submit admin-submit--small">Crear producto</button>
 					<% } %>
@@ -46,7 +47,7 @@
 				<% } %>
 
 				<% if (message != null) { %>
-					<p class="admin-message"><%= message %></p>
+					<p class="admin-message"><%= HtmlUtils.escape(message) %></p>
 				<% } %>
 
 				<% if (products != null && !products.isEmpty()) { %>
@@ -54,8 +55,8 @@
 						<% for (Product product : products) { %>
 							<li class="admin-product-item">
 								<div class="admin-product-item__info">
-									<strong><%= product.getDescription() %></strong>
-									<span class="admin-role-badge"><%= product.getProduct_type() != null ? product.getProduct_type().getName() : "Sin tipo" %></span>
+									<strong><%= HtmlUtils.escape(product.getDescription()) %></strong>
+									<span class="admin-role-badge"><%= HtmlUtils.escape(product.getProduct_type() != null ? product.getProduct_type().getName() : "Sin tipo") %></span>
 									<p>$<%= product.getPrice() %></p>
 								</div>
 								<div class="admin-product-item__actions">
@@ -95,7 +96,7 @@
 					<label for="product_type_id">Tipo de producto</label>
 					<select id="product_type_id" name="product_type_id">
 						<% for (ProductType productType : productTypes) { %>
-							<option value="<%= productType.getProduct_type_id() %>"><%= productType.getName() %></option>
+							<option value="<%= productType.getProduct_type_id() %>"><%= HtmlUtils.escape(productType.getName()) %></option>
 						<% } %>
 					</select>
 
