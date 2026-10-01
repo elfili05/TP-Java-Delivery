@@ -40,8 +40,8 @@ public class ProcessOrder {
 		
 	}
 	
-	public void addOrder(Order order) throws SQLException {
-		or.addOrder(order);
+	public Boolean addOrder(Order order) throws SQLException {
+		return or.addOrder(order);
 		
 	}
 }

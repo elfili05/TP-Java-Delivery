@@ -37,7 +37,13 @@ public class OrderProcess extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+	// un GET nunca guarda ni cancela un pedido: solo vuelve al menú. Confirmar/cancelar llega por POST (ver doPost).
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.getRequestDispatcher("WEB-INF/restaurant_menu.jsp").forward(request, response);
+	}
+
+	// procesa la decisión de la ventana modal de confirmación: cancelar o confirmar el pedido que está en la sesión.
+	private void handleConfirmation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		/*acá proceso la decisión de la ventana modal: cancelar o confirmar, si confirma, proOrder.addOrder(order), si cancela, vuelvo al menú
 		 * de restaurant_menu.jsp
 		*/
@@ -49,7 +55,23 @@ public class OrderProcess extends HttpServlet {
 			if ((request.getParameter("confirmOrder").equalsIgnoreCase("true"))) {
 				try {
 					if (ctrlRestaurant.isAvailable(currentRes)) {
-						proOrder.addOrder((Order) request.getSession().getAttribute("order"));
+						Order orderToSave = (Order) request.getSession().getAttribute("order");
+						// si el pedido ya se guardó, ya no está en la sesión: refrescar esta página (el mismo GET) no lo carga otra vez.
+						if (orderToSave != null) {
+							User orderUser = (User) request.getSession().getAttribute("user");
+							if (orderUser == null || "guest".equalsIgnoreCase(orderUser.getRole())) {
+								request.setAttribute("orderError", "Para hacer un pedido tenés que iniciar sesión con tu cuenta.");
+								request.getRequestDispatcher("WEB-INF/restaurant_menu.jsp").forward(request, response);
+								return;
+							}
+							if (!proOrder.addOrder(orderToSave)) {
+								// no se guardó nada (la transacción hizo rollback): el pedido sigue en la sesión para reintentar.
+								request.setAttribute("orderError", "No se pudo registrar el pedido. Intentá de nuevo.");
+								request.getRequestDispatcher("WEB-INF/restaurant_menu.jsp").forward(request, response);
+								return;
+							}
+							request.getSession().removeAttribute("order");
+						}
 						request.getRequestDispatcher("WEB-INF/order_confirmation.jsp").forward(request, response); // order successfull
 					} 
 					
@@ -90,6 +112,12 @@ public class OrderProcess extends HttpServlet {
 	@SuppressWarnings("unchecked")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
+		// el modal de confirmación manda "confirmOrder" (true/false) por POST: se procesa aparte.
+		if (request.getParameter("confirmOrder") != null) {
+			handleConfirmation(request, response);
+			return;
+		}
+
 		// If the user has selected products and quantities, prepare the order and redirect to confirmation modal. Otherwise, redirect back to menu.
 	
 		ProcessOrder proOrder = new ProcessOrder();
@@ -105,7 +133,7 @@ public class OrderProcess extends HttpServlet {
 		for (Product product : products) {
 			String quantityStr = request.getParameter("quantity_" + product.getProduct_id());
 			if (quantityStr != null) {
-				int quantity = Integer.parseInt(quantityStr);
+				int quantity = parseQuantity(quantityStr);
 				if (quantity > 0) {
 					orderDetails.add(new OrderDetail(product, quantity, detail_number));
 					detail_number++;
@@ -137,7 +165,14 @@ public class OrderProcess extends HttpServlet {
 		
 				
 		}
-		
-		
-		
+
+	// interpreta la cantidad del formulario; 0 (se ignora el ítem) si vino vacía o no es un número entero.
+	private int parseQuantity(String rawQuantity) {
+		try {
+			return Integer.parseInt(rawQuantity.trim());
+		} catch (NumberFormatException e) {
+			return 0;
+		}
 	}
+
+}

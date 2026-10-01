@@ -11,27 +11,32 @@ import java.util.LinkedList;
 
 public class OrderRepository {
 
-	public void addOrder(Order orderToAdd) throws SQLException{
+	// guarda el pedido (cabecera + detalles) como una sola transacción: o se guardan todos los registros o ninguno.
+	// devuelve true solo si todo se confirmó; ante cualquier error se hace rollback y devuelve false.
+	public Boolean addOrder(Order orderToAdd) throws SQLException{
+		Connection conn = null;
 		PreparedStatement stmt = null;
+		PreparedStatement detailStmt = null;
 		ResultSet rs = null;
 		int orderId = 0;
-		
-		//Discount discount = discountRepo.getOne(totalAmount);
+		Boolean result = false;
 		
 		try {
+			conn = DbConnector.getInstance().getConn();
+			// la conexión es propia del hilo del request (ver DbConnector), así que la transacción no se filtra a otros requests.
+			conn.setAutoCommit(false);
+			
 			// Insert the order
-			//System.out.println(restaurant.getRestaurant_id());
-			stmt = DbConnector.getInstance().getConn().prepareStatement(
+			stmt = conn.prepareStatement(
 					  "INSERT INTO user_order (user_id, restaurant_id, date, discount_id, total_amount) "
 					+ "VALUES (?, ?, CURDATE(),?, ?)",
 					Statement.RETURN_GENERATED_KEYS
 					);
-			System.out.println("user id: " + orderToAdd.getUser().getUser_id());
 			stmt.setInt(1, orderToAdd.getUser().getUser_id());
 			stmt.setInt(2, orderToAdd.getRestaurant().getRestaurant_id());
 			if (orderToAdd.getDiscount() != null) {
-			stmt.setInt(3, orderToAdd.getDiscount().getDiscount_id()); //cuando se llegue a los controladores, CAMBIAR esto
-				}
+				stmt.setInt(3, orderToAdd.getDiscount().getDiscount_id());
+			}
 			else { stmt.setNull(3, Types.INTEGER); }
 			stmt.setDouble(4, orderToAdd.getTotal());
 			stmt.executeUpdate();
@@ -40,34 +45,48 @@ public class OrderRepository {
 			if (rs.next()) {
 				orderId = rs.getInt(1);
 			}
+			if (orderId == 0) {
+				throw new SQLException("No se obtuvo el id del pedido recién insertado.");
+			}
 			
 			// Insert the order details
+			detailStmt = conn.prepareStatement(
+					  "INSERT INTO order_detail (order_id, detail_number, product_id, quantity, subtotal) "
+					+ "VALUES (?,?,?,?,?)"
+					);
 			for (OrderDetail orderDetail : orderToAdd.getOrder_details()) {
-				stmt = DbConnector.getInstance().getConn().prepareStatement(
-						  "INSERT INTO order_detail (order_id, detail_number, product_id, quantity, subtotal) "
-						+ "VALUES (?,?,?,?,?)"
-						);
-				stmt.setInt(1, orderId);
-				stmt.setInt(2, orderDetail.getDetail_number());
-				stmt.setInt(3, orderDetail.getProduct().getProduct_id());
-				stmt.setInt(4, orderDetail.getQuantity());
-				stmt.setDouble(5, orderDetail.getSubtotal());
-				stmt.executeUpdate();
+				detailStmt.setInt(1, orderId);
+				detailStmt.setInt(2, orderDetail.getDetail_number());
+				detailStmt.setInt(3, orderDetail.getProduct().getProduct_id());
+				detailStmt.setInt(4, orderDetail.getQuantity());
+				detailStmt.setDouble(5, orderDetail.getSubtotal());
+				detailStmt.executeUpdate();
 			}
+			
+			conn.commit();
+			result = true;
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
+			result = false;
+			try {
+				if (conn != null) { conn.rollback(); }
+			} catch (SQLException rollbackError) {
+				rollbackError.printStackTrace();
+			}
 			
 		} finally {
 			try {
 				if (rs != null) { rs.close(); }
 				if (stmt != null) { stmt.close(); }
+				if (detailStmt != null) { detailStmt.close(); }
+				if (conn != null) { conn.setAutoCommit(true); }
 				DbConnector.getInstance().releaseConn();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
-		
+		return result;
 	}
 	
 	// marca un pedido pendiente como entregado; devuelve true solo si se actualizó una fila
@@ -86,8 +105,9 @@ public class OrderRepository {
 			result = stmt.executeUpdate() == 1;
 
 		} catch (SQLException e) {
+			// un fallo de BD se propaga: no es lo mismo que "ya estaba entregado", y el servlet muestra cada caso por separado.
 			e.printStackTrace();
-			result = false;
+			throw e;
 
 		} finally {
 			try {
@@ -186,7 +206,7 @@ public class OrderRepository {
 
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
-					  "SELECT d.detail_number, d.quantity, p.product_id, p.description, p.price "
+					  "SELECT d.detail_number, d.quantity, d.subtotal, p.product_id, p.description "
 					+ "FROM order_detail d "
 					+ "INNER JOIN product p ON p.product_id = d.product_id "
 					+ "WHERE d.order_id = ? "
@@ -200,9 +220,11 @@ public class OrderRepository {
 					Product product = new Product();
 					product.setProduct_id(rs.getInt("product_id"));
 					product.setDescription(rs.getString("description"));
-					product.setPrice(rs.getDouble("price"));
+					// el precio unitario se deduce del subtotal guardado en el pedido: así un cambio de precio posterior no altera el historial.
+					int quantity = rs.getInt("quantity");
+					product.setPrice(quantity > 0 ? rs.getDouble("subtotal") / quantity : 0);
 
-					OrderDetail detail = new OrderDetail(product, rs.getInt("quantity"), rs.getInt("detail_number"));
+					OrderDetail detail = new OrderDetail(product, quantity, rs.getInt("detail_number"));
 					detail.setOrder_id(orderId);
 					details.add(detail);
 				}
