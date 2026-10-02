@@ -10,11 +10,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Part;
 
@@ -23,6 +26,9 @@ import javax.servlet.http.Part;
 public class RestaurantImageStorage {
 
 	public static final long MAX_IMAGE_BYTES = 2L * 1024 * 1024;
+
+	// lado máximo (en píxeles) de una imagen subida.
+	private static final int MAX_IMAGE_SIDE_PIXELS = 4000;
 
 	private static final Set<String> ALLOWED_EXTENSIONS = new HashSet<String>(Arrays.asList("jpg", "jpeg", "png", "webp"));
 
@@ -80,6 +86,8 @@ public class RestaurantImageStorage {
 		}
 		if (!extension.equals("webp")) {
 			// ImageIO no decodifica webp; para jpg/png además se verifica que el contenido sea una imagen real.
+			// antes de decodificarla se leen solo sus dimensiones: un archivo chico puede declarar decenas de miles de píxeles por lado.
+			checkDimensions(content);
 			try {
 				if (ImageIO.read(new ByteArrayInputStream(content)) == null) {
 					throw new ImageUploadException("El archivo no es una imagen válida.");
@@ -127,14 +135,41 @@ public class RestaurantImageStorage {
 		}
 	}
 
+	// lee el ancho y el alto de la imagen sin decodificarla y rechaza las demasiado grandes.
+	private static void checkDimensions(byte[] content) throws ImageUploadException {
+		try (ImageInputStream input = ImageIO.createImageInputStream(new ByteArrayInputStream(content))) {
+			Iterator<ImageReader> readers = ImageIO.getImageReaders(input);
+			if (!readers.hasNext()) {
+				throw new ImageUploadException("El archivo no es una imagen válida.");
+			}
+			ImageReader reader = readers.next();
+			try {
+				reader.setInput(input);
+				if (reader.getWidth(0) > MAX_IMAGE_SIDE_PIXELS || reader.getHeight(0) > MAX_IMAGE_SIDE_PIXELS) {
+					throw new ImageUploadException("La imagen es demasiado grande (máximo " + MAX_IMAGE_SIDE_PIXELS + " x " + MAX_IMAGE_SIDE_PIXELS + " píxeles).");
+				}
+			} finally {
+				reader.dispose();
+			}
+		} catch (IOException | RuntimeException e) {
+			throw new ImageUploadException("El archivo no es una imagen válida.");
+		}
+	}
+
 	// resuelve el directorio real de uploads/ dentro de la app desplegada; null si no se puede saber.
-	private static Path uploadsDir(ServletContext context) {
-		String realPath = context.getRealPath("/uploads");
+	// si está definida la variable de entorno UPLOADS_DIR (o la propiedad -Duploads.dir) las imágenes se guardan ahí, fuera de la app desplegada,
+	// y sobreviven a un nuevo despliegue; si no, se usa la carpeta uploads/ de la aplicación.
+	public static Path uploadsDir(ServletContext context) {
+		String configured = System.getenv("UPLOADS_DIR");
+		if (configured == null || configured.trim().isEmpty()) {
+			configured = System.getProperty("uploads.dir");
+		}
+		String realPath = (configured != null && !configured.trim().isEmpty()) ? configured.trim() : context.getRealPath("/uploads");
 		if (realPath == null) {
 			return null;
 		}
 		try {
-			return Paths.get(realPath).normalize();
+			return Paths.get(realPath).toAbsolutePath().normalize();
 		} catch (InvalidPathException e) {
 			e.printStackTrace();
 			return null;
