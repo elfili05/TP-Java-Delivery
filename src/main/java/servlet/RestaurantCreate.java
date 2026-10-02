@@ -22,7 +22,7 @@ import main.java.logic.RestaurantImageStorage;
  */
 @WebServlet({ "/RestaurantCreate", "/restaurantcreate", "/restaurantCreate", "/Restaurantcreate", "/RESTAURANTCREATE" })
 // archivo de hasta 2 MB; el request completo tiene un margen extra para el resto del formulario.
-@MultipartConfig(maxFileSize = 2097152, maxRequestSize = 2162688)
+@MultipartConfig(maxFileSize = RestaurantImageStorage.MAX_IMAGE_BYTES, maxRequestSize = RestaurantImageStorage.MAX_IMAGE_BYTES + 65536)
 public class RestaurantCreate extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -88,6 +88,13 @@ public class RestaurantCreate extends HttpServlet {
 			return;
 		}
 
+		if (name.trim().length() > RestaurantEdit.MAX_TEXT_LENGTH || address.trim().length() > RestaurantEdit.MAX_TEXT_LENGTH) {
+			request.setAttribute("message", "El nombre y la dirección admiten hasta " + RestaurantEdit.MAX_TEXT_LENGTH + " caracteres.");
+			request.setAttribute("reopenCreateModal", true);
+			forwardWithRestaurants(request, response, ctrlRestaurant);
+			return;
+		}
+
 		// primero se valida y se guarda la imagen (opcional); recién después se toca la BD.
 		String imageUrl = null;
 		if (RestaurantImageStorage.hasImage(imagePart)) {
@@ -108,8 +115,8 @@ public class RestaurantCreate extends HttpServlet {
 		}
 
 		Restaurant restaurant = new Restaurant();
-		restaurant.setName(name);
-		restaurant.setAddress(address);
+		restaurant.setName(name.trim());
+		restaurant.setAddress(address.trim());
 		restaurant.setImage_url(imageUrl);
 
 		Boolean created = false;
@@ -133,6 +140,11 @@ public class RestaurantCreate extends HttpServlet {
 
 	// recarga el listado y vuelve a la pantalla de gestión de restaurantes; la comparten los demás servlets de restaurant.
 	static void forwardWithRestaurants(HttpServletRequest request, HttpServletResponse response, RestaurantCRUD ctrlRestaurant) throws ServletException, IOException {
+		// después de un POST se redirige al listado (Post/Redirect/Get) para que F5 no vuelva a crear lo mismo.
+		if (Flash.redirectAfterPost(request, response, "AdminRestaurants")) {
+			return;
+		}
+
 		LinkedList<Restaurant> restaurants = new LinkedList<Restaurant>();
 		try {
 			restaurants = ctrlRestaurant.getAvailable();

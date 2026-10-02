@@ -58,10 +58,10 @@
 					<input type="hidden" name="restaurant_id" value="<%= restaurant.getRestaurant_id() %>" />
 
 					<label for="name">Nombre</label>
-					<input type="text" id="name" name="name" value="<%= HtmlUtils.escape(restaurant.getName()) %>" required />
+					<input type="text" id="name" name="name" value="<%= HtmlUtils.escape(restaurant.getName()) %>" maxlength="80" required />
 
 					<label for="address">Dirección</label>
-					<input type="text" id="address" name="address" value="<%= HtmlUtils.escape(restaurant.getAddress()) %>" required />
+					<input type="text" id="address" name="address" value="<%= HtmlUtils.escape(restaurant.getAddress()) %>" maxlength="80" required />
 
 					<label for="image">Imagen</label>
 					<% if (restaurant.getImage_url() != null && !restaurant.getImage_url().trim().isEmpty()) { %>

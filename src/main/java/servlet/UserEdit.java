@@ -82,6 +82,25 @@ public class UserEdit extends HttpServlet {
 
 		UserCRUD ctrlUser = new UserCRUD();
 
+		// límites de las columnas de la tabla user (name, surname, address: 80; dni: 10; phone_number: 20) y rol válido.
+		if (tooLong(name, 80) || tooLong(surname, 80) || tooLong(request.getParameter("address"), 80)
+				|| tooLong(request.getParameter("dni"), 10) || tooLong(request.getParameter("phone_number"), 20)) {
+			request.setAttribute("message", "Algún dato supera el largo permitido (nombre, apellido y dirección: 80; DNI: 10; teléfono: 20).");
+			forwardWithUsers(request, response, ctrlUser);
+			return;
+		}
+		if (!"admin".equals(role) && !"client".equals(role)) {
+			request.setAttribute("message", "El rol indicado no es válido.");
+			forwardWithUsers(request, response, ctrlUser);
+			return;
+		}
+		// un admin no se quita el rol a sí mismo: se quedaría sin acceso al panel en medio de la tarea.
+		if (email != null && email.equalsIgnoreCase(u.getEmail()) && !"admin".equals(role)) {
+			request.setAttribute("message", "No podés quitarte el rol de administrador a vos mismo.");
+			forwardWithUsers(request, response, ctrlUser);
+			return;
+		}
+
 		Boolean updated = false;
 		if (name != null && !name.trim().isEmpty() && surname != null && !surname.trim().isEmpty()) {
 			User userToUpdate = new User();
@@ -104,8 +123,17 @@ public class UserEdit extends HttpServlet {
 		forwardWithUsers(request, response, ctrlUser);
 	}
 
+	private static boolean tooLong(String value, int maxLength) {
+		return value != null && value.trim().length() > maxLength;
+	}
+
 	// recarga el listado y vuelve a la pantalla de gestión de usuarios; la comparten los demás servlets de user.
 	static void forwardWithUsers(HttpServletRequest request, HttpServletResponse response, UserCRUD ctrlUser) throws ServletException, IOException {
+		if (Flash.redirectAfterPost(request, response, "AdminUsers")) {
+			return;
+		}
+		Flash.restore(request);
+
 		LinkedList<User> users = new LinkedList<User>();
 		try {
 			users = ctrlUser.getAll();

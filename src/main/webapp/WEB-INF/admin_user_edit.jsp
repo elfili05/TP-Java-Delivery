@@ -37,19 +37,19 @@
 					<input type="text" value="<%= HtmlUtils.escape(editedUser.getEmail()) %>" disabled />
 
 					<label for="name">Nombre</label>
-					<input type="text" id="name" name="name" value="<%= HtmlUtils.escape(editedUser.getName()) %>" required />
+					<input type="text" id="name" name="name" value="<%= HtmlUtils.escape(editedUser.getName()) %>" maxlength="80" required />
 
 					<label for="surname">Apellido</label>
-					<input type="text" id="surname" name="surname" value="<%= HtmlUtils.escape(editedUser.getSurname()) %>" required />
+					<input type="text" id="surname" name="surname" value="<%= HtmlUtils.escape(editedUser.getSurname()) %>" maxlength="80" required />
 
 					<label for="phone_number">Teléfono</label>
-					<input type="text" id="phone_number" name="phone_number" value="<%= HtmlUtils.escape(editedUser.getPhone_number()) %>" />
+					<input type="text" id="phone_number" name="phone_number" value="<%= HtmlUtils.escape(editedUser.getPhone_number()) %>" maxlength="20" />
 
 					<label for="dni">DNI</label>
-					<input type="text" id="dni" name="dni" value="<%= HtmlUtils.escape(editedUser.getDni()) %>" />
+					<input type="text" id="dni" name="dni" value="<%= HtmlUtils.escape(editedUser.getDni()) %>" maxlength="10" />
 
 					<label for="address">Dirección</label>
-					<input type="text" id="address" name="address" value="<%= HtmlUtils.escape(editedUser.getAddress()) %>" />
+					<input type="text" id="address" name="address" value="<%= HtmlUtils.escape(editedUser.getAddress()) %>" maxlength="80" />
 
 					<label for="role">Rol</label>
 					<select id="role" name="role">

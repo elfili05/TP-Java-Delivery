@@ -23,9 +23,12 @@ import main.java.logic.RestaurantImageStorage;
  */
 @WebServlet({ "/RestaurantEdit", "/restaurantedit", "/restaurantEdit", "/Restaurantedit", "/RESTAURANTEDIT" })
 // archivo de hasta 2 MB; el request completo tiene un margen extra para el resto del formulario.
-@MultipartConfig(maxFileSize = 2097152, maxRequestSize = 2162688)
+@MultipartConfig(maxFileSize = RestaurantImageStorage.MAX_IMAGE_BYTES, maxRequestSize = RestaurantImageStorage.MAX_IMAGE_BYTES + 65536)
 public class RestaurantEdit extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+
+	// restaurant.name y restaurant.address son varchar(80).
+	static final int MAX_TEXT_LENGTH = 80;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -62,6 +65,12 @@ public class RestaurantEdit extends HttpServlet {
 			response.sendRedirect("AdminRestaurants");
 			return;
 		}
+
+		// después de un POST (horarios incluidos) se redirige a la pantalla (Post/Redirect/Get) para que F5 no repita la acción.
+		if (Flash.redirectAfterPost(request, response, "RestaurantEdit?id=" + restaurantId)) {
+			return;
+		}
+		Flash.restore(request);
 
 		RestaurantCRUD ctrlRestaurant = new RestaurantCRUD();
 		Restaurant restaurantToFind = new Restaurant();
@@ -125,6 +134,12 @@ public class RestaurantEdit extends HttpServlet {
 			return;
 		}
 
+		if (name.trim().length() > MAX_TEXT_LENGTH || address.trim().length() > MAX_TEXT_LENGTH) {
+			request.setAttribute("message", "El nombre y la dirección admiten hasta " + MAX_TEXT_LENGTH + " caracteres.");
+			RestaurantCreate.forwardWithRestaurants(request, response, ctrlRestaurant);
+			return;
+		}
+
 		if (restaurantId == null) {
 			request.setAttribute("message", "No se pudo actualizar el restaurante.");
 			RestaurantCreate.forwardWithRestaurants(request, response, ctrlRestaurant);
@@ -166,8 +181,8 @@ public class RestaurantEdit extends HttpServlet {
 
 		Restaurant restaurant = new Restaurant();
 		restaurant.setRestaurant_id(restaurantId);
-		restaurant.setName(name);
-		restaurant.setAddress(address);
+		restaurant.setName(name.trim());
+		restaurant.setAddress(address.trim());
 		restaurant.setImage_url(newImageUrl != null ? newImageUrl : current.getImage_url());
 
 		Boolean updated = false;

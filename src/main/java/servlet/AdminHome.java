@@ -51,6 +51,11 @@ public class AdminHome extends HttpServlet {
 
 	// carga los pedidos pendientes y muestra el inicio del panel; la usa también OrderDeliver al volver a "home".
 	static void forwardWithPendingOrders(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if (Flash.redirectAfterPost(request, response, "AdminHome")) {
+			return;
+		}
+		Flash.restore(request);
+
 		OrderCRUD ctrlOrder = new OrderCRUD();
 
 		LinkedList<Order> pendingOrders = new LinkedList<Order>();
@@ -58,6 +63,10 @@ public class AdminHome extends HttpServlet {
 			pendingOrders = ctrlOrder.getOrdersByStatus("pending");
 		} catch (SQLException e) {
 			e.printStackTrace();
+			// un fallo de BD no se muestra como "no hay pedidos": se avisa en pantalla.
+			if (request.getAttribute("message") == null) {
+				request.setAttribute("message", "No se pudieron cargar los pedidos. Intentá de nuevo.");
+			}
 		}
 
 		request.setAttribute("pendingOrders", pendingOrders);

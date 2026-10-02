@@ -54,7 +54,7 @@
 									<p><%= HtmlUtils.escape(user.getEmail()) %></p>
 								</div>
 								<div class="admin-user-item__actions">
-									<a href="UserEdit?email=<%= HtmlUtils.escape(user.getEmail()) %>" class="admin-action-link">Editar</a>
+									<a href="UserEdit?email=<%= HtmlUtils.escape(java.net.URLEncoder.encode(user.getEmail(), "UTF-8")) %>" class="admin-action-link">Editar</a>
 									<form action="UserDelete" method="post" data-confirm="¿Eliminar este usuario?">
 										<input type="hidden" name="email" value="<%= HtmlUtils.escape(user.getEmail()) %>" />
 										<button type="submit" class="admin-action-link admin-action-link--danger">Eliminar</button>

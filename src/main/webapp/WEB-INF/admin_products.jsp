@@ -57,7 +57,7 @@
 								<div class="admin-product-item__info">
 									<strong><%= HtmlUtils.escape(product.getDescription()) %></strong>
 									<span class="admin-role-badge"><%= HtmlUtils.escape(product.getProduct_type() != null ? product.getProduct_type().getName() : "Sin tipo") %></span>
-									<p>$<%= product.getPrice() %></p>
+									<p>$<%= String.format(java.util.Locale.US, "%.2f", product.getPrice()) %></p>
 								</div>
 								<div class="admin-product-item__actions">
 									<a href="ProductEdit?restaurant_id=<%= restaurant.getRestaurant_id() %>&product_id=<%= product.getProduct_id() %>" class="admin-action-link">Editar</a>
@@ -88,7 +88,7 @@
 					<input type="hidden" name="restaurant_id" value="<%= restaurant.getRestaurant_id() %>" />
 
 					<label for="description">Descripción</label>
-					<input type="text" id="description" name="description" required />
+					<input type="text" id="description" name="description" maxlength="100" required />
 
 					<label for="price">Precio</label>
 					<input type="number" id="price" name="price" min="0.01" step="0.01" required />

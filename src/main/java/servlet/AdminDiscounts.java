@@ -46,11 +46,19 @@ public class AdminDiscounts extends HttpServlet {
 
 	// recarga el listado y vuelve a la pantalla de gestión de descuentos; la comparten los demás servlets de discount.
 	static void forwardWithDiscounts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if (Flash.redirectAfterPost(request, response, "AdminDiscounts")) {
+			return;
+		}
+		Flash.restore(request);
+
 		LinkedList<Discount> discounts = new LinkedList<Discount>();
 		try {
 			discounts = new DiscountCRUD().getDiscounts();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			if (request.getAttribute("message") == null) {
+				request.setAttribute("message", "No se pudieron cargar los descuentos. Intentá de nuevo.");
+			}
 		}
 
 		request.setAttribute("discounts", discounts);

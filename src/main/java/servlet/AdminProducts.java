@@ -60,6 +60,12 @@ public class AdminProducts extends HttpServlet {
 			return;
 		}
 
+		// después de un POST se redirige al listado (Post/Redirect/Get) para que F5 no repita la acción.
+		if (Flash.redirectAfterPost(request, response, "AdminProducts?restaurant_id=" + restaurantId)) {
+			return;
+		}
+		Flash.restore(request);
+
 		RestaurantCRUD ctrlRestaurant = new RestaurantCRUD();
 		ProductCRUD ctrlProduct = new ProductCRUD();
 

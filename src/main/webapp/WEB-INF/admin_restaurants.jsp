@@ -88,10 +88,10 @@
 
 				<form action="RestaurantCreate" method="post" enctype="multipart/form-data" class="admin-form">
 					<label for="name">Nombre</label>
-					<input type="text" id="name" name="name" required />
+					<input type="text" id="name" name="name" maxlength="80" required />
 
 					<label for="address">Dirección</label>
-					<input type="text" id="address" name="address" required />
+					<input type="text" id="address" name="address" maxlength="80" required />
 
 					<label for="image">Imagen (opcional)</label>
 					<input type="file" id="image" name="image" accept="image/*" />
@@ -120,6 +120,8 @@
 			const closeBtn = document.getElementById('closeCreateRestaurant');
 
 			if (modal && modal.hasAttribute('open')) {
+				// el servidor lo emite con el atributo "open"; showModal() falla si ya está abierto como diálogo no modal.
+				modal.removeAttribute('open');
 				modal.showModal();
 			}
 

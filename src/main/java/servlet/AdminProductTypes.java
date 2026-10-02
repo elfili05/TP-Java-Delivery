@@ -46,11 +46,19 @@ public class AdminProductTypes extends HttpServlet {
 
 	// recarga el listado y vuelve a la pantalla de gestión de tipos; la comparten los demás servlets de tipo de producto.
 	static void forwardWithProductTypes(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if (Flash.redirectAfterPost(request, response, "AdminProductTypes")) {
+			return;
+		}
+		Flash.restore(request);
+
 		LinkedList<ProductType> productTypes = new LinkedList<ProductType>();
 		try {
 			productTypes = new ProductTypeCRUD().getProductTypes();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			if (request.getAttribute("message") == null) {
+				request.setAttribute("message", "No se pudieron cargar los tipos de producto. Intentá de nuevo.");
+			}
 		}
 
 		request.setAttribute("productTypes", productTypes);

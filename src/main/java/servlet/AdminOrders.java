@@ -51,6 +51,11 @@ public class AdminOrders extends HttpServlet {
 
 	// recarga ambas listas de pedidos; la comparte OrderDeliver para volver a esta pantalla tras un POST.
 	static void forwardWithOrders(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if (Flash.redirectAfterPost(request, response, "AdminOrders")) {
+			return;
+		}
+		Flash.restore(request);
+
 		OrderCRUD ctrlOrder = new OrderCRUD();
 
 		LinkedList<Order> pendingOrders = new LinkedList<Order>();
@@ -60,6 +65,10 @@ public class AdminOrders extends HttpServlet {
 			deliveredOrders = ctrlOrder.getOrdersByStatus("delivered");
 		} catch (SQLException e) {
 			e.printStackTrace();
+			// un fallo de BD no se muestra como "no hay pedidos": se avisa en pantalla.
+			if (request.getAttribute("message") == null) {
+				request.setAttribute("message", "No se pudieron cargar los pedidos. Intentá de nuevo.");
+			}
 		}
 
 		request.setAttribute("pendingOrders", pendingOrders);
