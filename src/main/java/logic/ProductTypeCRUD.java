@@ -32,7 +32,11 @@ public class ProductTypeCRUD {
 
 		ProductType productType = new ProductType();
 		productType.setName(rawName.trim());
-		return ptr.addProductType(productType) ? null : "No se pudo crear el tipo de producto.";
+		try {
+			return ptr.addProductType(productType) ? null : "No se pudo crear el tipo de producto.";
+		} catch (SQLIntegrityConstraintViolationException e) {
+			return "Ya existe un tipo de producto con ese nombre.";
+		}
 	}
 
 	public String updateProductType(int productTypeId, String rawName) throws SQLException {
@@ -44,7 +48,11 @@ public class ProductTypeCRUD {
 		ProductType productType = new ProductType();
 		productType.setProduct_type_id(productTypeId);
 		productType.setName(rawName.trim());
-		return ptr.updateProductType(productType) ? null : "No se pudo actualizar el tipo de producto.";
+		try {
+			return ptr.updateProductType(productType) ? null : "No se pudo actualizar el tipo de producto.";
+		} catch (SQLIntegrityConstraintViolationException e) {
+			return "Ya existe un tipo de producto con ese nombre.";
+		}
 	}
 
 	public String deleteProductType(int productTypeId) throws SQLException {

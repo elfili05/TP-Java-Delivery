@@ -2,6 +2,7 @@ package main.java.servlet;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -45,16 +46,18 @@ public class ProductDelete extends HttpServlet {
 		ProductCRUD ctrlProduct = new ProductCRUD();
 
 		Boolean deleted = false;
+		String failureMessage = "No se pudo eliminar el producto.";
 		if (productId != null) {
 			try {
-				ctrlProduct.deleteProduct(productId);
-				deleted = true;
+				deleted = ctrlProduct.deleteProduct(productId);
+			} catch (SQLIntegrityConstraintViolationException e) {
+				failureMessage = "No se puede eliminar: el producto figura en pedidos.";
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
 
-		request.setAttribute("message", deleted ? "Producto eliminado correctamente." : "No se pudo eliminar el producto.");
+		request.setAttribute("message", deleted ? "Producto eliminado correctamente." : failureMessage);
 		AdminProducts.forwardWithProducts(request, response, restaurantId);
 	}
 

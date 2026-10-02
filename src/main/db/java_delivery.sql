@@ -14,14 +14,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-SET @MYSQLDUMP_TEMP_LOG_BIN = @@SESSION.SQL_LOG_BIN;
-SET @@SESSION.SQL_LOG_BIN= 0;
-
---
--- GTID state at the beginning of the backup 
---
-
-SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ 'd94a4558-335b-11f1-b286-0a002700000c:1-1337';
 
 --
 -- Table structure for table `discount`
@@ -32,8 +24,8 @@ DROP TABLE IF EXISTS `discount`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `discount` (
   `discount_id` int NOT NULL AUTO_INCREMENT,
-  `minimum_amount` float unsigned DEFAULT NULL,
-  `discount_percentage` float DEFAULT NULL,
+  `minimum_amount` decimal(12,2) unsigned DEFAULT NULL,
+  `discount_percentage` decimal(5,4) DEFAULT NULL,
   PRIMARY KEY (`discount_id`),
   UNIQUE KEY `minimum_amount_UNIQUE` (`minimum_amount`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
@@ -61,7 +53,7 @@ CREATE TABLE `order_detail` (
   `detail_number` int NOT NULL,
   `product_id` int NOT NULL,
   `quantity` int DEFAULT NULL,
-  `subtotal` float DEFAULT '0',
+  `subtotal` decimal(12,2) DEFAULT '0.00',
   PRIMARY KEY (`order_id`,`detail_number`),
   KEY `order_fk_idx` (`order_id`),
   KEY `product_id_fk, restaurant_id_fk_idx` (`product_id`),
@@ -91,7 +83,7 @@ DROP TABLE IF EXISTS `product`;
 CREATE TABLE `product` (
   `product_id` int NOT NULL AUTO_INCREMENT,
   `description` varchar(100) COLLATE utf8mb3_bin DEFAULT NULL,
-  `price` float DEFAULT NULL,
+  `price` decimal(12,2) DEFAULT NULL,
   `product_type_id` int NOT NULL,
   `restaurant_id` int NOT NULL,
   PRIMARY KEY (`product_id`),
@@ -122,7 +114,8 @@ DROP TABLE IF EXISTS `product_type`;
 CREATE TABLE `product_type` (
   `product_type_id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(80) COLLATE utf8mb3_bin DEFAULT NULL,
-  PRIMARY KEY (`product_type_id`)
+  PRIMARY KEY (`product_type_id`),
+  UNIQUE KEY `name_UNIQUE` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -233,7 +226,7 @@ DROP TABLE IF EXISTS `user_order`;
 CREATE TABLE `user_order` (
   `order_id` int NOT NULL AUTO_INCREMENT,
   `date` datetime DEFAULT NULL,
-  `total_amount` float DEFAULT '0',
+  `total_amount` decimal(12,2) DEFAULT '0.00',
   `discount_id` int DEFAULT NULL,
   `user_id` int NOT NULL,
   `restaurant_id` int NOT NULL,
@@ -257,7 +250,6 @@ LOCK TABLES `user_order` WRITE;
 INSERT INTO `user_order` VALUES (1,'2026-09-06 00:00:00',40370.4,1,3,1,'pending'),(2,'2026-09-06 00:00:00',3870.96,NULL,1,1,'pending'),(3,'2026-09-06 00:00:00',137801,3,3,1,'pending'),(4,'2026-09-06 00:00:00',78683.7,2,3,1,'pending'),(5,'2026-09-06 00:00:00',33136,1,4,1,'pending'),(6,'2026-09-07 00:00:00',60573.6,2,4,1,'pending'),(7,'2026-09-07 00:00:00',70284.9,2,3,1,'pending'),(8,'2026-09-07 00:00:00',39466,1,3,1,'pending'),(9,'2026-09-08 00:00:00',119685,3,4,1,'pending'),(10,'2026-09-08 00:00:00',56555,2,4,1,'pending'),(11,'2026-09-14 00:00:00',66391.7,2,4,1,'pending'),(12,'2026-09-14 00:00:00',41911.4,1,3,1,'pending'),(13,'2026-09-14 00:00:00',28351.3,NULL,3,1,'pending'),(14,'2026-09-15 00:00:00',93578.6,2,4,1,'pending');
 /*!40000 ALTER TABLE `user_order` ENABLE KEYS */;
 UNLOCK TABLES;
-SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

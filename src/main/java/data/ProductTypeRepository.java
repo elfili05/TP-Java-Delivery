@@ -28,6 +28,7 @@ public class ProductTypeRepository {
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw e; // un fallo de BD no se muestra como "lista vacía": la pantalla avisa.
 			
 		} finally {
 			try {
@@ -52,6 +53,9 @@ public class ProductTypeRepository {
 			stmt.setString(1, productType.getName());
 			stmt.executeUpdate();
 			result = true;
+		} catch (SQLIntegrityConstraintViolationException e) {
+			// product_type.name es UNIQUE: se propaga para mostrar "ya existe" (cubre dos altas simultáneas con el mismo nombre).
+			throw e;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			result = false;
@@ -138,6 +142,9 @@ public class ProductTypeRepository {
 			stmt.setString(1, productType.getName());
 			stmt.setInt(2, productType.getProduct_type_id());
 			result = stmt.executeUpdate() > 0;
+		} catch (SQLIntegrityConstraintViolationException e) {
+			// product_type.name es UNIQUE: se propaga para mostrar "ya existe" (cubre dos altas simultáneas con el mismo nombre).
+			throw e;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			result = false;

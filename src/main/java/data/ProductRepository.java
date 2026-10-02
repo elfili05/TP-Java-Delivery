@@ -143,16 +143,21 @@ public class ProductRepository {
 		return p;
 	}
 
-	public void deleteProduct(int productId) throws SQLException{
+	public Boolean deleteProduct(int productId) throws SQLException{
 		PreparedStatement stmt = null;
+		Boolean result = false;
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
 					  "DELETE FROM product WHERE product_id = ?"
 					);
 			stmt.setInt(1, productId);
-			stmt.executeUpdate();
+			result = stmt.executeUpdate() > 0;
+		} catch (SQLIntegrityConstraintViolationException e) {
+			// la FK de order_detail impide borrar un producto que figura en pedidos: se propaga para mostrar un mensaje claro.
+			throw e;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			result = false;
 			
 		} finally {
 			try {
@@ -162,11 +167,12 @@ public class ProductRepository {
 				e.printStackTrace();
 			}
 		}
-		
+		return result;
 	}
 	
-	public void addProduct(Product p, Restaurant res, ProductType pt) throws SQLException{
+	public Boolean addProduct(Product p, Restaurant res, ProductType pt) throws SQLException{
 		PreparedStatement stmt = null;
+		Boolean result = false;
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
 					  "INSERT INTO product (description, price, restaurant_id, product_type_id) "
@@ -176,9 +182,10 @@ public class ProductRepository {
 			stmt.setDouble(2, p.getPrice());
 			stmt.setInt(3, res.getRestaurant_id());
 			stmt.setInt(4, pt.getProduct_type_id());
-			stmt.executeUpdate();
+			result = stmt.executeUpdate() > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			result = false;
 			
 		} finally {
 			try {
@@ -188,10 +195,12 @@ public class ProductRepository {
 				e.printStackTrace();
 			}
 		}
+		return result;
 	}
 	
-	public void updateProduct(Product p, ProductType pt) throws SQLException{
+	public Boolean updateProduct(Product p, ProductType pt) throws SQLException{
 		PreparedStatement stmt = null;
+		Boolean result = false;
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
 					  "UPDATE product SET description = ?, price = ?, product_type_id = ? "
@@ -201,9 +210,10 @@ public class ProductRepository {
 			stmt.setDouble(2, p.getPrice());
 			stmt.setInt(3, pt.getProduct_type_id());
 			stmt.setInt(4, p.getProduct_id());
-			stmt.executeUpdate();
+			result = stmt.executeUpdate() > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			result = false;
 			
 		} finally {
 			try {
@@ -213,6 +223,7 @@ public class ProductRepository {
 				e.printStackTrace();
 			}
 		}
+		return result;
 	}
 	
 }

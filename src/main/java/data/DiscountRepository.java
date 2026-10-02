@@ -91,6 +91,7 @@ public class DiscountRepository {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw e; // un fallo de BD no se muestra como "lista vacía": la pantalla avisa.
 		} finally {
 			try {
 				if (rs != null) { rs.close(); }
@@ -134,6 +135,31 @@ public class DiscountRepository {
 		}
 
 		return d;
+	}
+
+	// cantidad de pedidos que usaron este descuento; un fallo de BD se propaga (no se puede asumir que "no hay pedidos").
+	public int countOrdersUsing(int discountId) throws SQLException {
+		int count = 0;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			stmt = DbConnector.getInstance().getConn().prepareStatement(
+					"select count(*) from user_order where discount_id = ?"
+					);
+			stmt.setInt(1, discountId);
+			rs = stmt.executeQuery();
+			if (rs != null && rs.next()) {
+				count = rs.getInt(1);
+			}
+		} finally {
+			try {
+				if (rs != null) { rs.close(); }
+				if (stmt != null) { stmt.close(); }
+			} finally {
+				DbConnector.getInstance().releaseConn();
+			}
+		}
+		return count;
 	}
 
 	public Boolean deleteDiscount(int discountId) throws SQLException{
