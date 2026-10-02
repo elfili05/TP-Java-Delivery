@@ -27,6 +27,14 @@ public class Signup extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
 
+	private static boolean notBlank(String value) {
+		return value != null && !value.trim().isEmpty();
+	}
+
+	private static boolean fits(String value, int maxLength) {
+		return value == null || value.length() <= maxLength;
+	}
+
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -57,7 +65,13 @@ public class Signup extends HttpServlet {
 		newUser.setRole("client"); // solo se cargan clientes desde la UI.
 		
 		try {
-			Boolean result = ctrlUser.addUser(newUser);
+			// largos de las columnas de la tabla user: si alguno se pasa, el alta falla igual que un email repetido.
+			boolean fitsColumns = fits(newUser.getName(), 80) && fits(newUser.getSurname(), 80) && fits(newUser.getAddress(), 80)
+					&& fits(newUser.getEmail(), 80) && fits(newUser.getPassword(), 200) && fits(newUser.getDni(), 10) && fits(newUser.getPhone_number(), 20);
+			// el "required" del formulario solo existe en el navegador: el servidor exige lo mismo (y un email con formato válido).
+			boolean hasRequiredData = notBlank(newUser.getName()) && notBlank(newUser.getSurname()) && notBlank(newUser.getPassword())
+					&& newUser.getEmail() != null && newUser.getEmail().trim().matches("[^@\\s]+@[^@\\s]+\\.[^@\\s]+");
+			Boolean result = fitsColumns && hasRequiredData && ctrlUser.addUser(newUser);
 			request.setAttribute("result",result);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

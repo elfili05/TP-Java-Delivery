@@ -17,7 +17,6 @@
 	<link rel="icon" type="ico" href="assets/icon2.ico" />
 	<%
 		User u = (User) session.getAttribute("user");
-		System.out.println(u.getRole());
 		String userName = (u != null && u.getName() != null && !u.getName().isBlank() && !"guest".equalsIgnoreCase(u.getRole())) ? u.getName() : "Invitado";
 		String userAddress = (u != null && u.getAddress() != null && !u.getAddress().isBlank()) ? u.getAddress() : "Tu dirección";
 		LinkedList<Restaurant> restaurants = (LinkedList<Restaurant>)request.getAttribute("restaurants");
@@ -50,14 +49,12 @@
 					<ul class="user-dropdown__list">
 						<li class="user-dropdown__item">
 							<form action="Logout" method="post">
-									<a href="logout" class="user-dropdown__link">
 								<button name="logoutButton" value="true" class="user-dropdown__link">
 										<svg class="user-dropdown__icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
 											<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
 										</svg>
 								<% if (!u.getRole().equalsIgnoreCase("guest")) { %> Cerrar sesión <% } else { %> Salir <% } %>
 								</button>
-									</a>
 							</form>
 						</li>
 						<% if (u.getRole().equalsIgnoreCase("admin")) { %>
@@ -93,7 +90,6 @@
 						String name = restaurant.getName() != null ? restaurant.getName() : "Restaurante";
 						String address = restaurant.getAddress() != null ? restaurant.getAddress() : "Dirección no disponible";
 						int restaurantId = restaurant.getRestaurant_id();
-						System.out.println(restaurantId);
 						
 					%>
 					<form action="restaurantmenu" method="get">

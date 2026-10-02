@@ -74,15 +74,18 @@ public class Signin extends HttpServlet {
 			u.setRole("guest");
 		}
 
-		if (request.getSession().getAttribute("user") != null) {
+		// si no vino ni email ni el botón de invitado (por ejemplo el botón "volver al menú"), se sigue con el usuario que ya está en la sesión.
+		boolean loginAttempt = request.getParameter("email") != null || "guest".equalsIgnoreCase(requestedRole);
+		if (!loginAttempt && request.getSession().getAttribute("user") != null) {
 			u = (User) request.getSession().getAttribute("user");
+			// volver a la lista de restaurantes abandona el pedido que se estaba armando ("Cancelar pedido").
+			request.getSession().removeAttribute("order");
 			
 		}
 		
 
 		
 		if (u.getRole() != null) {
-			System.out.println("role: " + u.getRole());
 
 				try {
 					restaurants = ctrlRestaurant.getAvailable();
@@ -91,9 +94,11 @@ public class Signin extends HttpServlet {
 
 				}
 				
-				if (request.getSession().getAttribute("user") == null) {
-
-				request.getSession().setAttribute("user", u);
+				// un login nuevo siempre arranca una sesión nueva: no hereda el pedido ni el menú de quien estaba antes
+				// y el id de sesión cambia al autenticarse (evita la fijación de sesión).
+				if (loginAttempt) {
+					request.getSession().invalidate();
+					request.getSession(true).setAttribute("user", u);
 				}
 				
 				request.setAttribute("restaurants", restaurants);
