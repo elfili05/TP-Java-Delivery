@@ -53,7 +53,7 @@
 			</section>
 
 			<section class="admin-panel" aria-label="Pedidos entregados">
-				<h1>Pedidos entregados</h1>
+				<h1>Pedidos entregados (últimos 50)</h1>
 
 				<% orders = deliveredOrders; showDeliver = false; ordersEmptyText = "No hay pedidos entregados."; %>
 				<%@ include file="admin_orders_list.jsp" %>

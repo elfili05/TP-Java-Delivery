@@ -11,6 +11,9 @@ import java.util.LinkedList;
 
 public class OrderRepository {
 
+	// cantidad de pedidos entregados que se listan en el panel del admin.
+	private static final int MAX_DELIVERED_ORDERS = 50;
+
 	// guarda el pedido (cabecera + detalles) como una sola transacción: o se guardan todos los registros o ninguno.
 	// devuelve true solo si todo se confirmó; ante cualquier error se hace rollback y devuelve false.
 	public Boolean addOrder(Order orderToAdd) throws SQLException{
@@ -21,6 +24,11 @@ public class OrderRepository {
 		int orderId = 0;
 		Boolean result = false;
 		
+		// un pedido sin ítems no se guarda (antes de abrir la conexión, para no dejar su contador desbalanceado).
+		if (orderToAdd == null || orderToAdd.getOrder_details() == null || orderToAdd.getOrder_details().isEmpty()) {
+			return false;
+		}
+		
 		try {
 			conn = DbConnector.getInstance().getConn();
 			// la conexión es propia del hilo del request (ver DbConnector), así que la transacción no se filtra a otros requests.
@@ -29,16 +37,18 @@ public class OrderRepository {
 			// Insert the order
 			stmt = conn.prepareStatement(
 					  "INSERT INTO user_order (user_id, restaurant_id, date, discount_id, total_amount) "
-					+ "VALUES (?, ?, CURDATE(),?, ?)",
+					+ "VALUES (?, ?, ?, ?, ?)",
 					Statement.RETURN_GENERATED_KEYS
 					);
 			stmt.setInt(1, orderToAdd.getUser().getUser_id());
 			stmt.setInt(2, orderToAdd.getRestaurant().getRestaurant_id());
+			// la fecha del pedido es la de hoy en la zona de negocio (no la del servidor de base de datos).
+			stmt.setString(3, BusinessClock.todayDate());
 			if (orderToAdd.getDiscount() != null) {
-				stmt.setInt(3, orderToAdd.getDiscount().getDiscount_id());
+				stmt.setInt(4, orderToAdd.getDiscount().getDiscount_id());
 			}
-			else { stmt.setNull(3, Types.INTEGER); }
-			stmt.setDouble(4, orderToAdd.getTotal());
+			else { stmt.setNull(4, Types.INTEGER); }
+			stmt.setDouble(5, orderToAdd.getTotal());
 			stmt.executeUpdate();
 			
 			rs = stmt.getGeneratedKeys();
@@ -77,6 +87,8 @@ public class OrderRepository {
 			
 		} finally {
 			try {
+				// si algo no-SQL cortó el proceso antes del commit, hay que descartar lo insertado: pasar a autocommit confirmaría la transacción abierta.
+				if (!result && conn != null) { conn.rollback(); }
 				if (rs != null) { rs.close(); }
 				if (stmt != null) { stmt.close(); }
 				if (detailStmt != null) { detailStmt.close(); }
@@ -121,15 +133,31 @@ public class OrderRepository {
 		return result;
 	}
 
-	// trae los pedidos según su estado ('pending' o 'delivered') con cliente, restaurante y descuento;
-	// los ítems se cargan después en un segundo paso con getDetails.
+	// trae los pedidos según su estado ('pending' o 'delivered') con cliente, restaurante, descuento e ítems.
+	// un fallo de BD se propaga (no se confunde con "no hay pedidos"): la pantalla del admin muestra un aviso.
 	public LinkedList<Order> getByStatus(String status) throws SQLException {
+		// se mantiene una conexión abierta mientras se cargan los detalles de cada pedido, en vez de abrir una nueva por pedido.
+		DbConnector.getInstance().getConn();
+		try {
+			LinkedList<Order> orders = loadOrders(status);
+			for (Order order : orders) {
+				order.setOrder_details(getDetails(order.getOrder_id()));
+			}
+			return orders;
+		} finally {
+			DbConnector.getInstance().releaseConn();
+		}
+	}
+
+	// cabeceras de pedido (cliente, restaurante y descuento) según el estado; los ítems los carga getByStatus.
+	private LinkedList<Order> loadOrders(String status) throws SQLException {
 		LinkedList<Order> orders = new LinkedList<>();
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 
-		// pendientes del más viejo al más nuevo; entregados del más nuevo al más viejo.
+		// pendientes del más viejo al más nuevo; entregados del más nuevo al más viejo y solo los últimos MAX_DELIVERED_ORDERS (el historial crece sin tope).
 		String direction = "pending".equals(status) ? "ASC" : "DESC";
+		String limit = "pending".equals(status) ? "" : " LIMIT " + MAX_DELIVERED_ORDERS;
 
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(
@@ -142,7 +170,7 @@ public class OrderRepository {
 					+ "INNER JOIN restaurant r ON r.restaurant_id = o.restaurant_id "
 					+ "LEFT JOIN discount d ON d.discount_id = o.discount_id "
 					+ "WHERE o.status = ? "
-					+ "ORDER BY o.order_id " + direction
+					+ "ORDER BY o.order_id " + direction + limit
 					);
 			stmt.setString(1, status);
 			rs = stmt.executeQuery();
@@ -180,6 +208,7 @@ public class OrderRepository {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw e;
 
 		} finally {
 			try {
@@ -189,10 +218,6 @@ public class OrderRepository {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-		}
-
-		for (Order order : orders) {
-			order.setOrder_details(getDetails(order.getOrder_id()));
 		}
 
 		return orders;
@@ -232,6 +257,7 @@ public class OrderRepository {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw e;
 
 		} finally {
 			try {

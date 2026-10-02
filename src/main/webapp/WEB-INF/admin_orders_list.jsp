@@ -23,12 +23,12 @@
 						&mdash; <%= HtmlUtils.escape(order.getRestaurant().getName()) %>
 					</p>
 					<% for (OrderDetail detail : order.getOrder_details()) { %>
-						<p><%= detail.getQuantity() %> &times; <%= HtmlUtils.escape(detail.getProduct().getDescription()) %> &mdash; $<%= String.format("%.2f", detail.getSubtotal()) %></p>
+						<p><%= detail.getQuantity() %> &times; <%= HtmlUtils.escape(detail.getProduct().getDescription()) %> &mdash; $<%= String.format(java.util.Locale.US, "%.2f", detail.getSubtotal()) %></p>
 					<% } %>
 					<% if (order.getDiscount() != null) { %>
-						<p>Descuento aplicado: <%= BigDecimal.valueOf(order.getDiscount().getDiscount_percentage() * 100).setScale(2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString().replace('.', ',') %>%</p>
+						<p>Descuento aplicado: <%= BigDecimal.valueOf(order.getDiscount().getDiscount_percentage() * 100).setScale(2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString() %>%</p>
 					<% } %>
-					<p><strong>Total: $<%= String.format("%.2f", order.getTotalWithDiscount()) %></strong></p>
+					<p><strong>Total: $<%= String.format(java.util.Locale.US, "%.2f", order.getTotalWithDiscount()) %></strong></p>
 				</div>
 				<% if (showDeliver) { %>
 					<div class="admin-product-item__actions">

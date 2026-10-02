@@ -26,7 +26,8 @@ public class ProcessOrder {
 		
 		order.setOrder_details(orderDetails);
 		
-		Discount d = dr.getOne(order.getTotal()); 
+		// el total es una suma de doubles (ej.: 29999.999999999996): se redondea a centavos para que el umbral del descuento se compare bien.
+		Discount d = dr.getOne(Math.round(order.getTotal() * 100) / 100.0); 
 		
 		order.setDiscount(d);
 		
