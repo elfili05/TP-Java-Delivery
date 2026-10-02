@@ -112,11 +112,17 @@ public class RestaurantRepository {
 					  + "FROM restaurant res\r\n"
 					  + "INNER JOIN schedule sch\r\n"
 					  + "	ON sch.restaurant_id = res.restaurant_id\r\n"
-					  + "WHERE sch.day_of_week = LOWER(DAYNAME(CURDATE()))\r\n"
-					  + "	AND time(now()) BETWEEN sch.start_time AND sch.end_time\r\n"
+					  + "WHERE sch.day_of_week = ?\r\n"
+					  // un cierre cargado como 00:00 significa "hasta la medianoche": abre desde start_time hasta el fin del día.
+					  + "	AND (? BETWEEN sch.start_time AND sch.end_time OR (sch.end_time = '00:00:00' AND ? >= sch.start_time))\r\n"
 					  + "    AND res.restaurant_id = ?;"
 					);
-			stmt.setInt(1, restaurantToCheck.getRestaurant_id());
+			// el día y la hora salen de BusinessClock (Java), no del reloj del servidor MySQL.
+			String currentTime = BusinessClock.nowTime();
+			stmt.setString(1, BusinessClock.todayName());
+			stmt.setString(2, currentTime);
+			stmt.setString(3, currentTime);
+			stmt.setInt(4, restaurantToCheck.getRestaurant_id());
 			rs = stmt.executeQuery();
 			if (rs != null && rs.next()) {
 				result = true;

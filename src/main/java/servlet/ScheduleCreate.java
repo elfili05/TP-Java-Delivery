@@ -58,12 +58,13 @@ public class ScheduleCreate extends HttpServlet {
 
 		Boolean created = false;
 		boolean overlap = false;
-		if (restaurantId != null && isValidDay(dayOfWeek) && startTime != null && endTime != null) {
+		boolean invalidRange = startTime != null && endTime != null && !isValidRange(startTime, endTime);
+		if (restaurantId != null && isValidDay(dayOfWeek) && startTime != null && endTime != null && !invalidRange) {
 			Restaurant restaurant = new Restaurant();
 			restaurant.setRestaurant_id(restaurantId);
 
 			Schedule schedule = new Schedule();
-			schedule.setDay_of_week(dayOfWeek);
+			schedule.setDay_of_week(dayOfWeek.toLowerCase());
 			schedule.setStart_time(startTime);
 			schedule.setEnd_time(endTime);
 
@@ -83,11 +84,21 @@ public class ScheduleCreate extends HttpServlet {
 			message = "Horario agregado correctamente.";
 		} else if (overlap) {
 			message = "Ese horario se superpone con uno ya cargado para ese día.";
+		} else if (invalidRange) {
+			message = RANGE_ERROR_MESSAGE;
 		} else {
 			message = "No se pudo agregar el horario. Revisá los datos ingresados.";
 		}
 		request.setAttribute("message", message);
 		RestaurantEdit.forwardWithRestaurant(request, response, restaurantId);
+	}
+
+	static final String RANGE_ERROR_MESSAGE = "La hora de cierre tiene que ser posterior a la de apertura (para cerrar a medianoche cargá 00:00).";
+
+	// el cierre debe ser después de la apertura; "00:00" se acepta como cierre a medianoche (así lo interpreta también la disponibilidad del restaurante).
+	static boolean isValidRange(Time startTime, Time endTime) {
+		boolean closesAtMidnight = endTime.toString().equals("00:00:00") && !startTime.toString().equals("00:00:00");
+		return closesAtMidnight || endTime.after(startTime);
 	}
 
 	// interpreta el id de la URL/formulario; null si vino vacío o no es un número.
