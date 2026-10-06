@@ -1,5 +1,6 @@
 <%@page import="java.util.LinkedList"%>
 <%@page import="main.java.entities.User"%>
+<%@page import="main.java.logic.HtmlUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
@@ -35,12 +36,12 @@
 				</div>
 
 				<form action="AdminUsers" method="get" class="admin-search">
-					<input type="text" name="q" value="<%= query != null ? query : "" %>" placeholder="Buscar por nombre, apellido o email..." />
+					<input type="text" name="q" value="<%= HtmlUtils.escape(query) %>" placeholder="Buscar por nombre, apellido o email..." />
 					<button type="submit" class="admin-action-link">Buscar</button>
 				</form>
 
 				<% if (message != null) { %>
-					<p class="admin-message"><%= message %></p>
+					<p class="admin-message"><%= HtmlUtils.escape(message) %></p>
 				<% } %>
 
 				<% if (users != null && !users.isEmpty()) { %>
@@ -48,14 +49,14 @@
 						<% for (User user : users) { %>
 							<li class="admin-user-item">
 								<div class="admin-user-item__info">
-									<strong><%= user.getName() %> <%= user.getSurname() %></strong>
-									<span class="admin-role-badge <%= "admin".equalsIgnoreCase(user.getRole()) ? "admin-role-badge--admin" : "" %>"><%= user.getRole() %></span>
-									<p><%= user.getEmail() %></p>
+									<strong><%= HtmlUtils.escape(user.getName()) %> <%= HtmlUtils.escape(user.getSurname()) %></strong>
+									<span class="admin-role-badge <%= "admin".equalsIgnoreCase(user.getRole()) ? "admin-role-badge--admin" : "" %>"><%= HtmlUtils.escape(user.getRole()) %></span>
+									<p><%= HtmlUtils.escape(user.getEmail()) %></p>
 								</div>
 								<div class="admin-user-item__actions">
-									<a href="UserEdit?email=<%= user.getEmail() %>" class="admin-action-link">Editar</a>
+									<a href="UserEdit?email=<%= HtmlUtils.escape(java.net.URLEncoder.encode(user.getEmail(), "UTF-8")) %>" class="admin-action-link">Editar</a>
 									<form action="UserDelete" method="post" data-confirm="¿Eliminar este usuario?">
-										<input type="hidden" name="email" value="<%= user.getEmail() %>" />
+										<input type="hidden" name="email" value="<%= HtmlUtils.escape(user.getEmail()) %>" />
 										<button type="submit" class="admin-action-link admin-action-link--danger">Eliminar</button>
 									</form>
 								</div>

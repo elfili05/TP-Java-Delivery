@@ -40,6 +40,8 @@ public class AdminUsers extends HttpServlet {
 			return;
 		}
 
+		Flash.restore(request);
+
 		UserCRUD ctrlUser = new UserCRUD();
 		LinkedList<User> users = new LinkedList<User>();
 		try {
@@ -66,6 +68,11 @@ public class AdminUsers extends HttpServlet {
 		request.setAttribute("users", users);
 		request.setAttribute("query", query);
 		request.getRequestDispatcher("WEB-INF/admin_users.jsp").forward(request, response);
+	}
+
+	// un POST (a mano o por un formulario alterado) se trata igual que un GET: valida el rol y solo muestra la lista.
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
 	}
 
 }

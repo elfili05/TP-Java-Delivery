@@ -1,0 +1,79 @@
+package main.java.servlet;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.LinkedList;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import main.java.entities.Order;
+import main.java.entities.User;
+import main.java.logic.OrderCRUD;
+
+/**
+ * Servlet implementation class AdminOrders
+ */
+@WebServlet({ "/AdminOrders", "/adminorders", "/adminOrders", "/Adminorders", "/ADMINORDERS" })
+public class AdminOrders extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public AdminOrders() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	// lista los pedidos pendientes y entregados para la pantalla "Gestionar pedidos".
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User u = (User) request.getSession().getAttribute("user");
+
+		if (u == null || !u.getRole().equalsIgnoreCase("admin")) {
+			response.sendRedirect("index.html");
+			return;
+		}
+
+		forwardWithOrders(request, response);
+	}
+
+	// un POST (a mano o por un formulario alterado) se trata igual que un GET: valida el rol y solo muestra la lista.
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+	// recarga ambas listas de pedidos; la comparte OrderDeliver para volver a esta pantalla tras un POST.
+	static void forwardWithOrders(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if (Flash.redirectAfterPost(request, response, "AdminOrders")) {
+			return;
+		}
+		Flash.restore(request);
+
+		OrderCRUD ctrlOrder = new OrderCRUD();
+
+		LinkedList<Order> pendingOrders = new LinkedList<Order>();
+		LinkedList<Order> deliveredOrders = new LinkedList<Order>();
+		try {
+			pendingOrders = ctrlOrder.getOrdersByStatus("pending");
+			deliveredOrders = ctrlOrder.getOrdersByStatus("delivered");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			// un fallo de BD no se muestra como "no hay pedidos": se avisa en pantalla.
+			if (request.getAttribute("message") == null) {
+				request.setAttribute("message", "No se pudieron cargar los pedidos. Intentá de nuevo.");
+			}
+		}
+
+		request.setAttribute("pendingOrders", pendingOrders);
+		request.setAttribute("deliveredOrders", deliveredOrders);
+		request.getRequestDispatcher("WEB-INF/admin_orders.jsp").forward(request, response);
+	}
+
+}

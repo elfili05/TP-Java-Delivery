@@ -36,43 +36,43 @@
 				<form class="signin-form signup-form" action="signup" method="post">
 					<div class="signin-form__field">
 						<label class="visually-hidden" for="name">Nombre</label>
-						<input id="name" class="signin-form__input" type="text" name="name"
+						<input id="name" class="signin-form__input" type="text" name="name" maxlength="80"
 							placeholder="Ingrese su nombre..." autocomplete="given-name" required />
 					</div>
 
 					<div class="signin-form__field">
 						<label class="visually-hidden" for="surname">Apellido</label>
-						<input id="surname" class="signin-form__input" type="text" name="surname"
+						<input id="surname" class="signin-form__input" type="text" name="surname" maxlength="80"
 							placeholder="Ingrese su apellido..." autocomplete="family-name" required />
 					</div>
 
 					<div class="signin-form__field">
 						<label class="visually-hidden" for="address">Dirección</label>
-						<input id="address" class="signin-form__input" type="text" name="address"
+						<input id="address" class="signin-form__input" type="text" name="address" maxlength="80"
 							placeholder="Ingrese su dirección..." autocomplete="street-address" required />
 					</div>
 
 					<div class="signin-form__field">
 						<label class="visually-hidden" for="dni">DNI</label>
-						<input id="dni" class="signin-form__input" type="text" name="dni"
+						<input id="dni" class="signin-form__input" type="text" name="dni" maxlength="10"
 							placeholder="Ingrese su DNI..." inputmode="numeric" autocomplete="off" required />
 					</div>
 
 					<div class="signin-form__field">
 						<label class="visually-hidden" for="phone_number">Teléfono</label>
-						<input id="phone_number" class="signin-form__input" type="tel" name="phone_number"
+						<input id="phone_number" class="signin-form__input" type="tel" name="phone_number" maxlength="20"
 							placeholder="Ingrese su teléfono..." autocomplete="tel" required />
 					</div>
 
 					<div class="signin-form__field">
 						<label class="visually-hidden" for="email">Email</label>
-						<input id="email" class="signin-form__input" type="email" name="email"
+						<input id="email" class="signin-form__input" type="email" name="email" maxlength="80"
 							placeholder="Ingrese su email..." autocomplete="email" required />
 					</div>
 
 					<div class="signin-form__field">
 						<label class="visually-hidden" for="password">Contraseña</label>
-						<input id="password" class="signin-form__input" type="password" name="password"
+						<input id="password" class="signin-form__input" type="password" name="password" maxlength="200"
 							placeholder="Ingrese su contraseña..." autocomplete="new-password" required />
 					</div>
 

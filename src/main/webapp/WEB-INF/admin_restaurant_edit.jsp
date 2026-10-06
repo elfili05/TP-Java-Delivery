@@ -2,6 +2,7 @@
 <%@page import="main.java.entities.Restaurant"%>
 <%@page import="main.java.entities.Schedule"%>
 <%@page import="main.java.entities.User"%>
+<%@page import="main.java.logic.HtmlUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%!
@@ -50,20 +51,24 @@
 				<h1>Editar restaurante</h1>
 
 				<% if (message != null) { %>
-					<p class="admin-message"><%= message %></p>
+					<p class="admin-message"><%= HtmlUtils.escape(message) %></p>
 				<% } %>
 
-				<form action="RestaurantEdit" method="post" class="admin-form">
+				<form action="RestaurantEdit" method="post" enctype="multipart/form-data" class="admin-form">
 					<input type="hidden" name="restaurant_id" value="<%= restaurant.getRestaurant_id() %>" />
 
 					<label for="name">Nombre</label>
-					<input type="text" id="name" name="name" value="<%= restaurant.getName() %>" required />
+					<input type="text" id="name" name="name" value="<%= HtmlUtils.escape(restaurant.getName()) %>" maxlength="80" required />
 
 					<label for="address">Dirección</label>
-					<input type="text" id="address" name="address" value="<%= restaurant.getAddress() %>" required />
+					<input type="text" id="address" name="address" value="<%= HtmlUtils.escape(restaurant.getAddress()) %>" maxlength="80" required />
 
-					<label for="image_url">Imagen (ruta o URL)</label>
-					<input type="text" id="image_url" name="image_url" value="<%= restaurant.getImage_url() != null ? restaurant.getImage_url() : "" %>" placeholder="uploads/mi-restaurante.jpg" />
+					<label for="image">Imagen</label>
+					<% if (restaurant.getImage_url() != null && !restaurant.getImage_url().trim().isEmpty()) { %>
+						<img src="<%= HtmlUtils.escape(restaurant.getImage_url()) %>" alt="Imagen actual del restaurante" class="admin-restaurant-item__img" />
+					<% } %>
+					<input type="file" id="image" name="image" accept="image/*" />
+					<p class="admin-empty">Si no elegís un archivo, se conserva la imagen actual.</p>
 
 					<button type="submit" class="admin-submit">Guardar cambios</button>
 				</form>
@@ -82,8 +87,8 @@
 						<% for (Schedule schedule : schedules) { %>
 							<li class="admin-schedule-item">
 								<div class="admin-schedule-item__info">
-									<strong><%= dayLabel(schedule.getDay_of_week()) %></strong>
-									<span> — <%= schedule.getStart_time().toString().substring(0, 5) %> a <%= schedule.getEnd_time().toString().substring(0, 5) %></span>
+									<strong><%= HtmlUtils.escape(dayLabel(schedule.getDay_of_week())) %></strong>
+									<span> — <%= HtmlUtils.escape(schedule.getStart_time().toString().substring(0, 5)) %> a <%= HtmlUtils.escape(schedule.getEnd_time().toString().substring(0, 5)) %></span>
 								</div>
 								<div class="admin-schedule-item__actions">
 									<a href="ScheduleEdit?restaurant_id=<%= restaurant.getRestaurant_id() %>&schedule_number=<%= schedule.getSchedule_number() %>" class="admin-action-link">Editar</a>

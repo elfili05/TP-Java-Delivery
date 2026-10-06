@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Configuración de Tomcat para esta app: la cookie de sesión no se manda en pedidos de otros sitios (SameSite=Lax),
+     una segunda defensa contra CSRF además del filtro CsrfOriginFilter. -->
+<Context>
+	<CookieProcessor className="org.apache.tomcat.util.http.Rfc6265CookieProcessor" sameSiteCookies="lax" />
+</Context>

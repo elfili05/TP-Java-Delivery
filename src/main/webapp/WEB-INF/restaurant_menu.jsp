@@ -5,6 +5,7 @@
 <%@page import="main.java.entities.OrderDetail"%>
 <%@page import="java.util.LinkedList"%>
 <%@page import="java.time.*"%>
+<%@page import="main.java.logic.HtmlUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -66,14 +67,14 @@
 				}
 				if (userOrder.getDiscount() != null && userOrder.getDiscount().getDiscount_percentage() > 0) {
 					hasDiscount = true;
-					discountLabel = String.format(java.util.Locale.US, "%.0f%%", userOrder.getDiscount().getDiscount_percentage() * 100);
+					discountLabel = java.math.BigDecimal.valueOf(userOrder.getDiscount().getDiscount_percentage() * 100).setScale(2, java.math.RoundingMode.HALF_UP).stripTrailingZeros().toPlainString() + "%";
 					orderTotalWithDiscount = userOrder.getTotalWithDiscount();
 				}
 			}
 		}
  	
 %>
-<title>Java Delivery | <%= restaurantName %></title>
+<title>Java Delivery | <%= HtmlUtils.escape(restaurantName) %></title>
 </head>
 <body class="home-page menu-page">
     <div class="home-layout">
@@ -85,14 +86,14 @@
 
 			<div class="delivery-target">
 				<span class="delivery-target__label">Enviar a:</span>
-				<span class="delivery-target__value"><%= userAddress %></span>
+				<span class="delivery-target__value"><%= HtmlUtils.escape(userAddress) %></span>
 			</div>
 
 			<div class="user-menu-container">
 				<button class="user-welcome" aria-label="Usuario logueado, menú de opciones" aria-haspopup="true" aria-expanded="false" id="userMenuBtn">
 					<div class="user-welcome__avatar"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6"><path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" /></svg>
 					</div>
-					<span class="user-welcome__text">Hola, <strong><%= userName %></strong></span>
+					<span class="user-welcome__text">Hola, <strong><%= HtmlUtils.escape(userName) %></strong></span>
 					<%if (!u.getRole().equalsIgnoreCase("guest")) { %><svg class="user-welcome__arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"> <% } %>
 						<path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
 					</svg>
@@ -103,12 +104,12 @@
 						<li class="user-dropdown__item">
 							<form action="logout" method="post">
 								<button name="logoutButton" value="true" class="user-dropdown__link">
-									<a href="logout" class="user-dropdown__link">
+									<span class="user-dropdown__link">
 										<svg class="user-dropdown__icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
 											<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
 										</svg>
 								<% if (!u.getRole().equalsIgnoreCase("guest")) { %> Cerrar sesión <% } else { %> Salir <% } %>
-									</a>
+									</span>
 								</button>
 							</form>
 						</li>
@@ -118,8 +119,8 @@
 			</div>
 		</header>
 
-        <section class="menu-banner" aria-label="Restaurante seleccionado"<% if (restaurantImage != null && !restaurantImage.isBlank()) { %> style="background-image: url('<%= restaurantImage %>')"<% } %>>
-            <div class="menu-banner__overlay"><h1><%= restaurantName %></h1><p>Menú de productos</p></div>
+        <section class="menu-banner" aria-label="Restaurante seleccionado"<% if (restaurantImage != null && !restaurantImage.isBlank()) { %> style="background-image: url('<%= HtmlUtils.safeImageUrl(restaurantImage, "assets/restaurant_background.jpg") %>')"<% } %>>
+            <div class="menu-banner__overlay"><h1><%= HtmlUtils.escape(restaurantName) %></h1><p>Menú de productos</p></div>
         </section>
 
         <main class="menu-content">
@@ -128,16 +129,10 @@
             		<label for="productTypeFilter">Filtrar por:</label>
             		<select id="productTypeFilter" name="productTypeFilter"><option value="all">Todos los productos
             				</option><% 
-            				if (products != null) { 
-            				java.util.LinkedHashSet<String> types = new java.util.LinkedHashSet<>(); 
-            				for (Product product : products) { 
-            				if (product.getProduct_type() != null && product.getProduct_type().getName() != null) {
-            					types.add(product.getProduct_type().getName()); 
-            					} 
-            				}
-            				
+            				java.util.Collection<String> types = (java.util.Collection<String>) session.getAttribute("menuTypes");
+            				if (types != null) { 
             				for (String type : types) { %>
-            				<option value="<%= type %>"><%= type %></option>
+            				<option value="<%= HtmlUtils.escape(type) %>"><%= HtmlUtils.escape(type) %></option>
             				<% } 
             				} %>
             				
@@ -145,6 +140,10 @@
             		<button type="submit">Elegir filtro</button>
             	</form>
             </div>
+            <% String orderError = (String) request.getAttribute("orderError");
+               if (orderError != null) { %>
+            <p role="alert" style="margin: 0 0 12px; padding: 10px 14px; border-radius: 8px; background: #fde8e8; color: #9b1c1c;"><%= HtmlUtils.escape(orderError) %></p>
+            <% } %>
             <form id="orderForm" class="order-form" action="orderprocess" method="post">
             <div class="table-wrapper">
             	<table class="products-table">
@@ -157,15 +156,15 @@
             		</thead>
             		 <tbody>
                 			<% if (products != null) { for (Product product : products) { String type = product.getProduct_type() != null ? product.getProduct_type().getName() : "Sin tipo"; %>
-                			<tr data-product-type="<%= type %>">
-                				<td><%= product.getDescription() %></td>
+                			<tr data-product-type="<%= HtmlUtils.escape(type) %>">
+                				<td><%= HtmlUtils.escape(product.getDescription()) %></td>
                 				<td>$ <%= String.format(java.util.Locale.US, "%.2f", product.getPrice()) %></td>
-                				<td><%= type %></td>
+                				<td><%= HtmlUtils.escape(type) %></td>
                 				<td>
                 					<div class="quantity-control">
-                							<button type="button" class="quantity-button decrease" aria-label="Reducir cantidad de <%= product.getDescription() %>">-</button>
-                							<input type="number" name="quantity_<%= product.getProduct_id() %>" value="0" min="0" aria-label="Cantidad de <%= product.getDescription() %>">
-                							<button type="button" class="quantity-button increase" aria-label="Aumentar cantidad de <%= product.getDescription() %>">+</button>
+                							<button type="button" class="quantity-button decrease" aria-label="Reducir cantidad de <%= HtmlUtils.escape(product.getDescription()) %>">-</button>
+                							<input type="number" name="quantity_<%= product.getProduct_id() %>" value="0" min="0" aria-label="Cantidad de <%= HtmlUtils.escape(product.getDescription()) %>">
+                							<button type="button" class="quantity-button increase" aria-label="Aumentar cantidad de <%= HtmlUtils.escape(product.getDescription()) %>">+</button>
                 					</div>
                 				</td>
                 			</tr>
@@ -174,7 +173,7 @@
                 </table>
             </div>
             <% if (products == null || products.isEmpty()) { %>
-                <p class="menu-empty" role="status"><%= restaurantName %> no tiene productos para ofrecer.. por ahora.</p>
+                <p class="menu-empty" role="status"><%= HtmlUtils.escape(restaurantName) %> no tiene productos para ofrecer.. por ahora.</p>
             <% } else { %>
 			   <%  if (!u.getRole().equalsIgnoreCase("guest") && !u.getRole().equalsIgnoreCase("admin")) { %>
                 <div class="order-actions">
@@ -205,11 +204,11 @@
 						</div>
 						<div class="order-confirmation-dialog__meta-row">
 							<span class="order-confirmation-dialog__label">Enviar a:</span>
-							<span class="order-confirmation-dialog__value"><%= orderAddressLabel %></span>
+							<span class="order-confirmation-dialog__value"><%= HtmlUtils.escape(orderAddressLabel) %></span>
 						</div>
 						<div class="order-confirmation-dialog__meta-row">
 							<span class="order-confirmation-dialog__label">Restaurante:</span>
-							<span class="order-confirmation-dialog__value"><%= orderRestaurantLabel %></span>
+							<span class="order-confirmation-dialog__value"><%= HtmlUtils.escape(orderRestaurantLabel) %></span>
 						</div>
 					</section>
 
@@ -233,7 +232,7 @@
 								<tbody>
 									<% if (orderDetails != null && !orderDetails.isEmpty()) { for (OrderDetail detail : orderDetails) { if (detail != null && detail.getProduct() != null) { %>
 									<tr>
-										<td><%= detail.getProduct().getDescription() %></td>
+										<td><%= HtmlUtils.escape(detail.getProduct().getDescription()) %></td>
 										<td>$ <%= String.format(java.util.Locale.US, "%.2f", detail.getProduct().getPrice()) %></td>
 										<td><%= detail.getQuantity() %></td>
 										<td>$ <%= String.format(java.util.Locale.US, "%.2f", detail.getSubtotal()) %></td>
@@ -262,10 +261,10 @@
 					</section>
 
 					<div class="order-confirmation-dialog__actions">
-						<form class="order-confirmation-dialog__action-form" action="orderProcess" method="get">
+						<form class="order-confirmation-dialog__action-form" action="orderProcess" method="post">
 							<button class="order-confirmation-dialog__button order-confirmation-dialog__button--secondary" name="confirmOrder" value="false" type="submit">Cancelar pedido</button>
 						</form>
-						<form class="order-confirmation-dialog__action-form" action="orderProcess" method="get">
+						<form class="order-confirmation-dialog__action-form" action="orderProcess" method="post">
 							<button class="order-confirmation-dialog__button order-confirmation-dialog__button--primary" name="confirmOrder" value="true" type="submit">Confirmar pedido</button>
 						</form>
 					</div>
@@ -310,6 +309,17 @@ document.addEventListener('DOMContentLoaded', () => {
 					}
 				});
 			}
+
+			// botones "-" y "+" de cada producto: suman o restan 1 en el campo de cantidad (mínimo 0, máximo 99).
+			document.querySelectorAll('.quantity-control').forEach((control) => {
+				const input = control.querySelector('input[type="number"]');
+				const change = (amount) => {
+					const current = parseInt(input.value, 10) || 0;
+					input.value = Math.min(99, Math.max(0, current + amount));
+				};
+				control.querySelector('.decrease').addEventListener('click', () => change(-1));
+				control.querySelector('.increase').addEventListener('click', () => change(1));
+			});
 		});
 </script>
 

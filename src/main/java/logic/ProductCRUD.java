@@ -31,16 +31,16 @@ public class ProductCRUD {
 		return ptr.getAll();
 	}
 
-	public void addProduct(Product product, Restaurant restaurant, ProductType productType) throws SQLException {
-		pr.addProduct(product, restaurant, productType);
+	public Boolean addProduct(Product product, Restaurant restaurant, ProductType productType) throws SQLException {
+		return pr.addProduct(product, restaurant, productType);
 	}
 
-	public void updateProduct(Product product, ProductType productType) throws SQLException {
-		pr.updateProduct(product, productType);
+	public Boolean updateProduct(Product product, ProductType productType) throws SQLException {
+		return pr.updateProduct(product, productType);
 	}
 
-	public void deleteProduct(int productId) throws SQLException {
-		pr.deleteProduct(productId);
+	public Boolean deleteProduct(int productId) throws SQLException {
+		return pr.deleteProduct(productId);
 	}
 
 }

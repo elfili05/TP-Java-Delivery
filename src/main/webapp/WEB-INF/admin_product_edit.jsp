@@ -2,6 +2,7 @@
 <%@page import="main.java.entities.Product"%>
 <%@page import="main.java.entities.ProductType"%>
 <%@page import="main.java.entities.User"%>
+<%@page import="main.java.logic.HtmlUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
@@ -40,15 +41,15 @@
 					<input type="hidden" name="product_id" value="<%= editedProduct.getProduct_id() %>" />
 
 					<label for="description">Descripción</label>
-					<input type="text" id="description" name="description" value="<%= editedProduct.getDescription() %>" required />
+					<input type="text" id="description" name="description" value="<%= HtmlUtils.escape(editedProduct.getDescription()) %>" maxlength="100" required />
 
 					<label for="price">Precio</label>
-					<input type="number" id="price" name="price" min="0.01" step="0.01" value="<%= editedProduct.getPrice() %>" required />
+					<input type="number" id="price" name="price" min="0.01" step="0.01" value="<%= String.format(java.util.Locale.US, "%.2f", editedProduct.getPrice()) %>" required />
 
 					<label for="product_type_id">Tipo de producto</label>
 					<select id="product_type_id" name="product_type_id">
 						<% for (ProductType productType : productTypes) { %>
-							<option value="<%= productType.getProduct_type_id() %>" <%= productType.getProduct_type_id() == currentTypeId ? "selected" : "" %>><%= productType.getName() %></option>
+							<option value="<%= productType.getProduct_type_id() %>" <%= productType.getProduct_type_id() == currentTypeId ? "selected" : "" %>><%= HtmlUtils.escape(productType.getName()) %></option>
 						<% } %>
 					</select>
 

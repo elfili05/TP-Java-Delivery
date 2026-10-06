@@ -91,18 +91,17 @@ public class ProductEdit extends HttpServlet {
 		ProductCRUD ctrlProduct = new ProductCRUD();
 
 		Boolean updated = false;
-		if (productId != null && productTypeId != null && description != null && !description.trim().isEmpty() && price != null && price > 0) {
+		if (productId != null && productTypeId != null && description != null && !description.trim().isEmpty() && description.trim().length() <= ProductCreate.MAX_DESCRIPTION_LENGTH && price != null && price > 0) {
 			Product product = new Product();
 			product.setProduct_id(productId);
-			product.setDescription(description);
+			product.setDescription(description.trim());
 			product.setPrice(price);
 
 			ProductType productType = new ProductType();
 			productType.setProduct_type_id(productTypeId);
 
 			try {
-				ctrlProduct.updateProduct(product, productType);
-				updated = true;
+				updated = ctrlProduct.updateProduct(product, productType);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

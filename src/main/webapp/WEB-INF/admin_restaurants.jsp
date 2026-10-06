@@ -1,6 +1,7 @@
 <%@page import="java.util.LinkedList"%>
 <%@page import="main.java.entities.Restaurant"%>
 <%@page import="main.java.entities.User"%>
+<%@page import="main.java.logic.HtmlUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
@@ -10,6 +11,8 @@
 		return;
 	}
 	String message = (String) request.getAttribute("message");
+	// solo los errores del alta reabren el modal; el resto de los mensajes (editar, eliminar, éxito) van arriba del listado.
+	boolean reopenCreateModal = request.getAttribute("reopenCreateModal") != null;
 	String query = (String) request.getAttribute("query");
 	LinkedList<Restaurant> restaurants = (LinkedList<Restaurant>) request.getAttribute("restaurants");
 %>
@@ -36,21 +39,25 @@
 					<button type="button" id="openCreateRestaurant" class="admin-submit admin-submit--small">Crear restaurante</button>
 				</div>
 
+				<% if (message != null && !reopenCreateModal) { %>
+					<p class="admin-message"><%= HtmlUtils.escape(message) %></p>
+				<% } %>
+
 				<form action="AdminRestaurants" method="get" class="admin-search">
-					<input type="text" name="q" value="<%= query != null ? query : "" %>" placeholder="Buscar por nombre o dirección..." />
+					<input type="text" name="q" value="<%= HtmlUtils.escape(query) %>" placeholder="Buscar por nombre o dirección..." />
 					<button type="submit" class="admin-action-link">Buscar</button>
 				</form>
 
 				<% if (restaurants != null && !restaurants.isEmpty()) { %>
 					<ul class="admin-restaurant-list">
 						<% for (Restaurant restaurant : restaurants) {
-							String imgSrc = restaurant.getImage_url() != null ? restaurant.getImage_url() : "assets/icon2.ico";
+							String imgSrc = (restaurant.getImage_url() != null && !restaurant.getImage_url().trim().isEmpty()) ? restaurant.getImage_url() : "assets/icon2.ico";
 						%>
 							<li class="admin-restaurant-item">
-								<img src="<%= imgSrc %>" alt="" class="admin-restaurant-item__img" />
+								<img src="<%= HtmlUtils.escape(imgSrc) %>" alt="" class="admin-restaurant-item__img" />
 								<div class="admin-restaurant-item__info">
-									<strong><%= restaurant.getName() %></strong>
-									<p><%= restaurant.getAddress() %></p>
+									<strong><%= HtmlUtils.escape(restaurant.getName()) %></strong>
+									<p><%= HtmlUtils.escape(restaurant.getAddress()) %></p>
 								</div>
 								<div class="admin-restaurant-item__actions">
 									<a href="RestaurantEdit?id=<%= restaurant.getRestaurant_id() %>" class="admin-action-link">Editar</a>
@@ -70,24 +77,24 @@
 			</section>
 		</main>
 
-		<dialog id="createRestaurantModal" class="admin-modal" <%= message != null ? "open" : "" %>>
+		<dialog id="createRestaurantModal" class="admin-modal" <%= reopenCreateModal ? "open" : "" %>>
 			<div class="admin-modal__content">
 				<button type="button" id="closeCreateRestaurant" class="admin-modal__close" aria-label="Cerrar">&times;</button>
 				<h2>Crear restaurante</h2>
 
-				<% if (message != null) { %>
-					<p class="admin-message"><%= message %></p>
+				<% if (message != null && reopenCreateModal) { %>
+					<p class="admin-message"><%= HtmlUtils.escape(message) %></p>
 				<% } %>
 
-				<form action="RestaurantCreate" method="post" class="admin-form">
+				<form action="RestaurantCreate" method="post" enctype="multipart/form-data" class="admin-form">
 					<label for="name">Nombre</label>
-					<input type="text" id="name" name="name" required />
+					<input type="text" id="name" name="name" maxlength="80" required />
 
 					<label for="address">Dirección</label>
-					<input type="text" id="address" name="address" required />
+					<input type="text" id="address" name="address" maxlength="80" required />
 
-					<label for="image_url">Imagen (ruta o URL)</label>
-					<input type="text" id="image_url" name="image_url" placeholder="uploads/mi-restaurante.jpg" />
+					<label for="image">Imagen (opcional)</label>
+					<input type="file" id="image" name="image" accept="image/*" />
 
 					<button type="submit" class="admin-submit">Crear restaurante</button>
 				</form>
@@ -113,6 +120,8 @@
 			const closeBtn = document.getElementById('closeCreateRestaurant');
 
 			if (modal && modal.hasAttribute('open')) {
+				// el servidor lo emite con el atributo "open"; showModal() falla si ya está abierto como diálogo no modal.
+				modal.removeAttribute('open');
 				modal.showModal();
 			}
 

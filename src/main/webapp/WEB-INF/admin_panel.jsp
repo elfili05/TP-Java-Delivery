@@ -1,4 +1,11 @@
+<%@page import="java.util.LinkedList"%>
+<%@page import="java.math.BigDecimal"%>
+<%@page import="java.math.RoundingMode"%>
+<%@page import="java.time.format.DateTimeFormatter"%>
+<%@page import="main.java.entities.Order"%>
+<%@page import="main.java.entities.OrderDetail"%>
 <%@page import="main.java.entities.User"%>
+<%@page import="main.java.logic.HtmlUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
@@ -7,6 +14,13 @@
 		response.sendRedirect("index.html");
 		return;
 	}
+	String message = (String) request.getAttribute("message");
+
+	// variables que lee el fragmento admin_orders_list.jsp.
+	LinkedList<Order> orders = (LinkedList<Order>) request.getAttribute("pendingOrders");
+	boolean showDeliver = true;
+	String ordersFrom = "home";
+	String ordersEmptyText = "No hay pedidos pendientes.";
 %>
 <!DOCTYPE html>
 <html lang="es">
@@ -24,10 +38,15 @@
 	<div class="admin-layout">
 		<%@ include file="admin_header.jsp" %>
 
-		<main class="admin-content">
+		<main class="admin-content admin-content--wide">
 			<section class="admin-panel" aria-label="Pedidos pendientes">
 				<h1>Pedidos pendientes</h1>
-				<p class="admin-empty">No hay pedidos pendientes.</p>
+
+				<% if (message != null) { %>
+					<p class="admin-message"><%= HtmlUtils.escape(message) %></p>
+				<% } %>
+
+				<%@ include file="admin_orders_list.jsp" %>
 			</section>
 		</main>
 	</div>

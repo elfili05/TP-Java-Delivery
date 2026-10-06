@@ -41,6 +41,8 @@ public class AdminRestaurants extends HttpServlet {
 			return;
 		}
 
+		Flash.restore(request);
+
 		RestaurantCRUD ctrlRestaurant = new RestaurantCRUD();
 		LinkedList<Restaurant> restaurants = new LinkedList<Restaurant>();
 		try {

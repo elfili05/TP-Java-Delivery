@@ -8,3 +8,7 @@ CLAUDE.md
 
 # compiled classes, generated locally by the Java extension, never source
 src/main/webapp/WEB-INF/classes/
+
+# imágenes que suben los admins desde la app (se guardan como uploads/<uuid>.jpg): no van al repo, salvo las de ejemplo restaurantN.jpg
+src/main/webapp/uploads/*
+!src/main/webapp/uploads/restaurant[0-9].jpg

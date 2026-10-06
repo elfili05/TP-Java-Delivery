@@ -59,7 +59,6 @@ public class UserRepository {
 			e.printStackTrace();
 		} finally {
 			try {
-				System.out.println("aca!");
 				if (rs != null) { rs.close(); }
 				if (stmt != null) { stmt.close(); }
 				DbConnector.getInstance().releaseConn();
@@ -123,10 +122,11 @@ public class UserRepository {
 					"delete from user where email=?"
 					);
 			stmt.setString(1, email);
-			stmt.executeUpdate();
+			result = stmt.executeUpdate() > 0;
 			
-			result = true;
-			
+		} catch (SQLIntegrityConstraintViolationException e0) {
+			// la FK de user_order impide borrar un usuario con pedidos: se propaga para mostrar un mensaje claro.
+			throw e0;
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			errorMessage = e1.getMessage();
@@ -163,9 +163,7 @@ public class UserRepository {
 			stmt.setString(6, userToUpdate.getAddress());
 			stmt.setString(7, userToUpdate.getEmail());
 			
-			stmt.executeUpdate();
-			
-			result = true;
+			result = stmt.executeUpdate() > 0;
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -199,9 +197,7 @@ public class UserRepository {
 			stmt.setString(6, userToUpdate.getRole());
 			stmt.setString(7, userToUpdate.getEmail());
 
-			stmt.executeUpdate();
-
-			result = true;
+			result = stmt.executeUpdate() > 0;
 
 		} catch (SQLException e) {
 			e.printStackTrace();

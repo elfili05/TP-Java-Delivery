@@ -1,6 +1,7 @@
 <%@page import="java.util.LinkedList"%>
 <%@page import="main.java.entities.Restaurant"%>
 <%@page import="main.java.entities.User"%>
+<%@page import="main.java.logic.HtmlUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -16,7 +17,6 @@
 	<link rel="icon" type="ico" href="assets/icon2.ico" />
 	<%
 		User u = (User) session.getAttribute("user");
-		System.out.println(u.getRole());
 		String userName = (u != null && u.getName() != null && !u.getName().isBlank() && !"guest".equalsIgnoreCase(u.getRole())) ? u.getName() : "Invitado";
 		String userAddress = (u != null && u.getAddress() != null && !u.getAddress().isBlank()) ? u.getAddress() : "Tu dirección";
 		LinkedList<Restaurant> restaurants = (LinkedList<Restaurant>)request.getAttribute("restaurants");
@@ -32,14 +32,14 @@
 
 			<div class="delivery-target">
 				<span class="delivery-target__label">Enviar a:</span>
-				<span class="delivery-target__value"><%= userAddress %></span>
+				<span class="delivery-target__value"><%= HtmlUtils.escape(userAddress) %></span>
 			</div>
 
 			<div class="user-menu-container">
 				<button class="user-welcome" aria-label="Usuario logueado, menú de opciones" aria-haspopup="true" aria-expanded="false" id="userMenuBtn">
 					<div class="user-welcome__avatar"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6"><path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" /></svg>
 					</div>
-					<span class="user-welcome__text">Hola, <strong><%= userName %></strong></span>
+					<span class="user-welcome__text">Hola, <strong><%= HtmlUtils.escape(userName) %></strong></span>
 					<%if (!u.getRole().equalsIgnoreCase("guest")) { %><svg class="user-welcome__arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"> <% } %>
 						<path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
 					</svg>
@@ -49,14 +49,12 @@
 					<ul class="user-dropdown__list">
 						<li class="user-dropdown__item">
 							<form action="Logout" method="post">
-									<a href="logout" class="user-dropdown__link">
 								<button name="logoutButton" value="true" class="user-dropdown__link">
 										<svg class="user-dropdown__icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
 											<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
 										</svg>
 								<% if (!u.getRole().equalsIgnoreCase("guest")) { %> Cerrar sesión <% } else { %> Salir <% } %>
 								</button>
-									</a>
 							</form>
 						</li>
 						<% if (u.getRole().equalsIgnoreCase("admin")) { %>
@@ -92,17 +90,16 @@
 						String name = restaurant.getName() != null ? restaurant.getName() : "Restaurante";
 						String address = restaurant.getAddress() != null ? restaurant.getAddress() : "Dirección no disponible";
 						int restaurantId = restaurant.getRestaurant_id();
-						System.out.println(restaurantId);
 						
 					%>
 					<form action="restaurantmenu" method="get">
 						
-							<a style= 'background-image: url("<%=restaurant.getImage_url()%>"); background-size: cover;'  class="restaurant-card" aria-label="Ver menú de <%= name %>">
+							<a style= 'background-image: url("<%= HtmlUtils.safeImageUrl(restaurant.getImage_url(), "assets/restaurant_background.jpg") %>"); background-size: cover;'  class="restaurant-card" aria-label="Ver menú de <%= HtmlUtils.escape(name) %>">
 								<button type="submit" name="selectedRestaurant" value="<%=Integer.toString(restaurant.getRestaurant_id())%>">
 								<div class="restaurant-card__media" aria-hidden="true"></div>
 								<div class="restaurant-card__content">
-									<h2><%= name %></h2>
-									<p><%= address %></p>
+									<h2><%= HtmlUtils.escape(name) %></h2>
+									<p><%= HtmlUtils.escape(address) %></p>
 								</div>
 								</button>
 							</a>

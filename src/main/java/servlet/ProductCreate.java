@@ -22,6 +22,9 @@ import main.java.logic.ProductCRUD;
 public class ProductCreate extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
+	// la columna product.description es varchar(100).
+	static final int MAX_DESCRIPTION_LENGTH = 100;
+
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -57,7 +60,7 @@ public class ProductCreate extends HttpServlet {
 		ProductCRUD ctrlProduct = new ProductCRUD();
 
 		Boolean created = false;
-		if (restaurantId != null && productTypeId != null && description != null && !description.trim().isEmpty() && price != null && price > 0) {
+		if (restaurantId != null && productTypeId != null && description != null && !description.trim().isEmpty() && description.trim().length() <= MAX_DESCRIPTION_LENGTH && price != null && price > 0) {
 			Restaurant restaurant = new Restaurant();
 			restaurant.setRestaurant_id(restaurantId);
 
@@ -65,28 +68,26 @@ public class ProductCreate extends HttpServlet {
 			productType.setProduct_type_id(productTypeId);
 
 			Product product = new Product();
-			product.setDescription(description);
+			product.setDescription(description.trim());
 			product.setPrice(price);
 
 			try {
-				ctrlProduct.addProduct(product, restaurant, productType);
-				created = true;
+				created = ctrlProduct.addProduct(product, restaurant, productType);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
 
-		request.setAttribute("message", created ? "Producto creado correctamente." : "No se pudo crear el producto. Revisá los datos ingresados.");
+		request.setAttribute("message", created ? "Producto creado correctamente." : "No se pudo crear el producto. Revisá los datos ingresados (la descripción admite hasta 100 caracteres).");
 		AdminProducts.forwardWithProducts(request, response, restaurantId);
 	}
 
-	// interpreta el precio del formulario; null si vino vacío o no es un número válido.
+	// interpreta el precio del formulario (acepta coma o punto, hasta 2 decimales); null si vino vacío, no es un número válido o es absurdamente grande.
 	static Double parsePrice(String rawPrice) {
-		try {
-			return Double.parseDouble(rawPrice);
-		} catch (NumberFormatException | NullPointerException e) {
+		if (rawPrice == null || !rawPrice.trim().matches("\\d{1,9}([.,]\\d{1,2})?")) {
 			return null;
 		}
+		return Double.parseDouble(rawPrice.trim().replace(',', '.'));
 	}
 
 }

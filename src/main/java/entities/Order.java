@@ -1,6 +1,7 @@
 package main.java.entities;
 
 import java.time.*;
+import main.java.data.BusinessClock;
 import java.util.LinkedList;
 
 public class Order {
@@ -14,7 +15,7 @@ public class Order {
 	
 	
 	public Order(User user, Restaurant restaurant) {
-		this.order_date = LocalDate.now();
+		this.order_date = BusinessClock.today();
 		this.user = user;
 		this.restaurant = restaurant;
 		this.setStatus("pending");
@@ -66,7 +67,7 @@ public class Order {
 
 
 	public double getTotal() {
-		if (order_details != null || !order_details.isEmpty()) {
+		if (order_details != null && !order_details.isEmpty()) {
 			double total = 0;
 			for (OrderDetail order_detail : order_details) {
 				total += order_detail.getSubtotal();

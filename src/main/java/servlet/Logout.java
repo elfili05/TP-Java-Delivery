@@ -25,18 +25,15 @@ public class Logout extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+	// un GET no cierra la sesión (una página externa podría forzarlo con un link o una imagen): solo vuelve al inicio. El cierre es por POST.
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.getSession().removeAttribute("user");
-		request.getSession().removeAttribute("currentRestaurant");
-		request.getRequestDispatcher("index.html").forward(request, response);
-		System.out.println("User logged out successfully.");
+		response.sendRedirect("index.html");
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
+		// se descarta toda la sesión (usuario, pedido en curso, menú): así nadie que entre después en el mismo navegador hereda nada.
+		request.getSession().invalidate();
+		request.getRequestDispatcher("index.html").forward(request, response);
 	}
 
 }

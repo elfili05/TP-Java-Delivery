@@ -91,11 +91,12 @@ public class ScheduleEdit extends HttpServlet {
 
 		Boolean updated = false;
 		boolean overlap = false;
-		if (restaurantId != null && scheduleNumber != null && ScheduleCreate.isValidDay(dayOfWeek) && startTime != null && endTime != null) {
+		boolean invalidRange = startTime != null && endTime != null && !ScheduleCreate.isValidRange(startTime, endTime);
+		if (restaurantId != null && scheduleNumber != null && ScheduleCreate.isValidDay(dayOfWeek) && startTime != null && endTime != null && !invalidRange) {
 			Schedule schedule = new Schedule();
 			schedule.setRestaurant_id(restaurantId);
 			schedule.setSchedule_number(scheduleNumber);
-			schedule.setDay_of_week(dayOfWeek);
+			schedule.setDay_of_week(dayOfWeek.toLowerCase());
 			schedule.setStart_time(startTime);
 			schedule.setEnd_time(endTime);
 
@@ -115,6 +116,8 @@ public class ScheduleEdit extends HttpServlet {
 			message = "Horario actualizado correctamente.";
 		} else if (overlap) {
 			message = "Ese horario se superpone con uno ya cargado para ese día.";
+		} else if (invalidRange) {
+			message = ScheduleCreate.RANGE_ERROR_MESSAGE;
 		} else {
 			message = "No se pudo actualizar el horario.";
 		}

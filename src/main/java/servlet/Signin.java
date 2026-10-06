@@ -53,7 +53,8 @@ public class Signin extends HttpServlet {
 		
 		
 		
-		u.setRole(request.getParameter("role")); // solo en el caso de "guest" se usará esta parte.
+		// el rol NUNCA se toma del request: sale de la base de datos. Solo "guest" (botón de invitado) se acepta como valor pedido.
+		String requestedRole = request.getParameter("role");
 		u.setEmail(request.getParameter("email"));
 		u.setPassword(request.getParameter("password"));
 		
@@ -64,20 +65,27 @@ public class Signin extends HttpServlet {
 		try {
 			u = ctrlUser.validateUser(u);
 		} catch (SQLException e) {
-			response.getWriter().append(e.toString());
-			System.out.println("exception");
-			//e.printStackTrace();
+			// el detalle queda en el servidor; al usuario no se le muestra la excepción.
+			e.printStackTrace();
 		}
 		
-		if (request.getSession().getAttribute("user") != null) {
+		// validateUser devuelve el mismo objeto sin rol si las credenciales no existen: solo ahí se permite entrar como invitado.
+		if (u.getRole() == null && "guest".equalsIgnoreCase(requestedRole)) {
+			u.setRole("guest");
+		}
+
+		// si no vino ni email ni el botón de invitado (por ejemplo el botón "volver al menú"), se sigue con el usuario que ya está en la sesión.
+		boolean loginAttempt = request.getParameter("email") != null || "guest".equalsIgnoreCase(requestedRole);
+		if (!loginAttempt && request.getSession().getAttribute("user") != null) {
 			u = (User) request.getSession().getAttribute("user");
+			// volver a la lista de restaurantes abandona el pedido que se estaba armando ("Cancelar pedido").
+			request.getSession().removeAttribute("order");
 			
 		}
 		
 
 		
 		if (u.getRole() != null) {
-			System.out.println("role: " + u.getRole());
 
 				try {
 					restaurants = ctrlRestaurant.getAvailable();
@@ -86,9 +94,11 @@ public class Signin extends HttpServlet {
 
 				}
 				
-				if (request.getSession().getAttribute("user") == null) {
-
-				request.getSession().setAttribute("user", u);
+				// un login nuevo siempre arranca una sesión nueva: no hereda el pedido ni el menú de quien estaba antes
+				// y el id de sesión cambia al autenticarse (evita la fijación de sesión).
+				if (loginAttempt) {
+					request.getSession().invalidate();
+					request.getSession(true).setAttribute("user", u);
 				}
 				
 				request.setAttribute("restaurants", restaurants);

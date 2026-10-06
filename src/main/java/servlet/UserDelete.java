@@ -2,6 +2,7 @@ package main.java.servlet;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -52,10 +53,13 @@ public class UserDelete extends HttpServlet {
 		} else {
 			try {
 				deleted = ctrlUser.deleteUser(email);
+				message = deleted ? "Usuario eliminado correctamente." : "No se pudo eliminar el usuario.";
+			} catch (SQLIntegrityConstraintViolationException e) {
+				message = "No se puede eliminar: el usuario tiene pedidos asociados.";
 			} catch (SQLException e) {
 				e.printStackTrace();
+				message = "No se pudo eliminar el usuario.";
 			}
-			message = deleted ? "Usuario eliminado correctamente." : "No se pudo eliminar el usuario.";
 		}
 
 		request.setAttribute("message", message);
