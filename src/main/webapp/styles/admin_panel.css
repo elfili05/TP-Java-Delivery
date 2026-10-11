@@ -1,9 +1,12 @@
+@import url("delivery_pattern.css");
+
 :root {
   --bg-page: #ffece6;
   --panel-border: rgba(38, 38, 38, 0.82);
   --text-dark: #2d2c2c;
   --text-light: #5d5d5d;
   --accent: #ff5a2a;
+  --accent-soft: #f76b40;
   --brand-dark: #ffaf4e;
   --card-bg: rgba(255, 255, 255, 0.55);
   --field-bg: #faf8f6;
@@ -27,18 +30,29 @@ img {
   display: block;
 }
 
+/* patrón de dibujo de delivery, el mismo de todo el sistema */
+.admin-page {
+  background-color: var(--delivery-pattern-bg);
+  background-image: var(--delivery-pattern);
+}
+
 .admin-layout {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
+/* mismo color de header que el menú de restaurantes */
 .admin-topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+  min-height: 92px;
   padding: 16px 32px;
   border-bottom: 2px solid var(--panel-border);
+  background: var(--accent-soft);
 }
 
 .brand-block {
@@ -46,14 +60,14 @@ img {
   align-items: center;
   gap: 10px;
   text-decoration: none;
-  color: inherit;
+  color: var(--text-dark);
   padding: 8px 14px;
   margin: -8px -14px;
   border-radius: 0.85rem;
 }
 
 .brand-block:hover {
-  background: rgba(255, 90, 42, 0.12);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .brand-block img {
@@ -68,57 +82,69 @@ img {
 
 .admin-nav {
   display: flex;
+  align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
+}
+
+/* los botones del header (secciones, saludo y cerrar sesión) comparten la misma forma y color que el botón de usuario del menú de restaurantes */
+.admin-nav__link,
+.admin-welcome,
+.admin-logout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 8px 14px;
+  margin: 0;
+  border: 2px solid var(--panel-border);
+  border-radius: 999px;
+  background: var(--brand-dark);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+  color: var(--text-dark);
+  font-family: inherit;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
 }
 
 .admin-nav__link {
   font-weight: 600;
-  font-size: 0.9rem;
-  color: var(--text-dark);
-  text-decoration: none;
-  padding: 8px 14px;
-  border-radius: 0.85rem;
 }
 
-.admin-nav__link:hover {
-  background: rgba(255, 90, 42, 0.12);
+.admin-nav__link:hover,
+.admin-nav__link:focus-visible,
+.admin-welcome:hover,
+.admin-welcome:focus-visible,
+.admin-logout:hover,
+.admin-logout:focus-visible {
+  background: var(--accent);
+  transform: translateY(-2px);
+}
+
+.admin-nav__link:active,
+.admin-welcome:active,
+.admin-logout:active {
+  transform: translateY(0);
 }
 
 .admin-topbar__right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
-.admin-welcome {
-  color: var(--text-dark);
-  text-decoration: none;
-  padding: 8px 14px;
-  margin: -8px -14px;
-  border-radius: 0.85rem;
-}
-
-.admin-welcome:hover {
-  background: rgba(255, 90, 42, 0.12);
+.admin-topbar__right form {
+  display: flex;
+  margin: 0;
 }
 
 .admin-logout {
-  font-family: inherit;
   font-weight: 700;
-  font-size: 0.85rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  border: 2px solid var(--panel-border);
-  background: transparent;
-  color: var(--text-dark);
-  padding: 8px 16px;
-  border-radius: 1rem;
-  cursor: pointer;
-  transition: transform 0.2s ease-out;
-}
-
-.admin-logout:hover {
-  transform: scale(1.05);
 }
 
 .admin-content {

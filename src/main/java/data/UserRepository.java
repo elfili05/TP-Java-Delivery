@@ -214,6 +214,86 @@ public class UserRepository {
 		return result;
 	}
 
+	// busca un usuario por su id (sin la password), para precargar la pantalla "Mi perfil".
+	public User getById(int userId) throws SQLException {
+		User u = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			stmt = DbConnector.getInstance().getConn().prepareStatement(
+					"select user_id, email, name, surname, phone_number, dni, address, role from user where user_id=?"
+					);
+			stmt.setInt(1, userId);
+			rs = stmt.executeQuery();
+			if (rs != null && rs.next()) {
+				u = new User();
+				u.setUser_id(rs.getInt("user_id"));
+				u.setEmail(rs.getString("email"));
+				u.setName(rs.getString("name"));
+				u.setSurname(rs.getString("surname"));
+				u.setPhone_number(rs.getString("phone_number"));
+				u.setDni(rs.getString("dni"));
+				u.setAddress(rs.getString("address"));
+				u.setRole(rs.getString("role"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (rs != null) { rs.close(); }
+				if (stmt != null) { stmt.close(); }
+				DbConnector.getInstance().releaseConn();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return u;
+	}
+
+	// actualiza los datos propios del usuario (incluido el email), identificándolo por user_id. Nunca toca el rol.
+	// la password solo se cambia si userToUpdate trae una nueva (no vacía); si no, se conserva la actual.
+	public Boolean updateProfile(User userToUpdate) throws SQLException {
+
+		Boolean result = false;
+		PreparedStatement stmt = null;
+		boolean changePassword = userToUpdate.getPassword() != null && !userToUpdate.getPassword().isEmpty();
+		try {
+			stmt = DbConnector.getInstance().getConn().prepareStatement(
+					"update user set email=?, name=?, surname=?, phone_number=?, dni=?, address=?"
+					+ (changePassword ? ", password=?" : "") + " where user_id=?"
+					);
+			stmt.setString(1, userToUpdate.getEmail());
+			stmt.setString(2, userToUpdate.getName());
+			stmt.setString(3, userToUpdate.getSurname());
+			stmt.setString(4, userToUpdate.getPhone_number());
+			stmt.setString(5, userToUpdate.getDni());
+			stmt.setString(6, userToUpdate.getAddress());
+			int next = 7;
+			if (changePassword) {
+				stmt.setString(next++, userToUpdate.getPassword());
+			}
+			stmt.setInt(next, userToUpdate.getUser_id());
+
+			result = stmt.executeUpdate() > 0;
+
+		} catch (SQLIntegrityConstraintViolationException e0) {
+			// email repetido (UNIQUE): se propaga para mostrar un mensaje claro.
+			throw e0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result = false;
+		} finally {
+			try {
+				if (stmt != null) { stmt.close(); }
+				DbConnector.getInstance().releaseConn();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				result = false;
+			}
+		}
+		return result;
+	}
+
 	public LinkedList<User> getAll() throws SQLException{
 		LinkedList<User> users = new LinkedList<>();
 		PreparedStatement stmt = null;
