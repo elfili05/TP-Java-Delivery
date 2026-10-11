@@ -21,7 +21,8 @@ public class RestaurantRepository {
 					+ "	AND time(now()) BETWEEN sch.start_time AND sch.end_time;"
 	 * 
 	 * */
-
+	
+	
 	public LinkedList<Restaurant> getAll() throws SQLException {
 		LinkedList<Restaurant> restaurants = new LinkedList<>();
 		PreparedStatement stmt = null;
@@ -29,8 +30,51 @@ public class RestaurantRepository {
 		
 		try {
 			stmt = DbConnector.getInstance().getConn().prepareStatement(""
-					+ "SELECT res.restaurant_id, res.name, res.address, res.image_url\r\n"
+					+ "SELECT res.restaurant_id, res.name, res.address, res.image_url\r\n "
+					+ "FROM restaurant res\r\n "
+					);
+			rs = stmt.executeQuery();
+			
+			if (rs != null) {
+				while (rs.next()) {
+					Restaurant r = new Restaurant();
+					r.setRestaurant_id(rs.getInt("res.restaurant_id"));
+					r.setName(rs.getString("res.name"));
+					r.setAddress(rs.getString("res.address"));
+					r.setImage_url(rs.getString("res.image_url"));
+					restaurants.add(r);
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			
+		} finally {
+			try {
+				if (rs != null) { rs.close(); }
+				if (stmt != null) { stmt.close(); }
+				DbConnector.getInstance().releaseConn();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return restaurants;
+	}
+
+	public LinkedList<Restaurant> getAvailable() throws SQLException {
+		LinkedList<Restaurant> restaurants = new LinkedList<>();
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		try {
+			stmt = DbConnector.getInstance().getConn().prepareStatement(""
+					+ "SELECT DISTINCT res.restaurant_id, res.name, res.address, res.image_url\r\n"
 					+ "FROM restaurant res\r\n"
+					+ "INNER JOIN schedule sch\r\n"
+					+ "	ON sch.restaurant_id = res.restaurant_id\r\n"
+					+ "WHERE sch.day_of_week = LOWER(DAYNAME(CURDATE()))\r\n"
+					+ "	AND time(now()) BETWEEN sch.start_time AND sch.end_time;"
 					);
 			rs = stmt.executeQuery();
 			

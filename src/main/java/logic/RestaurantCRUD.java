@@ -17,6 +17,10 @@ public class RestaurantCRUD {
 	}
 	
 	public LinkedList<Restaurant> getAvailable() throws SQLException {
+		return rr.getAvailable();
+	}
+	
+	public LinkedList<Restaurant> getAll() throws SQLException {
 		return rr.getAll();
 	}
 	

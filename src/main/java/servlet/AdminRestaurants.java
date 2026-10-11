@@ -46,7 +46,7 @@ public class AdminRestaurants extends HttpServlet {
 		RestaurantCRUD ctrlRestaurant = new RestaurantCRUD();
 		LinkedList<Restaurant> restaurants = new LinkedList<Restaurant>();
 		try {
-			restaurants = ctrlRestaurant.getAvailable();
+			restaurants = ctrlRestaurant.getAll();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
