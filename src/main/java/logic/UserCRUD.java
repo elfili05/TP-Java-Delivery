@@ -41,4 +41,14 @@ public class UserCRUD {
 		return ur.deleteUser(email);
 	}
 
+	// usados por la pantalla "Mi perfil": el usuario consulta y edita sus propios datos.
+	public User getById(int userId) throws SQLException {
+		return ur.getById(userId);
+	}
+
+	// lanza SQLIntegrityConstraintViolationException si el email ya pertenece a otro usuario.
+	public Boolean updateProfile(User userToUpdate) throws SQLException {
+		return ur.updateProfile(userToUpdate);
+	}
+
 }
