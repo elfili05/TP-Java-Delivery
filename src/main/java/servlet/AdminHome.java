@@ -70,7 +70,7 @@ public class AdminHome extends HttpServlet {
 		}
 
 		request.setAttribute("pendingOrders", pendingOrders);
-		request.getRequestDispatcher("WEB-INF/admin_panel.jsp").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/admin-layout/admin_panel.jsp").forward(request, response);
 	}
 
 }

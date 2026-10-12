@@ -66,7 +66,7 @@ public class ScheduleEdit extends HttpServlet {
 		}
 
 		request.setAttribute("editedSchedule", scheduleToEdit);
-		request.getRequestDispatcher("WEB-INF/admin_schedule_edit.jsp").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/admin-layout/admin_schedule_edit.jsp").forward(request, response);
 	}
 
 	/**

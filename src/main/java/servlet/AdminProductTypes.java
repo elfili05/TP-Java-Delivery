@@ -62,7 +62,7 @@ public class AdminProductTypes extends HttpServlet {
 		}
 
 		request.setAttribute("productTypes", productTypes);
-		request.getRequestDispatcher("WEB-INF/admin_product_types.jsp").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/admin-layout/admin_product_types.jsp").forward(request, response);
 	}
 
 	// interpreta el id de la URL/formulario; null si vino vacío o no es un número.

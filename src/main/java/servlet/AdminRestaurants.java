@@ -68,7 +68,7 @@ public class AdminRestaurants extends HttpServlet {
 
 		request.setAttribute("restaurants", restaurants);
 		request.setAttribute("query", query);
-		request.getRequestDispatcher("WEB-INF/admin_restaurants.jsp").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/admin-layout/admin_restaurants.jsp").forward(request, response);
 	}
 
 	/**

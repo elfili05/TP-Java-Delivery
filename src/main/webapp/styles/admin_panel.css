@@ -46,13 +46,34 @@ img {
 .admin-topbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 18px;
+  justify-content: center;
+  gap: 12px 8px;
   flex-wrap: wrap;
-  min-height: 92px;
   padding: 16px 32px;
   border-bottom: 2px solid var(--panel-border);
   background: var(--accent-soft);
+}
+
+/* el logo ocupa la primera fila, centrado */
+.admin-topbar .brand-block {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+.admin-topbar::before {
+  content: "";
+  order: 1;
+  flex-basis: 100%;
+  height: 0;
+}
+
+.admin-topbar .brand-block {
+  order: 0;
+}
+
+.admin-topbar__right,
+.admin-nav {
+  order: 2;
 }
 
 .brand-block {
@@ -133,7 +154,7 @@ img {
 .admin-topbar__right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .admin-topbar__right form {
@@ -145,6 +166,21 @@ img {
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+/* color distinto para no confundir con los botones de los CRUD */
+.admin-welcome,
+.admin-logout {
+  background: var(--text-dark);
+  color: #fff;
+  border-color: var(--text-dark);
+}
+
+.admin-welcome:hover,
+.admin-welcome:focus-visible,
+.admin-logout:hover,
+.admin-logout:focus-visible {
+  background: #000;
 }
 
 .admin-content {

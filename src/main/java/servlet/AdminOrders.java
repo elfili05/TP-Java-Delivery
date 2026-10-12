@@ -73,7 +73,7 @@ public class AdminOrders extends HttpServlet {
 
 		request.setAttribute("pendingOrders", pendingOrders);
 		request.setAttribute("deliveredOrders", deliveredOrders);
-		request.getRequestDispatcher("WEB-INF/admin_orders.jsp").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/admin-layout/admin_orders.jsp").forward(request, response);
 	}
 
 }

@@ -92,7 +92,7 @@ public class RestaurantEdit extends HttpServlet {
 
 		request.setAttribute("restaurant", restaurant);
 		request.setAttribute("schedules", schedules);
-		request.getRequestDispatcher("WEB-INF/admin_restaurant_edit.jsp").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/admin-layout/admin_restaurant_edit.jsp").forward(request, response);
 	}
 
 	/**

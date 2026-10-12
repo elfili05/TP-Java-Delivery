@@ -91,7 +91,7 @@ public class AdminProducts extends HttpServlet {
 		request.setAttribute("restaurant", restaurant);
 		request.setAttribute("products", products);
 		request.setAttribute("productTypes", productTypes);
-		request.getRequestDispatcher("WEB-INF/admin_products.jsp").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/admin-layout/admin_products.jsp").forward(request, response);
 	}
 
 	// interpreta el id de la URL/formulario; null si vino vacío o no es un número.

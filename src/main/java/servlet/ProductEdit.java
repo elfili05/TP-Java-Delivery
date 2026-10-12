@@ -67,7 +67,7 @@ public class ProductEdit extends HttpServlet {
 		request.setAttribute("restaurantId", restaurantId);
 		request.setAttribute("editedProduct", product);
 		request.setAttribute("productTypes", productTypes);
-		request.getRequestDispatcher("WEB-INF/admin_product_edit.jsp").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/admin-layout/admin_product_edit.jsp").forward(request, response);
 	}
 
 	/**

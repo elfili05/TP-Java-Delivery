@@ -67,7 +67,7 @@ public class AdminUsers extends HttpServlet {
 
 		request.setAttribute("users", users);
 		request.setAttribute("query", query);
-		request.getRequestDispatcher("WEB-INF/admin_users.jsp").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/admin-layout/admin_users.jsp").forward(request, response);
 	}
 
 	// un POST (a mano o por un formulario alterado) se trata igual que un GET: valida el rol y solo muestra la lista.

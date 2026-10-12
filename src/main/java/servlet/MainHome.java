@@ -50,7 +50,7 @@ public class MainHome extends HttpServlet {
 		}
 
 		request.setAttribute("restaurants", restaurants);
-		request.getRequestDispatcher("WEB-INF/main_page.jsp").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/shared/main_page.jsp").forward(request, response);
 	}
 
 }
