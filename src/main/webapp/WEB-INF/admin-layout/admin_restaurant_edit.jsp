@@ -83,7 +83,7 @@
 				</div>
 
 				<% if (schedules != null && !schedules.isEmpty()) { %>
-					<ul class="admin-schedule-list">
+					<ul class="admin-schedule-list" style="margin-top: 15px;">
 						<% for (Schedule schedule : schedules) { %>
 							<li class="admin-schedule-item">
 								<div class="admin-schedule-item__info">

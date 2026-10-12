@@ -47,7 +47,7 @@
 				<% } %>
 
 				<% if (discounts != null && !discounts.isEmpty()) { %>
-					<ul class="admin-product-list">
+					<ul class="admin-product-list" style="margin-top: 15px;">
 						<% for (Discount discount : discounts) { %>
 							<li class="admin-product-item">
 								<div class="admin-product-item__info">

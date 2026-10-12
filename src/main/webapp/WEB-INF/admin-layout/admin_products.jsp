@@ -51,7 +51,7 @@
 				<% } %>
 
 				<% if (products != null && !products.isEmpty()) { %>
-					<ul class="admin-product-list">
+					<ul class="admin-product-list" style="margin-top: 15px;">
 						<% for (Product product : products) { %>
 							<li class="admin-product-item">
 								<div class="admin-product-item__info">
