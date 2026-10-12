@@ -35,7 +35,7 @@ Los pedidos, realizados por los usuarios, se gestionan desde su creación hasta 
 
 ## Alcance Funcional - Aprobación Directa
 
-<table><tbody><tr><th >Requerimiento</th><th >Detalle/Listado de casos incluidos</th></tr><tr><td >ABMC</td><td >1. CRUD Restaurante<br>2. CRUD Horario<br>3. CRUD Producto<br>4. CRUD descuento<br>5. CRUD tipo_producto<br>6. CRUD usuario</td></tr><tr><td >CU "Complejo"(nivel resumen)</td><td >Realizar pedido</td></tr><tr><td >Listado complejo</td><td >Productos por tipo, Productos por numero de veces pedido</td></tr><tr><td >Nivel de acceso</td><td >1. Invitado<br>2. Cliente<br>3. Administrador</td></tr><tr><td>Manejo de errores</td><td >No requiere detalle</td></tr><tr><td >Publicar el sitio</td><td >No requiere detalle</td></tr></tbody></table>
+<table><tbody><tr><th >Requerimiento</th><th >Detalle/Listado de casos incluidos</th></tr><tr><td >ABMC</td><td >1. CRUD Restaurante<br>2. CRUD Horario<br>3. CRUD Producto<br>4. CRUD descuento<br>5. CRUD tipo_producto<br>6. CRUD usuario</td></tr><tr><td >CU "Complejo"(nivel resumen)</td><td >1. Realizar pedido<br>2. Alta de restaurante (Nombre, Foto, Direccion, Productos y Horarios)</td></tr><tr><td >Listado complejo</td><td >Productos por tipo, Restaurantes según disponibilidad</td></tr><tr><td >Nivel de acceso</td><td >1. Invitado<br>2. Cliente<br>3. Administrador</td></tr><tr><td>Manejo de errores</td><td >No requiere detalle</td></tr><tr><td >Publicar el sitio</td><td >No requiere detalle</td></tr></tbody></table>
 
 ## Requerimientos extra - AD
 
