@@ -62,7 +62,7 @@ public class AdminDiscounts extends HttpServlet {
 		}
 
 		request.setAttribute("discounts", discounts);
-		request.getRequestDispatcher("WEB-INF/admin_discounts.jsp").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/admin-layout/admin_discounts.jsp").forward(request, response);
 	}
 
 	// interpreta el id de la URL/formulario; null si vino vacío o no es un número.

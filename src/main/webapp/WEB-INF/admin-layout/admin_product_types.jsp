@@ -1,15 +1,9 @@
 <%@page import="java.util.LinkedList"%>
-<%@page import="main.java.entities.Discount"%>
+<%@page import="main.java.entities.ProductType"%>
 <%@page import="main.java.entities.User"%>
 <%@page import="main.java.logic.HtmlUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%!
-	// muestra un número con hasta 2 decimales y punto como separador; evita arrastrar la imprecisión del float de la base.
-	private static String formatNumber(double value) {
-		return new java.text.DecimalFormat("0.##", new java.text.DecimalFormatSymbols(java.util.Locale.US)).format(value);
-	}
-%>
 <%
 	User u = (User) session.getAttribute("user");
 	if (u == null || !"admin".equalsIgnoreCase(u.getRole())) {
@@ -17,14 +11,14 @@
 		return;
 	}
 	String message = (String) request.getAttribute("message");
-	LinkedList<Discount> discounts = (LinkedList<Discount>) request.getAttribute("discounts");
+	LinkedList<ProductType> productTypes = (LinkedList<ProductType>) request.getAttribute("productTypes");
 %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Java Delivery | Gestionar Descuentos</title>
+	<title>Java Delivery | Gestionar Tipos de Producto</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 	<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -36,28 +30,27 @@
 		<%@ include file="admin_header.jsp" %>
 
 		<main class="admin-content admin-content--wide">
-			<section class="admin-panel" aria-label="Descuentos existentes">
+			<section class="admin-panel" aria-label="Tipos de producto existentes">
 				<div class="admin-section-header">
-					<h1>Descuentos</h1>
-					<button type="button" id="openCreateDiscount" class="admin-submit admin-submit--small">Crear descuento</button>
+					<h1>Tipos de producto</h1>
+					<button type="button" id="openCreateProductType" class="admin-submit admin-submit--small">Crear tipo</button>
 				</div>
 
 				<% if (message != null) { %>
 					<p class="admin-message"><%= HtmlUtils.escape(message) %></p>
 				<% } %>
 
-				<% if (discounts != null && !discounts.isEmpty()) { %>
-					<ul class="admin-product-list">
-						<% for (Discount discount : discounts) { %>
+				<% if (productTypes != null && !productTypes.isEmpty()) { %>
+					<ul class="admin-product-list" style="margin-top: 15px;">
+						<% for (ProductType productType : productTypes) { %>
 							<li class="admin-product-item">
 								<div class="admin-product-item__info">
-									<strong><%= formatNumber(discount.getDiscount_percentage() * 100) %>% de descuento</strong>
-									<p>En pedidos desde $<%= formatNumber(discount.getMinimum_amount()) %></p>
+									<strong><%= HtmlUtils.escape(productType.getName()) %></strong>
 								</div>
 								<div class="admin-product-item__actions">
-									<a href="DiscountEdit?id=<%= discount.getDiscount_id() %>" class="admin-action-link">Editar</a>
-									<form action="DiscountDelete" method="post" data-confirm="¿Eliminar este descuento?">
-										<input type="hidden" name="discount_id" value="<%= discount.getDiscount_id() %>" />
+									<a href="ProductTypeEdit?id=<%= productType.getProduct_type_id() %>" class="admin-action-link">Editar</a>
+									<form action="ProductTypeDelete" method="post" data-confirm="¿Eliminar este tipo de producto?">
+										<input type="hidden" name="product_type_id" value="<%= productType.getProduct_type_id() %>" />
 										<button type="submit" class="admin-action-link admin-action-link--danger">Eliminar</button>
 									</form>
 								</div>
@@ -65,24 +58,21 @@
 						<% } %>
 					</ul>
 				<% } else { %>
-					<p class="admin-empty">Todavía no hay descuentos cargados.</p>
+					<p class="admin-empty">Todavía no hay tipos de producto cargados.</p>
 				<% } %>
 			</section>
 		</main>
 
-		<dialog id="createDiscountModal" class="admin-modal">
+		<dialog id="createProductTypeModal" class="admin-modal">
 			<div class="admin-modal__content">
-				<button type="button" id="closeCreateDiscount" class="admin-modal__close" aria-label="Cerrar">&times;</button>
-				<h2>Crear descuento</h2>
+				<button type="button" id="closeCreateProductType" class="admin-modal__close" aria-label="Cerrar">&times;</button>
+				<h2>Crear tipo de producto</h2>
 
-				<form action="DiscountCreate" method="post" class="admin-form">
-					<label for="minimum_amount">Monto mínimo del pedido</label>
-					<input type="text" id="minimum_amount" name="minimum_amount" inputmode="decimal" required />
+				<form action="ProductTypeCreate" method="post" class="admin-form">
+					<label for="name">Nombre</label>
+					<input type="text" id="name" name="name" maxlength="80" required />
 
-					<label for="discount_percentage">Porcentaje de descuento (%)</label>
-					<input type="text" id="discount_percentage" name="discount_percentage" inputmode="decimal" required />
-
-					<button type="submit" class="admin-submit">Crear descuento</button>
+					<button type="submit" class="admin-submit">Crear tipo</button>
 				</form>
 			</div>
 		</dialog>
@@ -101,9 +91,9 @@
 
 	<script>
 		document.addEventListener('DOMContentLoaded', () => {
-			const modal = document.getElementById('createDiscountModal');
-			const openBtn = document.getElementById('openCreateDiscount');
-			const closeBtn = document.getElementById('closeCreateDiscount');
+			const modal = document.getElementById('createProductTypeModal');
+			const openBtn = document.getElementById('openCreateProductType');
+			const closeBtn = document.getElementById('closeCreateProductType');
 
 			if (openBtn) {
 				openBtn.addEventListener('click', () => modal.showModal());

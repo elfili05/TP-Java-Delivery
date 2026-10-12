@@ -76,7 +76,7 @@ public class RestaurantMenu extends HttpServlet {
 		try {
 			if (ctrlRestaurant.isAvailable(res) == false) {
 				// no sigue ni guarda este restaurante en la sesión: el pedido no puede armarse sobre uno cerrado.
-				request.getRequestDispatcher("WEB-INF/restaurant_unavailable.jsp").forward(request, response);
+				request.getRequestDispatcher("WEB-INF/shared/restaurant_unavailable.jsp").forward(request, response);
 				return;
 			}
 		} catch (SQLException | IOException e) {
@@ -118,7 +118,7 @@ public class RestaurantMenu extends HttpServlet {
 		
 		//System.out.println(response.getStatus());
 		request.getSession().setAttribute("currentRestaurant", res);
-		request.getRequestDispatcher("WEB-INF/restaurant_menu.jsp").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/shared/restaurant_menu.jsp").forward(request, response);
 		
 		
 		

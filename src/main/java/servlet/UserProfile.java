@@ -55,7 +55,7 @@ public class UserProfile extends HttpServlet {
 		}
 
 		request.setAttribute("profileUser", profile != null ? profile : u);
-		request.getRequestDispatcher("WEB-INF/user_profile.jsp").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/user-layout/user_profile.jsp").forward(request, response);
 	}
 
 	/**
@@ -135,7 +135,7 @@ public class UserProfile extends HttpServlet {
 		request.setAttribute("profileUser", entered);
 		request.setAttribute("message", message);
 		request.setAttribute("isError", true);
-		request.getRequestDispatcher("WEB-INF/user_profile.jsp").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/user-layout/user_profile.jsp").forward(request, response);
 	}
 
 	private static String trimmed(String value) {

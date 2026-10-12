@@ -153,7 +153,7 @@ public class RestaurantCreate extends HttpServlet {
 		}
 
 		request.setAttribute("restaurants", restaurants);
-		request.getRequestDispatcher("WEB-INF/admin_restaurants.jsp").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/admin-layout/admin_restaurants.jsp").forward(request, response);
 	}
 
 }

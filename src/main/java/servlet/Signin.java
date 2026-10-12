@@ -102,14 +102,14 @@ public class Signin extends HttpServlet {
 				}
 				
 				request.setAttribute("restaurants", restaurants);
-				request.getRequestDispatcher("WEB-INF/main_page.jsp").forward(request, response);
+				request.getRequestDispatcher("WEB-INF/shared/main_page.jsp").forward(request, response);
 
 				
 				
 
 				}
 			else {
-			request.getRequestDispatcher("WEB-INF/signin_error.html").include(request, response);
+			request.getRequestDispatcher("WEB-INF/user-layout/signin_error.html").include(request, response);
 			//response.getWriter().append("Email o Contrasena incorrectos.");
 				}
 

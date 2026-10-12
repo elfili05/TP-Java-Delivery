@@ -6,6 +6,13 @@
 		<span class="brand-text">Java Delivery — Administrador</span>
 	</a>
 
+	<div class="admin-topbar__right">
+		<a style='font-weight: 700' href="MainHome" class="admin-welcome" title="Volver al menú principal">Volver al menú principal</a>
+		<form action="logout" method="post">
+			<button type="submit" class="admin-logout">Cerrar sesión</button>
+		</form>
+	</div>
+
 	<nav class="admin-nav" aria-label="Secciones de administración">
 		<a href="AdminRestaurants" class="admin-nav__link">Gestionar Restaurantes</a>
 		<a href="AdminUsers" class="admin-nav__link">Gestionar Usuarios</a>
@@ -13,11 +20,4 @@
 		<a href="AdminProductTypes" class="admin-nav__link">Tipos de Producto</a>
 		<a href="AdminDiscounts" class="admin-nav__link">Descuentos</a>
 	</nav>
-	
-	<div class="admin-topbar__right">
-		<a style='font-weight: 700' href="MainHome" class="admin-welcome" title="Volver al menú principal">Volver al menú principal</a>
-		<form action="logout" method="post">
-			<button type="submit" class="admin-logout">Cerrar sesión</button>
-		</form>
-	</div>
 </header>

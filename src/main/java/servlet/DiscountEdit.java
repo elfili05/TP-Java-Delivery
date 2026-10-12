@@ -59,7 +59,7 @@ public class DiscountEdit extends HttpServlet {
 		}
 
 		request.setAttribute("discount", discount);
-		request.getRequestDispatcher("WEB-INF/admin_discount_edit.jsp").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/admin-layout/admin_discount_edit.jsp").forward(request, response);
 	}
 
 	/**

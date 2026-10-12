@@ -60,7 +60,7 @@ public class UserEdit extends HttpServlet {
 		}
 
 		request.setAttribute("editedUser", userToEdit);
-		request.getRequestDispatcher("WEB-INF/admin_user_edit.jsp").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/admin-layout/admin_user_edit.jsp").forward(request, response);
 	}
 
 	/**
@@ -142,7 +142,7 @@ public class UserEdit extends HttpServlet {
 		}
 
 		request.setAttribute("users", users);
-		request.getRequestDispatcher("WEB-INF/admin_users.jsp").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/admin-layout/admin_users.jsp").forward(request, response);
 	}
 
 }

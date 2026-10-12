@@ -59,7 +59,7 @@ public class ProductTypeEdit extends HttpServlet {
 		}
 
 		request.setAttribute("productType", productType);
-		request.getRequestDispatcher("WEB-INF/admin_product_type_edit.jsp").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/admin-layout/admin_product_type_edit.jsp").forward(request, response);
 	}
 
 	/**

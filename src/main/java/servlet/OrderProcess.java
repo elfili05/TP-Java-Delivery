@@ -47,7 +47,7 @@ public class OrderProcess extends HttpServlet {
 			response.sendRedirect("index.html");
 			return;
 		}
-		request.getRequestDispatcher("WEB-INF/restaurant_menu.jsp").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/shared/restaurant_menu.jsp").forward(request, response);
 	}
 
 	// procesa la decisión de la ventana modal de confirmación: cancelar o confirmar el pedido que está en la sesión.
@@ -63,7 +63,7 @@ public class OrderProcess extends HttpServlet {
 
 		if (!"true".equalsIgnoreCase(request.getParameter("confirmOrder"))) { // order cancellation
 			session.removeAttribute("order");
-			request.getRequestDispatcher("WEB-INF/restaurant_menu.jsp").forward(request, response);
+			request.getRequestDispatcher("WEB-INF/shared/restaurant_menu.jsp").forward(request, response);
 			return;
 		}
 
@@ -81,7 +81,7 @@ public class OrderProcess extends HttpServlet {
 		// no hay pedido pendiente: o ya se guardó recién (doble clic o refresco: se muestra la confirmación) o no había nada que confirmar (se vuelve a la lista).
 		if (orderToSave == null) {
 			if (session.getAttribute("orderSaved") != null) {
-				request.getRequestDispatcher("WEB-INF/order_confirmation.jsp").forward(request, response);
+				request.getRequestDispatcher("WEB-INF/user-layout/order_confirmation.jsp").forward(request, response);
 			} else {
 				response.sendRedirect("MainHome");
 			}
@@ -108,12 +108,12 @@ public class OrderProcess extends HttpServlet {
 				session.removeAttribute("orderSaved");
 				session.removeAttribute("currentRestaurant");
 				session.removeAttribute("products");
-				request.getRequestDispatcher("WEB-INF/restaurant_unavailable.jsp").forward(request, response); // order failed
+				request.getRequestDispatcher("WEB-INF/shared/restaurant_unavailable.jsp").forward(request, response); // order failed
 				return;
 			}
 
 			if (new ProcessOrder().addOrder(orderToSave)) {
-				request.getRequestDispatcher("WEB-INF/order_confirmation.jsp").forward(request, response); // order successfull
+				request.getRequestDispatcher("WEB-INF/user-layout/order_confirmation.jsp").forward(request, response); // order successfull
 				return;
 			}
 		} catch (SQLException e) {
@@ -140,7 +140,7 @@ public class OrderProcess extends HttpServlet {
 
 	private void showMenuWithError(HttpServletRequest request, HttpServletResponse response, String errorMessage) throws ServletException, IOException {
 		request.setAttribute("orderError", errorMessage);
-		request.getRequestDispatcher("WEB-INF/restaurant_menu.jsp").forward(request, response);
+		request.getRequestDispatcher("WEB-INF/shared/restaurant_menu.jsp").forward(request, response);
 	}
 
 	/**
@@ -211,7 +211,7 @@ public class OrderProcess extends HttpServlet {
 
 		else { // order has items, proceed to confirmation modal.
 			request.setAttribute("confirmOrder",true);
-			request.getRequestDispatcher("WEB-INF/restaurant_menu.jsp").forward(request, response);
+			request.getRequestDispatcher("WEB-INF/shared/restaurant_menu.jsp").forward(request, response);
 		}
 
 
