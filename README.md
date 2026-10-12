@@ -39,7 +39,7 @@ Los pedidos, realizados por los usuarios, se gestionan desde su creación hasta 
 
 ## Requerimientos extra - AD
 
-<table><tbody><tr><th >Requerimiento</th><th >**Detalle/Listado de casos incluidos**</th></tr><tr><td >Manejo de archivos</td><td ></td></tr><tr><td >Custom exceptions</td><td ></td></tr><tr><td >Log de errores</td><td ></td></tr><tr><td >Envio de emails</td><td ></td></tr></tbody></table>
+<table><tbody><tr><th >Requerimiento</th><th >**Detalle/Listado de casos incluidos**</th></tr><tr><td >Manejo de archivos</td><td >Incluido</td></tr><tr><td >Custom exceptions</td><td ></td></tr><tr><td >Log de errores</td><td ></td></tr><tr><td >Envio de emails</td><td ></td></tr></tbody></table>
 
 ## Video con Demo del Sistema
 
